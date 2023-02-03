@@ -1,3 +1,6 @@
 # DCIT-Notice-Board
 
-this is a test commit
+Authors:
+        Saeed Badree
+        Nikosi Lessey
+        Kheeron Persad
