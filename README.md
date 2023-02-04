@@ -1,4 +1,4 @@
-# DCIT-Notice-Board
+# UWI-Notice-Board
 
 Authors:
         Saeed Badree
