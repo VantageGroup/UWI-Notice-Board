@@ -1,6 +1,6 @@
 import click
 from flask import Flask
-from model import create_db, db, app
+from models import create_db, db, app
 
 @app.cli.command("init")
 def initialize():

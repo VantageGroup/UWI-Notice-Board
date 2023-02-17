@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, jsonify, send_from_
 from flask_cors import CORS
 from sqlalchemy.exc import OperationalError
 from models import db, get_migrate, create_db
-from models import Test
+from models import Test, Post
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
