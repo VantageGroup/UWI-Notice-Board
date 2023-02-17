@@ -1,8 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql.expression import func 
-#from werkzeug.security import generate_password_hash
+from sqlalchemy.sql.expression import func
 from flask_migrate import Migrate
-# from app import app
 
 db = SQLAlchemy()
 
@@ -53,3 +51,10 @@ class Post(db.Model):
 #     "post_date_time": self.post_date_time
 #     }
 
+class Board(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  title = db.Column(db.String(64), nullable=False)
+
+class User(db.Model):
+  username = db.Column(db.String(64), nullable=False)
+  password = db.Column(db.String(64), nullable=False)
