@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, jsonify, send_from_
 from flask_cors import CORS
 from sqlalchemy.exc import OperationalError
 from models import db, get_migrate, create_db
-from models import Test, Post
+from models import Test, Post, Board, User
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -25,15 +25,18 @@ app = create_app()
 migrate = get_migrate(app)
 
 
+def TestPostData():
+  post = Post(
+    title="Test Post #1",
+    message="This is the first test post"
+  )
+  return post
+
 @app.route('/')
 def home():
-  test = Test()
-  test = Test(
-    text="this is a test"
-  )
-  db.session.add(test)
-  db.session.commit()
-  return render_template('index.html', test=test)
+  test = TestPostData()
+  
+  return render_template('index.html', post=test)
 
 
 if __name__ == '__main__':

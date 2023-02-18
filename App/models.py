@@ -28,33 +28,43 @@ class Test(db.Model):
     
 
 class Post(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  # board = db.Column(db.Integer, db.ForeignKey('board.id'))
+  # owner = db.Column(db.String(64), db.ForeignKey('user.id'))
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
-
-  # post_date_time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-# def __init__(self, id, title, message):
-#   self.id = id
-#   self.title = title
-#   self.message = message
-
-# def __repr__(self):
-#     return f'<Post {self.id} - {self.title} - {self.message}>'
-
-
-# def toDict(self):
-#  return {
-#     "id": self.id,
-#     "title": self.title,
-#     "message": self.message,
-#     "post_date_time": self.post_date_time
-#     }
+  # viewerCount = db.Column(db.Integer, nullable=True)
+  # image = db.Column()
+  # imageLocation = db.Column()
+  # dateCreate = db.Column()
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      # "board": self.baord,
+      # "owner": self.owner,
+      "title": self.title,
+      "message": self.message 
+    }
+    
 
 class Board(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   title = db.Column(db.String(64), nullable=False)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "title": self.title
+    }
+    
 
 class User(db.Model):
-  username = db.Column(db.String(64), nullable=False)
+  username = db.Column(db.String(64), primary_key=True, nullable=False)
   password = db.Column(db.String(64), nullable=False)
+  
+  def toDict(self):
+    return{
+      "username": self.username,
+      "password": self.password
+    }
