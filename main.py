@@ -4,7 +4,8 @@ from flask import Flask, redirect, render_template, request, jsonify, send_from_
 from flask_cors import CORS
 from sqlalchemy.exc import OperationalError
 from models import db, get_migrate, create_db
-from models import Test
+from models import Test, Post
+from webforms import SearchForm, PostForm
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -27,14 +28,47 @@ migrate = get_migrate(app)
 
 @app.route('/')
 def home():
-  test = Test()
-  test = Test(
-    text="this is a test"
-  )
-  db.session.add(test)
+  # test = Test()
+  Post1 = Post()
+  # test = Test(text="this is a test")
+  Post1 = Post( title='Post1', message='Welcome to the UWI notice board.')
+  Post2 = Post(title='Post2', message='This is for the second post.')
+  Post3 = Post(title='Post3', message='This is for the third post.')
+  db.session.add(Post1)
+  db.session.add(Post2)
+  db.session.add(Post3)
   db.session.commit()
-  return render_template('index.html', test=test)
+  return render_template('index.html', Post1 = Post1, Post2 = Post2, Post3 = Post3)
 
+@app.context_processor
+def base():
+  form = SearchForm()
+  return dict(form=form) 
+
+
+@app.route('/search',methods=["POST"])
+def search():
+  form = SearchForm()
+  dbPosts = Post.query
+  queryAll = Post.query.all()
+  if 1 == 1:
+   post_searched = form.searched.data
+   dbPosts = dbPosts.filter(Post.message.like( '%' + post_searched + '%'))
+   dbPosts = dbPosts.order_by(Post.title).all()
+   return render_template('search.html', form=form, searched = post_searched, queryAll = queryAll, dbPosts = dbPosts)
+
+#creating form page
+@app.route('/createPost', methods=['GET', 'POST'])
+def createPost():
+  title = None
+  message = None
+  form = PostForm()
+  if form.validate_on_submit():
+    title = form.title.data
+    form.title.data = ''
+    message = form.message.data
+    form.message.data = ''
+  return render_template("form.html", title = title, message = message, form = form)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)

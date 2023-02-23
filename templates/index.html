@@ -19,9 +19,10 @@
      </div>
      
      <div class="search center">
-       <form action="">
-         <input type="text" placeholder="Search" />
-         <button><i class="material-icons">search</i></button>
+       <form method="POST" action="{{ url_for('search') }}" class="d-flex">
+        {{ form.hidden_tag()}}
+         <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searched"/>
+         <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
        </form>
      </div>
 
@@ -51,7 +52,11 @@
         </div>
      </div>
       <div class="create">
-        <button>Create Board</button>
+        
+        <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">
+          <a href="{{ url_for('createPost') }}">Create Post</a>
+        </button>
+      </form>
       </div>
   </header>
       <main>
@@ -115,7 +120,7 @@
                         <h3 class="title">UWI Fete</h3>
                         <p>Lorem ipsum dolor sit amet. Vel dolorum tenetur in dolores perspiciatis sed rerum eligendi nam quis tenetur. Aut
                           dolore rerum ut fugit quibusdam est minima dignissimos qui voluptas molestias sit perspiciatis animi. Et veritatis
-                          tempore sed laborum tempore ex dolores nesciunt. {{ test.text }}</p>
+                          tempore sed laborum tempore ex dolores nesciunt. {{ Post1.message }} {{ Post2.message }} {{ Post3.message }} </p>
                       </div>
                     </div>
                   </div>
