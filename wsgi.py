@@ -9,9 +9,9 @@ def initialize():
 
 # @app.cli.command("init", help="Creates and initializes the database")
 # def initialize():
-#   db.drop_all()
-#   db.init_app(app)
-#   db.create_all()
+db.drop_all()
+db.init_app(app)
+db.create_all()
 #   Post1 = Post('Post1', 'Welcome to the UWI notice board')
 #   Post2 = Post('Post2', 'Welcome to the UWI notice board')
 #   Post3 = Post('Post3', 'Welcome to the UWI notice board')
