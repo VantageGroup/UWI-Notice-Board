@@ -36,7 +36,7 @@ class Post(db.Model):
   # viewerCount = db.Column(db.Integer, nullable=True)
   # image = db.Column()
   # imageLocation = db.Column()
-  # dateCreate = db.Column()
+  # dateCreated = db.Column()
   
   def toDict(self):
     return{
@@ -45,6 +45,11 @@ class Post(db.Model):
       # "owner": self.owner,
       "title": self.title,
       "message": self.message 
+      # "viewerCount": self.viewerCount
+      # "image": self.image
+      # "imageLocation": self.imageLocation
+      # "dateCreated": self.dateCreate
+      
     }
     
 
@@ -61,6 +66,7 @@ class Board(db.Model):
 
 class User(db.Model):
   username = db.Column(db.String(64), primary_key=True, nullable=False)
+  email = db.Column(db.String(64), nullable=False)
   password = db.Column(db.String(64), nullable=False)
   
   def toDict(self):

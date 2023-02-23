@@ -25,18 +25,19 @@ app = create_app()
 migrate = get_migrate(app)
 
 
-def TestPostData():
-  post = Post(
-    title="Test Post #1",
-    message="This is the first test post"
-  )
-  return post
+def RetrievePosts():
+  posts = Post.query.all()
+  posts = [entry.toDict() for entry in posts]
+  
+  return posts
 
+
+# Landing Page
 @app.route('/')
 def home():
-  test = TestPostData()
+  test = RetrievePosts()
   
-  return render_template('index.html', post=test)
+  return render_template('index.html', posts=test)
 
 
 if __name__ == '__main__':
