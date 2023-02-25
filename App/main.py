@@ -29,9 +29,6 @@ from functions.postFunctions import (
   SearchForm,
   PostForm
 )
-# from postFunctions import SearchForm
-
-# from searchForm import ()
 
 
 def create_app():
@@ -77,8 +74,6 @@ def home():
 #Search Posts
 @app.route('/search', methods=["POST"])
 def search():
-  # form = SearchForm()
-  
   postsDb = Post.query
   search = request.form.get('searchCriteria')
   
@@ -89,18 +84,13 @@ def search():
     (Post.title.like( '%' + search + '%' ))
     )
   )
-  # foundTitle = postsDb.filter( Post.title.like( '%' + search + '%' ) )
   
   found = foundMessage
-  # found = found.union(foundTitle)
-  # [found.join(f) for f in foundTitle if f not in found]
-  
   found = found.order_by(Post.title).all()
   
-  return render_template('search.html', 
-    # form = form, 
+  return render_template('search.html',
     searched = search, 
-    dbPosts = found
+    posts = found
   )
 
 
@@ -131,6 +121,9 @@ def uploadPost():
     
   return redirect(url_for('home'))
 
+
+'''Remove from Production'''
+
 # Temp Route to purge all Databases
 @app.route('/purge', methods=['GET', 'POST'])
 def delete():
@@ -139,15 +132,23 @@ def delete():
   users = User.query
   
   for p in posts:
-    print(p.id)
     db.session.delete(p)
+  
+  for b in posts:
+    db.session.delete(b)
     
-  # db.session.delete(boards)
-  # db.session.delete(users)
+  for u in posts:
+    db.session.delete(u)
+  
+  
   db.session.commit()
   
   return redirect(url_for('home'))
   
+# Drops all tables and recreates them
+@app.route('/drop', methods=['GET', 'POST'])
+def dropAll():
+  db.drop_all()
   
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
