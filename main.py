@@ -26,11 +26,14 @@ app = create_app()
 migrate = get_migrate(app)
 
 
+
+
+
 @app.route('/')
 def home():
-  # test = Test()
+  num_rows_deleted = db.session.query(Post).delete()
+  db.session.commit()
   Post1 = Post()
-  # test = Test(text="this is a test")
   Post1 = Post( title='Post1', message='Welcome to the UWI notice board.')
   Post2 = Post(title='Post2', message='This is for the second post.')
   Post3 = Post(title='Post3', message='This is for the third post.')
@@ -38,7 +41,10 @@ def home():
   db.session.add(Post2)
   db.session.add(Post3)
   db.session.commit()
-  return render_template('index.html', Post1 = Post1, Post2 = Post2, Post3 = Post3)
+ 
+  dbPosts = Post.query
+  queryAll = Post.query.all()
+  return render_template('index.html',dbPosts = dbPosts)
 
 @app.context_processor
 def base():

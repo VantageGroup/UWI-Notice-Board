@@ -160,15 +160,15 @@
             {% else %}
 
 
-           <h1>Please fill out the form to create your post</h1>
+           <h4>Please fill out the form to create your post</h4>
            <br/>
            <form method ="POST">
             {{ form.hidden_tag() }}
             {{ form.title.label }}
             {{ form.title }}
- 
             <br/>
-            <h1>Please enter the content of your post</h1>
+            <h4>Please enter the content of your post:</h4>
+            <br/>
             {{ form.message.label }}
             {{ form.message() }}
             <br/>
