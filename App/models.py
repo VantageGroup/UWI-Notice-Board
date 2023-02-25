@@ -14,17 +14,6 @@ def create_db(app):
   
 def init_db(app):
   db.init_app(app)
-  
-class Test(db.Model):
-  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  text = db.Column(db.String(50))
-  
-  def toDict(self):
-    return{
-      "id": self.id,
-      "text": self.text
-    }
-    
     
 
 class Post(db.Model):
@@ -56,11 +45,15 @@ class Post(db.Model):
 class Board(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   title = db.Column(db.String(64), nullable=False)
+  # faculty = db.Column(db.String(64), nullable=False)
+  # dept = db.Column(db.String(64), nullable=False)
   
   def toDict(self):
     return{
       "id": self.id,
       "title": self.title
+      # "faculty": self.faculty
+      # "dept": self.dept
     }
     
 

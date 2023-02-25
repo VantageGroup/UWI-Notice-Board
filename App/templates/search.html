@@ -19,9 +19,8 @@
      </div>
      
      <div class="search center">
-      <form method="POST" action="{{ url_for('search') }}" class="d-flex">
-       {{ form.hidden_tag()}}
-        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searched"/>
+      <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
+        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
         <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
       </form>
       </div>
@@ -52,7 +51,7 @@
         </div>
      </div>
       <div class="create">
-        <button><a href= "{{ url_for('createPost') }}">Create Board</a></button>
+        <button><a href= "#">Create Board</a></button>
       </div>
   </header>
       <main>
