@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>UWI Notice Board</title>
-  <link href="static/css/style.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/boards.css" rel="stylesheet" type="text/css" />
    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
@@ -19,12 +19,11 @@
      </div>
      
      <div class="search center">
-      <form method="POST" action="{{ url_for('search') }}" class="d-flex">
-       {{ form.hidden_tag()}}
-        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searched"/>
-        <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
-      </form>
-      </div>
+       <form action="">
+         <input type="text" placeholder="Search" />
+         <button><i class="material-icons">search</i></button>
+       </form>
+     </div>
 
      <div class="icons-right"> 
        <div class="dropdown">
@@ -51,9 +50,9 @@
           </div>
         </div>
      </div>
-     <div class="create">
-      <button>Create Board</button>
-    </div>
+      <div class="create">
+        <button>Create Board</button>
+      </div>
   </header>
       <main>
           <div class="side-bar">
@@ -66,7 +65,7 @@
                 <i class="material-icons">explore</i>
                 <span>Explore</span>
               </a>
-              <a class="nav-link" href= "{{ url_for('createPost') }}" >
+              <a class="nav-link">
                 <i class="material-icons">collections</i>
                 <span>Boards</span>
               </a>
@@ -98,67 +97,35 @@
               <span>Math</span>
             </a>
           </div>
-          
           <div class="container">
-          <h2>You seached for...  {{searched}}</h2>
-          {% block content %}
-          {% for dbPost in dbPosts %}
-            <div class="for-date">
-              <p class="the-date">🟢Today</p>
-              <div class="card">
-                <div class="card-left">
-                  <div class="c-top">
-                    <div class="t-left">
-                      <div class="profile-image">
-                        <img src="static/images/icon.png" alt="">
-                        <p class="name">Aaron S.</p>
-                        <p class="time">1hr ago</p>
-                      </div>
-                    </div>
-                    <div class="t-right">
-                      <div class="card-content">
-                        <h3 class="title">{{dbPost.title}}</h3>
-                        <p> {{ dbPost.message }} </p>
-                      </div>
-                    </div>
+            {% block content %}
+          {% for dbBoard in dbBoards %}
+            <div class="card">
+              <div class="card-image">
+                <img src="static/images/uwi2.jpg">
+              </div>
+              <div class="card-content">
+                <div class="title">
+                  <h3>{{dbBoard.title}}</h3>
+                </div>
+                <div class="left-card">
+                  <div class="u-count">
+                    <p class="users-count">1.2k</p>
                   </div>
-                  <div class="c-bot">
-                    <div class="c-bot-left">
-                      <p class="board-name">DCIT</p>
-                    </div>
-                    <div class="c-bot-mid">
-                      <div class="card-footer">
-                        <button>Leave</button>
-                      </div>
-                    </div>
-                    <div class="c-bot-left-right">
-                      <p class="users-count">1.2k</p>
-                    </div>
-                    <div class="user-icon">
-                      <i class="material-icons">person</i>
-                    </div>
-                    <div class="c-bot-right">
-                      <p class="views">15 views</p>
-                    </div>
-                    <div class="c-bot-right-right">
-                      <i class="material-icons">more_horiz</i>
-                    </div>
+                  <div class="user-icon">
+                    <i class="material-icons">person</i>
                   </div>
                 </div>
                 
-                <div class="card-right">
-                  <div class="flyer">
-                    <img class="flyer-image" src="static/images/flyer.jpg" alt="">
-                  </div>
-                </div>
               </div>
+              <div class="join">
+                  <button>Join</button>
+                </div>
             </div>
+            
             {% endfor %}
             {% endblock %}
           </div>
-          
-
-        </div>
       </main>
   <script src="script.js"></script>
 </body>

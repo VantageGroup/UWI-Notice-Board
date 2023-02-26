@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, jsonify, send_from_
 from flask_cors import CORS
 from sqlalchemy.exc import OperationalError
 from models import db, get_migrate, create_db
-from models import Test, Post
+from models import Test, Post, Board
 from webforms import SearchForm, PostForm
 
 def create_app():
@@ -32,14 +32,22 @@ migrate = get_migrate(app)
 @app.route('/')
 def home():
   num_rows_deleted = db.session.query(Post).delete()
+  num_rows_deleted_boards = db.session.query(Board).delete()
   db.session.commit()
   Post1 = Post()
+  Board1 = Board()
   Post1 = Post( title='Post1', message='Welcome to the UWI notice board.')
   Post2 = Post(title='Post2', message='This is for the second post.')
   Post3 = Post(title='Post3', message='This is for the third post.')
+  Board1 = Board( title='DCIT Board')
+  Board2 = Board(title='Physics Board')
+  Board3 = Board(title='Engineering Board')
   db.session.add(Post1)
   db.session.add(Post2)
   db.session.add(Post3)
+  db.session.add(Board1)
+  db.session.add(Board2)
+  db.session.add(Board3)
   db.session.commit()
  
   dbPosts = Post.query
@@ -75,6 +83,15 @@ def createPost():
     message = form.message.data
     form.message.data = ''
   return render_template("form.html", title = title, message = message, form = form)
+
+@app.route('/renderBoards',methods=['GET','POST'])
+def renderBoards():
+  dbBoards = Board.query
+  queryAll = Board.query.all()
+  if 1 == 1:
+   return render_template('boards.html', dbBoards = dbBoards)
+
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
