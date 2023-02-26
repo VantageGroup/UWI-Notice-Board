@@ -104,17 +104,58 @@
                 
                 <br/>
 
-                <form method ="POST" action>
-                  {{ form.hidden_tag() }}
-                  {{ form.title.label }}
-                  {{ form.title }}
-                  <br/>
-                  <h4>Please enter the content of your post:</h4>
-                  <br/>
-                  {{ form.message.label }}
-                  {{ form.message() }}
-                  <br/>
-                  {{ form.submit() }}
+                <form method ="POST" enctype="multipart/form-data">
+                  <div class="card">
+                    <div class="card-left">
+                      <div class="c-top">
+
+                        <div class="t-left">
+                          <div class="profile-image">
+                            <img src="static/images/icon.png" alt="">
+                              <p class="name">Aaron S.</p>
+                              <p class="time">1hr ago</p>
+                            </div>
+                          </div>
+
+                          <div class="t-right">
+                            <div class="card-content">
+                              <h3 class="title">{{ form.hidden_tag() }}
+                                {{ form.title(placeholder="Enter post title") }}
+                              </h3>
+
+                              <p>
+                                {{ form.message(placeholder="Add some text") }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="c-bot">
+                          <div class="c-bot-left">
+                            <p class="board-name">
+                              DCIT
+                            </p>
+                          </div>
+
+                          <div class="c-bot-mid">
+                            <div class="card-footer">
+                              <button>{{ form.submit() }}</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        
+                      <div class="card-right">
+                        <div class="flyer">
+                          {% if file_url %}
+                          <img class="flyer-image" src="{{ file_url }}" alt="">
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+
+                    {{ form.photo(class="form.contorl") }}
+                  </div>
                 </form>
             {% endblock %}
 

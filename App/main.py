@@ -10,9 +10,18 @@ from flask import (
   flash, 
   url_for
 )
+from flask_cors import (
+  CORS
+)
+from flask_uploads import (
+  UploadSet, 
+  IMAGES, 
+  configure_uploads
+)
 
-from flask_cors import CORS
 from sqlalchemy.exc import OperationalError
+from werkzeug.utils import secure_filename
+
 from models import (
   db, 
   get_migrate, 
@@ -38,10 +47,18 @@ def create_app():
   app.config['TEMPLATE_AUTO_RELOAD'] = True
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   app.config['DEBUG'] = True
-  app.config['SECRET_KEY'] = 'password'
   app.config['PREFERRED_URL_SCHEME'] = 'https'
+  
+  # app.config['UPLOADED_PHOTOS_DEST'] = os.path.join(app.root_path, '/user-images')
+  app.config['UPLOAD_FOLDER'] = '/App/user/images/'
+  
+  app.config['SECRET_KEY'] = 'password'
+  
+  configure_uploads(app, UploadSet('photos', IMAGES))
   create_db(app)
+  
   app.app_context().push()
+  
   return app
   
   
@@ -106,21 +123,48 @@ def createPost():
 # Upload Post Route
 @app.route('/create-post', methods=['GET', 'POST'])
 def uploadPost():
-  title = request.form.get("title")
-  message = request.form.get("message")
+  form = PostForm()
   
-  newPost = Post (
-    title=title,
-    message=message
-  )
-  print("New Post Title:" + newPost.title)
-  print("New Post Message:" + newPost.message)
-  
-  db.session.add(newPost)
-  db.session.commit()
+  if (form.validate_on_submit()):
+    title = request.form.get("title")
+    message = request.form.get("message")
     
+    if (form.photo.data !=  None):
+      image = True
+      
+      f = request.files['photo']
+      f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+      
+      imageLocation = f.filename
+      print(imageLocation)
+    else:
+      image = False
+      imageLocation = ""
+    
+    newPost = Post (
+      title=title,
+      message=message,
+      image=image,
+      imageLocation=imageLocation
+    )
+    
+    print("New Post Title:" + newPost.title)
+    print("New Post Message:" + newPost.message)
+    
+    db.session.add(newPost)
+    db.session.commit()
+  
   return redirect(url_for('home'))
 
+# Retrieve Uploaded Image
+@app.route('/<filename>')
+def get_file(filename): 
+  return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+# Explore Boards Route
+@app.route('/boards')
+def boards():
+  return render_template('boards.html')
 
 '''Remove from Production'''
 

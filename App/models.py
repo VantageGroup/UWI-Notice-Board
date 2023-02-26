@@ -23,8 +23,8 @@ class Post(db.Model):
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
   # viewerCount = db.Column(db.Integer, nullable=True)
-  # image = db.Column()
-  # imageLocation = db.Column()
+  image = db.Column(db.Boolean)
+  imageLocation = db.Column(db.String(256), nullable=True)
   # dateCreated = db.Column()
   
   def toDict(self):
@@ -33,10 +33,10 @@ class Post(db.Model):
       # "board": self.baord,
       # "owner": self.owner,
       "title": self.title,
-      "message": self.message 
+      "message": self.message,
       # "viewerCount": self.viewerCount
-      # "image": self.image
-      # "imageLocation": self.imageLocation
+      "image": self.image,
+      "imageLocation": self.imageLocation
       # "dateCreated": self.dateCreate
       
     }
@@ -47,6 +47,9 @@ class Board(db.Model):
   title = db.Column(db.String(64), nullable=False)
   # faculty = db.Column(db.String(64), nullable=False)
   # dept = db.Column(db.String(64), nullable=False)
+  # image = db.Column(db.Boolean)
+  # imageLocation = db.Column(db.String(256), nullable=True)
+  # subscribers = db.Column(db.Integer, nullable=False)
   
   def toDict(self):
     return{
@@ -54,6 +57,9 @@ class Board(db.Model):
       "title": self.title
       # "faculty": self.faculty
       # "dept": self.dept
+      # "image": self.image,
+      # "imageLocation": self.imageLocation
+      # "subscribers": self.subscribers
     }
     
 
