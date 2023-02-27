@@ -49,8 +49,17 @@ def create_app():
   app.config['DEBUG'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
   
-  app.config['UPLOADED_PHOTOS_DEST'] = '/App/user/images/'
-  app.config['UPLOAD_FOLDER'] = '/App/user/images/'
+  os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
+  os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
+  os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
+  
+  app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
+  # app.config['UPLOADED_PHOTOS_DEST'] = '/user/images'
+  # '''/App/user/images/'''
+  app.config['UPLOAD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'post')
+  app.config['BOARD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'board')
+  app.config['PROFILE_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'profile')
+  # '''/App/user/images/'''
   
   app.config['SECRET_KEY'] = 'password'
   
@@ -72,6 +81,9 @@ def base():
 migrate = get_migrate(app)
 
 
+'''Functions'''
+
+# Retrieve all Posts from the Database
 def RetrievePosts():
   posts = Post.query.all()
   posts = [entry.toDict() for entry in posts]
@@ -79,10 +91,13 @@ def RetrievePosts():
   return posts
 
 
+'''App Routes'''
+
 # Landing Page
 @app.route('/')
 def home():
   feed = RetrievePosts()
+  print(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'images'))
   
   return render_template('index.html', 
       posts=feed)
@@ -165,6 +180,7 @@ def get_file(filename):
 @app.route('/boards')
 def boards():
   return render_template('boards.html')
+
 
 '''Remove from Production'''
 
