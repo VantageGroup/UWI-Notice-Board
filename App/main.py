@@ -49,7 +49,7 @@ def create_app():
   app.config['DEBUG'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
   
-  # app.config['UPLOADED_PHOTOS_DEST'] = os.path.join(app.root_path, '/user-images')
+  app.config['UPLOADED_PHOTOS_DEST'] = '/App/user/images/'
   app.config['UPLOAD_FOLDER'] = '/App/user/images/'
   
   app.config['SECRET_KEY'] = 'password'
