@@ -32,7 +32,6 @@ app.config['UPLOADED_PHOTOS_DEST'] = '/App/user/images'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 
-
 class PostForm(FlaskForm):
     title= StringField("Title of post", validators =[DataRequired()] )
     message = StringField("Post content", validators =[DataRequired()] )
