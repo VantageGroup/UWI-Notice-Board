@@ -54,12 +54,10 @@ def create_app():
   os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
   
   app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
-  # app.config['UPLOADED_PHOTOS_DEST'] = '/user/images'
-  # '''/App/user/images/'''
+  
   app.config['UPLOAD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'post')
   app.config['BOARD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'board')
   app.config['PROFILE_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'profile')
-  # '''/App/user/images/'''
   
   app.config['SECRET_KEY'] = 'password'
   
