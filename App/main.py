@@ -52,6 +52,9 @@ def create_app():
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
+  # os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
+  # os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
+  # os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
   
   app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
   
@@ -95,7 +98,6 @@ def RetrievePosts():
 @app.route('/')
 def home():
   feed = RetrievePosts()
-  print(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'images'))
   
   return render_template('index.html', 
       posts=feed)
