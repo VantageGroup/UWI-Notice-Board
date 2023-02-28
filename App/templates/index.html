@@ -14,7 +14,9 @@
 
   <header class="header">
     <div class="logo left">
-      <h3>UWI Notice Board</h3>
+      <a href='{{ url_for('home') }}'>
+        <h3>UWI Notice Board</h3>
+      </a>
     </div>
      
     <div class="search center">
@@ -62,14 +64,17 @@
                 <i class="material-icons">home</i>
                 <span>Home</span>
               </a>
+
               <a href='{{ url_for('boards') }}' class="nav-link">
                 <i class="material-icons">explore</i>
                 <span>Explore</span>
               </a>
+
               <a class="nav-link">
                 <i class="material-icons">collections</i>
                 <span>Boards</span>
               </a>
+
               <a class="nav-link">
                 <i class="material-icons">collections_bookmark</i>
                 <span>Boards Saved</span>
@@ -109,7 +114,7 @@
                       <div class="c-top">
                         <div class="t-left">
                           <div class="profile-image">
-                            <img src="static/images/icon.png" alt="">
+                            <img src="static/images/defaultProfile.jpg" alt="">
                             <p class="name">Aaron S.</p>
                             <p class="time">1hr ago</p>
                           </div>
@@ -118,7 +123,7 @@
                         <div class="t-right">
                           <div class="card-content">
                             <h3 class="title">{{ post.title }}</h3>
-                            <p>{{ post.message }}</p>
+                            <p>{{ post.message | safe }}</p>
                           </div>
                         </div>
                       </div>

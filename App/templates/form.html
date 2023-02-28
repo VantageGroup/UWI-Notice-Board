@@ -13,14 +13,14 @@
 <body>
 
   <header class="header">
-     <div class="logo left">
-       
-       <h3>UWI Notice Board</h3>
-     </div>
+    <div class="logo left">
+      <a href='{{ url_for('home') }}'>
+        <h3>UWI Notice Board</h3>
+      </a>
+    </div>
      
      <div class="search center">
        <form method="POST" action="{{ url_for('search') }}" class="d-flex">
-        {{ form.hidden_tag()}}
          <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
          <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
        </form>
@@ -58,18 +58,21 @@
       <main>
           <div class="side-bar">
             <div class="nav">
-              <a class="nav-link active">
+              <a href='{{ url_for('home') }}' class="nav-link active">
                 <i class="material-icons">home</i>
                 <span>Home</span>
               </a>
-              <a class="nav-link">
+
+              <a href='{{ url_for('boards') }}' class="nav-link">
                 <i class="material-icons">explore</i>
                 <span>Explore</span>
               </a>
+
               <a class="nav-link">
                 <i class="material-icons">collections</i>
                 <span>Boards</span>
               </a>
+
               <a class="nav-link">
                 <i class="material-icons">collections_bookmark</i>
                 <span>Boards Saved</span>
@@ -100,14 +103,17 @@
           </div>
           <div class="container">
             {% block content %}
+              {% if formPost %}
                 <h4>Please fill out the form to create your post</h4>
-                
+                  
                 <br/>
 
-                <form method ="POST" enctype="multipart/form-data">
+                <form method ="POST" enctype="multipart/form-data" style="width:100%">
+                  {{ formPost.hidden_tag() }}
+
                   <div class="card">
                     <div class="card-left">
-                      <div class="c-top">
+                      <div class="c-top" style="height:200vh">
 
                         <div class="t-left">
                           <div class="profile-image">
@@ -119,12 +125,12 @@
 
                           <div class="t-right">
                             <div class="card-content">
-                              <h3 class="title">{{ form.hidden_tag() }}
-                                {{ form.title(placeholder="Enter post title") }}
+                              <h3 class="title">
+                                {{ formPost.title(placeholder="Enter post title") }}
                               </h3>
 
                               <p>
-                                {{ form.message(placeholder="Add some text") }}
+                                {{ formPost.message(placeholder="Add some text") }}
                               </p>
                             </div>
                           </div>
@@ -139,28 +145,53 @@
 
                           <div class="c-bot-mid">
                             <div class="card-footer">
-                              <button>{{ form.submit() }}</button>
+                              <button>{{ formPost.submit() }}</button>
                             </div>
                           </div>
                         </div>
                       </div>
-                        
+                          
                       <div class="card-right">
                         <div class="flyer">
                           {% if file_url %}
-                          <img class="flyer-image" src="{{ file_url }}" alt="">
+                            <img class="flyer-image" src="{{ formPost.photo() }}" alt="">
                           {% endif %}
                         </div>
                       </div>
                     </div>
 
-                    {{ form.photo(class="form.contorl") }}
+                    {{ formPost.photo(class="form.contorl") }}
                   </div>
                 </form>
+                  
+                {{ ckeditor.load(pkg_type="basic") }}
+                {{ ckeditor.config(name='message') }}
+              {% else %}
+                <h4>Please fill out the form to create your post</h4>
+                  
+                <br/>
+
+                <form method ="POST" enctype="multipart/form-data" style="width:100%">
+                  {{ formBoard.hidden_tag() }}
+
+                  <h3 class="title">
+                    {{ formBoard.title(placeholder="Enter post title") }}
+                  </h3>
+
+                  <br>
+
+                  
+                  <button>{{ formBoard.submit() }}</button>
+                  
+                </form>
+                  
+                {{ ckeditor.load(pkg_type="basic") }}
+                {{ ckeditor.config(name='message') }}
+              {% endif %}
             {% endblock %}
 
          </div>
       </main>
-  <script src="script.js"></script>
+  <script src="script.js"> </script>
 </body>
 </html>

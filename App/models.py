@@ -2,6 +2,17 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 from flask_migrate import Migrate
 
+from flask_wtf import FlaskForm
+from wtforms import (
+    StringField,
+    SubmitField
+)
+from wtforms.validators import (
+    DataRequired,
+    InputRequired,
+    Length
+)
+
 db = SQLAlchemy()
 
 def get_migrate(app):
@@ -73,3 +84,8 @@ class User(db.Model):
       "username": self.username,
       "password": self.password
     }
+    
+
+class SearchForm(FlaskForm):
+    search = StringField("searchCriteria", validators =[DataRequired()])
+    submit = SubmitField("Submit")

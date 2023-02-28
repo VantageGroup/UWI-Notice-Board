@@ -20,9 +20,9 @@
     </div>
      
     <div class="search center">
-      <form action="">
-        <input type="text" placeholder="Search" />
-          <button><i class="material-icons">search</i></button>
+      <form method="POST" action="{{ url_for('search') }}" class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
       </form>
     </div>
 
@@ -98,183 +98,46 @@
               <span>Math</span>
             </a>
           </div>
+
           <div class="container">
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
+            {% block content %}
+              {% for board in boards %}
+                <div class="card">
+                  <div class="card-image">
+                    <img src="static/images/dark.jpg">
                   </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
+
+                  <div class="card-content">
+                    <div class="title">
+                      <h3>
+                        {{ board.title }} 
+                      </h3>
+                    </div>
+
+                    <div class="left-card">
+                      <div class="u-count">
+                        <p class="users-count">1.2k</p>
+                      </div>
+
+                      <div class="user-icon">
+                        <i class="material-icons">person</i>
+                      </div>
+                    </div>
+                    
                   </div>
+                  
+                  <div class="join">
+                      <button>Join</button>
+                    </div>
                 </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-                </div>
-            </div>
-            <div class="card">
-              <div class="card-image">
-                <img src="static/images/dark.jpg">
-              </div>
-              <div class="card-content">
-                <div class="title">
-                  <h3>DCIT Board</h3>
-                </div>
-                <div class="left-card">
-                  <div class="u-count">
-                    <p class="users-count">1.2k</p>
-                  </div>
-                  <div class="user-icon">
-                    <i class="material-icons">person</i>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="join">
-                  <button>Join</button>
-              </div>
-            </div>
+              {% endfor %}
+            {% endblock %}
+
+            <a href="{{ url_for('createBoard') }}" class="d-flex">
+              <button class="btn btn-outline-secondary" type="submit">
+                Create a Board
+              </button>
+            </a>
           </div>
       </main>
   <script src="script.js"></script>

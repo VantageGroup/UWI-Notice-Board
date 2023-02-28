@@ -1,15 +1,15 @@
 import os
 from flask import Flask, render_template
 
+from werkzeug.utils import secure_filename
+from flask_ckeditor import CKEditorField
+
+from flask_wtf import FlaskForm
 from flask_uploads import (
     UploadSet, 
     IMAGES, 
     configure_uploads
 )
-
-from werkzeug.utils import secure_filename
-
-from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     SubmitField,
@@ -29,15 +29,16 @@ from wtforms.validators import (
     Length
 )
 
+
 app = Flask(__name__)
-app.config['UPLOADED_PHOTOS_DEST'] = os.path.join(app.root_path, '/user', '/images')
+app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
 
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 
 class PostForm(FlaskForm):
-    title= StringField("Title of post", validators =[DataRequired()] )
-    message = StringField("Post content", validators =[DataRequired()] )
+    title = StringField( "Title", validators =[DataRequired()] )
+    message = CKEditorField( "Message" )
     photo = FileField(validators=[
         FileAllowed(photos, 'Only images are allowed')
     ]
@@ -45,9 +46,8 @@ class PostForm(FlaskForm):
     submit= SubmitField("Submit")
 
 
-class SearchForm(FlaskForm):
-    search = StringField("searchCriteria")
-    submit = SubmitField("Submit")
-
-#Creating a form class
+# class SearchForm(FlaskForm):
+#     search = StringField("searchCriteria")
+#     submit = SubmitField("Submit")
+ 
  

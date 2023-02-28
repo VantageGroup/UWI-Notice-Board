@@ -21,6 +21,7 @@ from flask_uploads import (
 
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
+from flask_ckeditor import CKEditor
 
 from models import (
   db, 
@@ -31,23 +32,30 @@ from models import (
 from models import (
   Post, 
   Board, 
-  User
+  User,
+  SearchForm
 )
 
 from functions.postFunctions import (
-  SearchForm,
   PostForm
+)
+from functions.boardFunctions import (
+  BoardForm
 )
 
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
+  # app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
   app.config['TEMPLATE_AUTO_RELOAD'] = True
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   app.config['DEBUG'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
+  
+  editor = CKEditor()
+  editor.init_app(app)
   
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
@@ -60,7 +68,7 @@ def create_app():
   
   app.config['UPLOAD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'post')
   app.config['BOARD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'board')
-  app.config['PROFILE_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'profile')
+  app.config['PROFILE_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'user')
   
   app.config['SECRET_KEY'] = 'password'
   
@@ -76,8 +84,8 @@ app = create_app()
 
 @app.context_processor
 def base():
-  form = SearchForm()
-  return dict(form=form) 
+  searchPost = SearchForm()
+  return dict(form=searchPost) 
 
 migrate = get_migrate(app)
 
@@ -91,6 +99,12 @@ def RetrievePosts():
   
   return posts
 
+def RetrieveBoards():
+  boards = Board.query.all()
+  boards = [entry.toDict() for entry in boards]
+  
+  return boards
+
 
 '''App Routes'''
 
@@ -102,29 +116,47 @@ def home():
   return render_template('index.html', 
       posts=feed)
 
+# Retrieve Uploaded Image
+@app.route('/<filename>')
+def get_file(filename): 
+  return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 #Search Posts
 @app.route('/search', methods=["POST"])
 def search():
   postsDb = Post.query
+  boardsDb = Board.query
+  
   search = request.form.get('searchCriteria')
   
   print("Searched for " + request.form.get('searchCriteria'))
   
-  foundMessage = postsDb.filter( db.or_ (
+  found = postsDb.filter( db.or_ 
+    (
     (Post.message.like( '%' + search + '%' )), 
     (Post.title.like( '%' + search + '%' ))
     )
   )
+  foundPosts = found
+  foundPosts = foundPosts.order_by(Post.title).all()
   
-  found = foundMessage
-  found = found.order_by(Post.title).all()
+  
+  found = boardsDb.filter(
+    (
+    (Board.title.like( '%' + search + '%' ))
+    )
+  )
+  foundBoards = found
+  foundBoards = foundBoards.order_by(Board.title).all()
   
   return render_template('search.html',
     searched = search, 
-    posts = found
+    boards = foundBoards,
+    posts = foundPosts
   )
 
+
+'''Post Related Routes'''
 
 # Create a Post Route
 @app.route('/create-post', methods=['GET'])
@@ -132,7 +164,7 @@ def createPost():
   form = PostForm()
     
   return render_template("form.html",
-    form = form
+    formPost = form
   )
 
 # Upload Post Route
@@ -171,15 +203,57 @@ def uploadPost():
   
   return redirect(url_for('home'))
 
-# Retrieve Uploaded Image
-@app.route('/<filename>')
-def get_file(filename): 
-  return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+'''Board Related Routes'''
 
 # Explore Boards Route
 @app.route('/boards')
 def boards():
-  return render_template('boards.html')
+  boards = RetrieveBoards()
+  
+  return render_template('boards.html', boards=boards)
+
+# Create a Board Route
+@app.route('/create-board', methods=['GET'])
+def createBoard():
+  form = BoardForm()
+    
+  return render_template("form.html",
+    formBoard = form
+  )
+
+# Upload Board Route
+@app.route('/create-board', methods=['GET', 'POST'])
+def uploadBoard():
+  form = PostForm()
+  
+  if (form.validate_on_submit()):
+    title = request.form.get("title")
+    
+    # if (form.photo.data !=  None):
+    #   image = True
+      
+    #   f = request.files['photo']
+    #   f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+      
+    #   imageLocation = f.filename
+    #   print(imageLocation)
+    # else:
+    #   image = False
+    #   imageLocation = ""
+    
+    newBoard = Board (
+      title=title
+      # image=image,
+      # imageLocation=imageLocation
+    )
+    
+    print("New Board Title:" + newBoard.title)
+    
+    db.session.add(newBoard)
+    db.session.commit()
+  
+  return redirect(url_for('boards'))
 
 
 '''Remove from Production'''
