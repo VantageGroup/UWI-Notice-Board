@@ -341,7 +341,7 @@ h4 {
   padding-left: 25px;
 }
 
-
-
-
-
+a {
+  color: black;
+  text-decoration: none;
+}
