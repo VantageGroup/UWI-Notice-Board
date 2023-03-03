@@ -54,13 +54,15 @@
         </div>
      </div>
       <div class="create">
-        <button>Create Board</button>
+        <a href="{{ url_for('createBoard') }}">
+          <button class="btn btn-outline-secondary" type="submit">Create Board</button>
+        </a>
       </div>
   </header>
       <main>
           <div class="side-bar">
             <div class="nav">
-              <a href='{{ url_for('home') }}' class="nav-link active">
+              <a href="{{ url_for('home') }}" class="nav-link active">
                 <i class="material-icons">home</i>
                 <span>Home</span>
               </a>
@@ -70,7 +72,7 @@
                 <span>Explore</span>
               </a>
 
-              <a href='{{ url_for('boards') }}' class="nav-link">
+              <a href="{{ url_for('boards') }}" class="nav-link">
                 <i class="material-icons">collections</i>
                 <span>Boards</span>
               </a>
