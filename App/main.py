@@ -219,7 +219,7 @@ def getBoard(id):
   board = Board.query.get(id)
   print(board.id, board.title)
   
-  # return render_template('boards.html', boards=boards)
+  # return render_template('board.html', board=board)
   return redirect(url_for('home'))
 
 # Create a Board Route
