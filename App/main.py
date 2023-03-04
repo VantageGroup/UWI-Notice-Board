@@ -213,6 +213,15 @@ def boards():
   
   return render_template('boards.html', boards=boards)
 
+# View Board Route
+@app.route('/board/<id>')
+def getBoard(id):
+  board = Board.query.get(id)
+  print(board.id, board.title)
+  
+  # return render_template('boards.html', boards=boards)
+  return redirect(url_for('home'))
+
 # Create a Board Route
 @app.route('/create-board', methods=['GET'])
 def createBoard():
