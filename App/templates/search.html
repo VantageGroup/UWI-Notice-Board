@@ -116,7 +116,7 @@
           {% block content %}
             {% if posts %}
             <div class="container-post">
-              <h2>You seached for...  {{searched}}</h2>
+              <h2 class="search-message-post">You seached for...  {{searched}}</h2>
               {% for post in posts %}
                 <div class="card">
                   <div class="card-left">
@@ -167,8 +167,8 @@
               {% endfor %}
             </div>
             {% else %}
-            <div class="container-board">
-              <h2>You seached for...  {{searched}}</h2>
+            <h2 class="search-message-board">You seached for...  {{searched}}</h2>
+            <div class="container-board"> 
               {% for board in boards %}
                 <a href="/board/{{ board.id }}">
                   <div class="board-card">
