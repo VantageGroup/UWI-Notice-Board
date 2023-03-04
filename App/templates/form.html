@@ -170,12 +170,41 @@
                 <h4>Please fill out the form to create your post</h4>
                   
                 <br/>
-
+                
                 <form method ="POST" enctype="multipart/form-data" style="width:100%">
-                  {{ formBoard.hidden_tag() }}
+                  <div class="card">
+                    <div class="card-image">
+                      <img src="static/images/dark.jpg">
+                    </div>
+  
+                    <div class="card-content">
+                      <div class="title">
+                        <h3>
+                          {{ formBoard.hidden_tag() }}
+                          {{ formBoard.title(placeholder="Enter post title") }} 
+                        </h3>
+                      </div>
+  
+                      <div class="left-card">
+                        <div class="u-count">
+                          <p class="users-count">1.2k</p>
+                        </div>
+  
+                        <div class="user-icon">
+                          <i class="material-icons">person</i>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    
+                    <div class="join">
+                        <button>Join</button>
+                      </div>
+                  </div>
+                  
 
                   <h3 class="title">
-                    {{ formBoard.title(placeholder="Enter post title") }}
+                    
                   </h3>
 
                   <br>
