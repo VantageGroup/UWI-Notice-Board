@@ -5,7 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>UWI Notice Board</title>
-  <link href="static/css/style.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/page.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/post.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/board.css" rel="stylesheet" type="text/css" />
    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
@@ -14,7 +16,7 @@
 
   <header class="header">
     <div class="logo left">
-      <a href='{{ url_for('home') }}'>
+      <a href="{{ url_for('home') }}">
         <h3>UWI Notice Board</h3>
       </a>
     </div>
@@ -58,7 +60,7 @@
       <main>
           <div class="side-bar">
             <div class="nav">
-              <a href='{{ url_for('home') }}' class="nav-link active">
+              <a href="{{ url_for('home') }}" class="nav-link active">
                 <i class="material-icons">home</i>
                 <span>Home</span>
               </a>
@@ -68,7 +70,7 @@
                 <span>Explore</span>
               </a>
 
-              <a href='{{ url_for('boards') }}' class="nav-link">
+              <a href="{{ url_for('boards') }}" class="nav-link">
                 <i class="material-icons">collections</i>
                 <span>Boards</span>
               </a>
@@ -101,56 +103,40 @@
               <span>Math</span>
             </a>
           </div>
-          <div class="container">
             {% block content %}
               {% if formPost %}
-                <h4>Please fill out the form to create your post</h4>
-                  
-                <br/>
-
+              <div class="container-post">
+                <h4>Please fill out the form to create your post</h4><br/>
                 <form method ="POST" enctype="multipart/form-data" style="width:100%">
                   {{ formPost.hidden_tag() }}
-
                   <div class="card">
                     <div class="card-left">
-                      <div class="c-top" style="height:200vh">
-
-                        <div class="t-left">
+                      <div class="card-top" style="height:200vh">
+                        <div class="top-left">
                           <div class="profile-image">
                             <img src="static/images/defaultProfile.jpg" alt="">
-                              <p class="name">Aaron S.</p>
-                              <p class="time">1hr ago</p>
+                            <p class="name">Aaron S.</p>
+                            <p class="time">1hr ago</p>
                             </div>
                           </div>
-
-                          <div class="t-right">
+                          <div class="top-right">
                             <div class="card-content">
-                              <h3 class="title">
-                                {{ formPost.title(placeholder="Enter post title") }}
-                              </h3>
-
-                              <p>
-                                {{ formPost.message(placeholder="Add some text") }}
-                              </p>
+                              <h3 class="title">{{ formPost.title(placeholder="Enter post title") }}</h3>
+                              <p>{{ formPost.message(placeholder="Add some text") }}</p>
                             </div>
                           </div>
                         </div>
-
-                        <div class="c-bot">
-                          <div class="c-bot-left">
-                            <p class="board-name">
-                              DCIT
-                            </p>
+                        <div class="card-bot">
+                          <div class="card-bot-left">
+                            <p class="board-name">DCIT</p>
                           </div>
-
-                          <div class="c-bot-mid">
+                          <div class="card-bot-mid">
                             <div class="card-footer">
                               <button>{{ formPost.submit() }}</button>
                             </div>
                           </div>
                         </div>
-                      </div>
-                          
+                      </div>  
                       <div class="card-right">
                         <div class="flyer">
                           {% if file_url %}
@@ -159,67 +145,46 @@
                         </div>
                       </div>
                     </div>
-
-                    {{ formPost.photo(class="form.contorl") }}
-                  </div>
+                    {{ formPost.photo(class="form.control") }}
                 </form>
-                  
                 {{ ckeditor.load(pkg_type="basic") }}
                 {{ ckeditor.config(name='message') }}
+              </div>
               {% else %}
-                <h4>Please fill out the form to create your post</h4>
-                  
-                <br/>
-                
+              <div class="container-board">
+                <h4>Please fill out the form to create your board</h4><br/>
+                <!-- Need to allow user to add in faculty and department here -->
                 <form method ="POST" enctype="multipart/form-data" style="width:100%">
-                  <div class="card">
-                    <div class="card-image">
+                  <div class="board-card">
+                    <div class="board-card-image">
                       <img src="static/images/dark.jpg">
                     </div>
-  
-                    <div class="card-content">
-                      <div class="title">
+                    <div class="board-card-content">
+                      <div class="board-title">
                         <h3>
                           {{ formBoard.hidden_tag() }}
                           {{ formBoard.title(placeholder="Enter post title") }} 
                         </h3>
                       </div>
-  
-                      <div class="left-card">
-                        <div class="u-count">
-                          <p class="users-count">1.2k</p>
+                      <div class="board-left-card">
+                        <div class="board-u-count">
+                          <p class="board-users-count">1.2k</p>
                         </div>
-  
-                        <div class="user-icon">
+                        <div class="board-user-icon">
                           <i class="material-icons">person</i>
                         </div>
                       </div>
-                      
                     </div>
-                    
-                    <div class="join">
-                        <button>Join</button>
-                      </div>
-                  </div>
-                  
-
-                  <h3 class="title">
-                    
-                  </h3>
-
-                  <br>
-
-                  
-                  <button>{{ formBoard.submit() }}</button>
-                  
+                    <div class="board-join">
+                      <button>{{ formBoard.submit() }}</button>
+                    </div>
+                  </div>                  
                 </form>
-                  
                 {{ ckeditor.load(pkg_type="basic") }}
                 {{ ckeditor.config(name='message') }}
+              </div>
               {% endif %}
             {% endblock %}
-
-         </div>
       </main>
   <script src="script.js"> </script>
 </body>
