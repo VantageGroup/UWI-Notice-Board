@@ -60,10 +60,9 @@
 
 .board-left-card {
   display: flex;
-  width: 20%;
-  margin-left: 50%;
-  justify-content: right;
   padding-top: 5px;
+  position: absolute;
+  right: 20px;
 }
 
 a {
