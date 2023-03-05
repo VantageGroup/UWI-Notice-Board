@@ -277,10 +277,10 @@ def delete():
   for p in posts:
     db.session.delete(p)
   
-  for b in posts:
+  for b in boards:
     db.session.delete(b)
     
-  for u in posts:
+  for u in users:
     db.session.delete(u)
   
   

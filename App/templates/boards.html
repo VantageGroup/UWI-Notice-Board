@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>UWI Notice Board</title>
-  <link href="static/css/boards.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/page.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/board.css" rel="stylesheet" type="text/css" />
    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
@@ -14,7 +15,7 @@
 
   <header class="header">
     <div class="logo left">
-      <a href='{{ url_for('home') }}'>
+      <a href="{{ url_for('home') }}">
         <h3>UWI Notice Board</h3>
       </a>
     </div>
@@ -100,46 +101,38 @@
               <span>Math</span>
             </a>
           </div>
-
-          <div class="container">
+          <div class="container-board">
             {% block content %}
               {% for board in boards %}
               <a href="/board/{{ board.id }}">
-                <div class="card">
-                  <div class="card-image">
+                <div class="board-card">
+                  <div class="board-card-image">
                     <img src="static/images/dark.jpg">
                   </div>
-
-                  <div class="card-content">
-                    <div class="title">
+                  <div class="board-card-content">
+                    <div class="board-title">
                       <h3>
                         {{ board.title }} 
                       </h3>
                     </div>
-
-                    <div class="left-card">
-                      <div class="u-count">
-                        <p class="users-count">1.2k</p>
+                    <div class="board-left-card">
+                      <div class="board-u-count">
+                        <p class="board-users-count">1.2k</p>
                       </div>
-
-                      <div class="user-icon">
+                      <div class="board-user-icon">
                         <i class="material-icons">person</i>
                       </div>
                     </div>
-                    
                   </div>
-                  
-                  <div class="join">
+                  <div class="board-join">
                     <a href="">
                       <button>Join</button>
                     </a>
                   </div>
                 </div>
               </a>
-                
               {% endfor %}
             {% endblock %}
-
           </div>
       </main>
   <script src="script.js"></script>

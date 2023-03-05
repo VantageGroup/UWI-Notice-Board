@@ -1,0 +1,166 @@
+/* This is for styling the post cards */
+
+.card{
+  position: relative;
+  font-family: "Candara", sans-serif;
+  width: 65vw;
+  height: 270px;
+  margin: 20px;
+  margin-left: 30px;
+  overflow: hidden;
+  box-shadow: 0px 5px 10px gray;
+  display: flex;
+  flex-direction: row;
+  transition-duration: 0.4s;
+  transition-property: transform;
+}
+
+.card-content{
+  margin-left: 1vw;
+  width: 30vw;
+  height: 200px;
+}
+
+.title{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.profile-image img{
+  z-index: 1;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  display: block;
+  margin-left: 0.5vw;
+  margin-right: auto;
+  margin-top: 0.5vw;
+  border-radius: 100px;
+  border: 8px solid #fff;
+  transition-duration: 0.4s;
+  transition-property: transform;
+}
+
+.name{
+  text-align: center;
+}
+
+.time{
+  text-align: center;
+}
+
+.flyer{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.flyer-image{
+  width: 100%;
+}
+
+.card-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-footer button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.card-footer button:hover {
+  background-color: #3e8e41;
+}
+
+.card-left {
+  flex-grow: 1;
+  padding-left: 0px;
+}
+
+.card-right {
+  width: 30%;
+}
+
+.card-right img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.card-top {
+  display: flex;
+  position: absolute;
+  width: 70%;
+  height: 80%;
+}
+
+.card-bot {
+  position: absolute;
+  display: flex;
+  bottom: 0;
+  width: 70%;
+  background-color: #f2f2f2;
+  height: 20%;
+}
+
+.card-bot-left{
+  width: 25%;
+}
+
+.card-bot-mid{
+  width: 33%;
+}
+
+.card-bot-right-left{
+  width: 10%;
+}
+
+.card-bot-right-mid{
+  width: 20%;
+}
+
+.card-bot-right-right i.material-icons{
+  padding: 15px;
+}
+
+.board-name{
+  text-align: center;
+  padding: 15px;
+}
+
+.users-count{
+  text-align: center;
+  padding: 15px;
+}
+
+.views {
+  text-align: center;
+  padding: 15px;
+}
+
+.user-icon i.material-icons{
+  padding-top: 10px;
+} 
+
+.the-date{
+  padding-left: 25px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.search-message-post{
+  margin-left: 30px;
+}
