@@ -29,20 +29,32 @@
 
      <div class="icons-right"> 
        <div class="dropdown">
-          <button class="dropbtn">Faculty</button>
+          <button class="dropbtn">
+            {% if sortF %}
+              {{ sortF }}
+            {% else %}
+              Faculty
+            {% endif %}
+          </button>
           <div class="dropdown-content">
-            <a href="#">Science and Technology</a>
-            <a href="#">Medical Sciences</a>
-            <a href="#">Social Sciences</a>
-            <a href="#">Engineering</a>
-            <a href="#">Law</a>
-            <a href="#">Humanities and Education</a>
-            <a href="#">Food and Agriculture</a>
-            <a href="#">Sports</a>
+            <a href="{{ url_for('boards', sortF = 'FST' )  }}">Science and Technology</a>
+            <a href="{{ url_for('boards', sortF = 'FMS' )  }}">Medical Sciences</a>
+            <a href="{{ url_for('boards', sortF = 'FSS' )  }}">Social Sciences</a>
+            <a href="{{ url_for('boards', sortF = 'ENG' )  }}">Engineering</a>
+            <a href="{{ url_for('boards', sortF = 'LAW' )  }}">Law</a>
+            <a href="{{ url_for('boards', sortF = 'FHE' )  }}">Humanities and Education</a>
+            <a href="{{ url_for('boards', sortF = 'FFA' )  }}">Food and Agriculture</a>
+            <a href="{{ url_for('boards', sortF = 'SPORT' )  }}">Sports</a>
           </div>
         </div>
        <div class="dropdown">
-          <button class="dropbtn">Department</button>
+          <button class="dropbtn">
+            {% if sortDept %}
+              {{ sortDept }}
+            {% else %}
+              Department
+            {% endif %}
+          </button>
           <div class="dropdown-content">
             <a href="#">DCIT</a>
             <a href="#">Chemisty</a>
@@ -104,6 +116,8 @@
           <div class="container-board">
             {% block content %}
               {% for board in boards %}
+              
+              {% if board.faculty == sortF%}
               <a href="/board/{{ board.id }}">
                 <div class="board-card">
                   <div class="board-card-image">
@@ -131,10 +145,12 @@
                   </div>
                 </div>
               </a>
+              {% endif %}
+
               {% endfor %}
             {% endblock %}
           </div>
       </main>
-  <script src="script.js"></script>
+  <!--<script src="script.js"></script>-->
 </body>
 </html>

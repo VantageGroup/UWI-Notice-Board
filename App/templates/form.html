@@ -178,7 +178,8 @@
                     <div class="board-join">
                       <button>{{ formBoard.submit() }}</button>
                     </div>
-                  </div>                  
+                  </div>
+                  {{ formBoard.faculty }}          
                 </form>
                 {{ ckeditor.load(pkg_type="basic") }}
                 {{ ckeditor.config(name='message') }}

@@ -18,15 +18,16 @@ from flask_uploads import (
   IMAGES, 
   configure_uploads
 )
+from flask_ckeditor import CKEditor
 
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
-from flask_ckeditor import CKEditor
 
 from models import (
   db, 
   get_migrate, 
-  create_db
+  create_db,
+  reCreate_db
 )
 
 from models import (
@@ -50,9 +51,11 @@ def create_app():
   CORS(app)
   app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
   app.config['TEMPLATE_AUTO_RELOAD'] = True
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   app.config['DEBUG'] = True
+  app.config['TEMPLATES_AUTO_RELOAD'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
+  
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   
   editor = CKEditor()
   editor.init_app(app)
@@ -93,25 +96,29 @@ migrate = get_migrate(app)
 '''Functions'''
 
 # Retrieve all Posts from the Database
-def RetrievePosts():
+def RetrieveAllPosts():
   posts = Post.query.all()
   posts = [entry.toDict() for entry in posts]
   
   return posts
 
-def RetrieveBoards():
+#
+def RetrieveAllBoards():
   boards = Board.query.all()
   boards = [entry.toDict() for entry in boards]
   
   return boards
 
+# #
+# def createFD():
+#   faculty
 
 '''App Routes'''
 
 # Landing Page
 @app.route('/')
 def home():
-  feed = RetrievePosts()
+  feed = RetrieveAllPosts()
   
   return render_template('index.html', 
       posts=feed)
@@ -207,14 +214,19 @@ def uploadPost():
 '''Board Related Routes'''
 
 # Explore Boards Route
-@app.route('/boards')
-def boards():
-  boards = RetrieveBoards()
+@app.route('/boards', methods=['GET', 'POST'])
+@app.route('/boards%<sortF>', methods=['GET', 'POST'])
+def boards(sortF = None, sortDept = None):
+  boards = RetrieveAllBoards()
+  print (sortF)
   
-  return render_template('boards.html', boards=boards)
+  if (sortF == None):
+    return render_template('boards.html')
+  else:
+    return render_template('boards.html', boards=boards, sortF=sortF)
 
 # View Board Route
-@app.route('/board/<id>')
+@app.route('/board/<id>', methods=['GET'])
 def getBoard(id):
   board = Board.query.get(id)
   print(board.id, board.title)
@@ -238,21 +250,25 @@ def uploadBoard():
   
   if (form.validate_on_submit()):
     title = request.form.get("title")
+    faculty = request.form.get("faculty")
+    dept = None
     
-    # if (form.photo.data !=  None):
-    #   image = True
+    if (form.photo.data !=  None):
+      image = True
       
-    #   f = request.files['photo']
-    #   f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+      f = request.files['photo']
+      f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
       
-    #   imageLocation = f.filename
-    #   print(imageLocation)
-    # else:
-    #   image = False
-    #   imageLocation = ""
+      imageLocation = f.filename
+      print(imageLocation)
+    else:
+      image = False
+      imageLocation = ""
     
     newBoard = Board (
-      title=title
+      title=title,
+      faculty=faculty,
+      dept=dept
       # image=image,
       # imageLocation=imageLocation
     )
@@ -275,6 +291,7 @@ def delete():
   users = User.query
   
   for p in posts:
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], "/post/", p))
     db.session.delete(p)
   
   for b in boards:
@@ -292,6 +309,16 @@ def delete():
 @app.route('/drop', methods=['GET', 'POST'])
 def dropAll():
   db.drop_all()
+  reCreate_db()
+  db.session.commit()
+  
+  return redirect(url_for('home'))
+
+@app.route('/print/<var>')
+def printline(var=None):
+  print (var)
+  
+  return redirect(url_for('home'))
   
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)

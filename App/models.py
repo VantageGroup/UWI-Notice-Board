@@ -13,6 +13,8 @@ from wtforms.validators import (
     Length
 )
 
+# from functions.static import *
+
 db = SQLAlchemy()
 
 def get_migrate(app):
@@ -25,8 +27,12 @@ def create_db(app):
   
 def init_db(app):
   db.init_app(app)
+  
+def reCreate_db():
+  db.create_all()
     
-
+    
+'''#'''
 class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   # board = db.Column(db.Integer, db.ForeignKey('board.id'))
@@ -41,7 +47,7 @@ class Post(db.Model):
   def toDict(self):
     return{
       "id": self.id,
-      # "board": self.baord,
+      "board": self.baord,
       # "owner": self.owner,
       "title": self.title,
       "message": self.message,
@@ -52,12 +58,12 @@ class Post(db.Model):
       
     }
     
-
+'''#'''
 class Board(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   title = db.Column(db.String(64), nullable=False)
-  # faculty = db.Column(db.String(64), nullable=False)
-  # dept = db.Column(db.String(64), nullable=False)
+  faculty = db.Column(db.String(64), nullable=True)
+  dept = db.Column(db.String(64), nullable=True)
   # image = db.Column(db.Boolean)
   # imageLocation = db.Column(db.String(256), nullable=True)
   # subscribers = db.Column(db.Integer, nullable=False)
@@ -65,19 +71,22 @@ class Board(db.Model):
   def toDict(self):
     return{
       "id": self.id,
-      "title": self.title
-      # "faculty": self.faculty
-      # "dept": self.dept
+      "title": self.title,
+      "faculty": self.faculty,
+      "dept": self.dept
       # "image": self.image,
       # "imageLocation": self.imageLocation
       # "subscribers": self.subscribers
     }
     
-
+'''#'''
 class User(db.Model):
   username = db.Column(db.String(64), primary_key=True, nullable=False)
   email = db.Column(db.String(64), nullable=False)
   password = db.Column(db.String(64), nullable=False)
+  faculty = db.Column(db.String(64), nullable=True)
+  dept = db.Column(db.String(64), nullable=True)
+  
   
   def toDict(self):
     return{
@@ -85,7 +94,20 @@ class User(db.Model):
       "password": self.password
     }
     
-
+'''#'''
+class FacultyDept(db.Model):
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  faculty = db.Column(db.String(64), nullable=False)
+  department = db.Column(db.String(64), nullable=False)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "faculty": self.faculty,
+      "department": self.department
+    }
+    
+'''#'''
 class SearchForm(FlaskForm):
     search = StringField("searchCriteria", validators =[DataRequired()])
     submit = SubmitField("Submit")
