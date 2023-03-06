@@ -182,7 +182,6 @@ def uploadPost():
   if (form.validate_on_submit()):
     title = request.form.get("title")
     message = request.form.get("message")
-    boardId = request.form.get("board id")
     
     if (form.photo.data !=  None):
       image = True
@@ -199,7 +198,6 @@ def uploadPost():
     newPost = Post (
       title=title,
       message=message,
-      boardId=boardId,
       image=image,
       imageLocation=imageLocation
     )
@@ -325,9 +323,7 @@ def printline(var=None):
 @app.route('/renderBoardPosts/<id>',methods=['GET'] )  
 def renderBoardPosts(id):
   post = Post.query
-  board = Board.query.get(id)
-  print(board.id, board.title)
-  return render_template("boardPosts.html", board=board,post=post)
+  return render_template("boardPosts.html")
   
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
