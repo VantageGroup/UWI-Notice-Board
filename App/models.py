@@ -41,7 +41,7 @@ class Post(db.Model):
   def toDict(self):
     return{
       "id": self.id,
-      # "board": self.baord,
+      #"board": self.baord,
       # "owner": self.owner,
       "title": self.title,
       "message": self.message,
