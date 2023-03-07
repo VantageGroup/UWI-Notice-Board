@@ -35,7 +35,7 @@ def reCreate_db():
 '''#'''
 class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  # board = db.Column(db.Integer, db.ForeignKey('board.id'))
+  board = db.Column(db.Integer, db.ForeignKey('board.id'))
   # owner = db.Column(db.String(64), db.ForeignKey('user.id'))
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
@@ -47,7 +47,7 @@ class Post(db.Model):
   def toDict(self):
     return{
       "id": self.id,
-      #"board": self.baord,
+      "board": self.board,
       # "owner": self.owner,
       "title": self.title,
       "message": self.message,

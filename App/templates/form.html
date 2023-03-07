@@ -140,7 +140,7 @@
                       <div class="card-right">
                         <div class="flyer">
                           {% if file_url %}
-                            <img class="flyer-image" src="{{ formPost.photo() }}" alt="">
+                            <img class="flyer-image" src="{{ formPost.photo }}" alt="">
                           {% endif %}
                         </div>
                       </div>
@@ -150,7 +150,9 @@
                 {{ ckeditor.load(pkg_type="basic") }}
                 {{ ckeditor.config(name='message') }}
               </div>
+
               {% else %}
+
               <div class="container-board">
                 <h4>Please fill out the form to create your board</h4><br/>
                 <!-- Need to allow user to add in faculty and department here -->
