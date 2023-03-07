@@ -233,13 +233,15 @@ def boards(sortF = None, sortD = None):
 def board(bID):
   board = Board.query.get(bID)
   
+  
   posts = Post.query.filter_by(board=bID)
   posts = [entry.toDict() for entry in posts]
+  boardId = board.id
   
   print(board.id, board.title)
 
   return render_template("boardPosts.html", 
-    posts=posts
+    posts=posts, boardId=boardId, board=board
   )
 
 # Create a Board Route

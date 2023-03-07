@@ -139,7 +139,7 @@
                     </div>
                   </div>
                   <div class="board-join">
-                    <a href="/renderBoardPosts/{{ board.id }}">
+                    <a href="{{ url_for('board', bID = board.id ) }}">
                       <button>Join</button>
                     </a>
                   </div>
@@ -148,7 +148,7 @@
 
               {% elif board.faculty == sortF %}
               
-              <a href="/renderBoardPosts/{{ board.id }}">
+              <a href="{{ url_for('board', bID = board.id ) }}">
                 <div class="board-card">
                   <div class="board-card-image">
                     <img src="static/images/dark.jpg">
@@ -169,7 +169,7 @@
                     </div>
                   </div>
                   <div class="board-join">
-                    <a href="/renderBoardPosts/{{ board.id }}">
+                    <a href="{{ url_for('board', bID = board.id ) }}">
                       <button>Join</button>
                     </a>
                   </div>
