@@ -166,8 +166,8 @@ def search():
 '''Post Related Routes'''
 
 # Create a Post Route
-@app.route('/create-post', methods=['GET'])
-def createPost():
+@app.route('/board/<boardID>/create-post', methods=['GET'])
+def createPost(boardID):
   form = PostForm()
     
   return render_template("form.html",
@@ -175,13 +175,14 @@ def createPost():
   )
 
 # Upload Post Route
-@app.route('/create-post', methods=['GET', 'POST'])
-def uploadPost():
+@app.route('/board/<boardID>/create-post', methods=['GET', 'POST'])
+def uploadPost(boardID):
   form = PostForm()
   
   if (form.validate_on_submit()):
     title = request.form.get("title")
     message = request.form.get("message")
+    bID = boardID
     
     if (form.photo.data !=  None):
       image = True
@@ -198,11 +199,12 @@ def uploadPost():
     newPost = Post (
       title=title,
       message=message,
+      board=bID,
       image=image,
       imageLocation=imageLocation
     )
     
-    print("New Post Title:" + newPost.title)
+    print("New Post Title:" + newPost.title + " to board: " + newPost.board)
     print("New Post Message:" + newPost.message)
     
     db.session.add(newPost)
@@ -213,26 +215,32 @@ def uploadPost():
 
 '''Board Related Routes'''
 
-# Explore Boards Route
+# View Boards Route
 @app.route('/boards', methods=['GET', 'POST'])
-@app.route('/boards%<sortF>', methods=['GET', 'POST'])
-def boards(sortF = None, sortDept = None):
+@app.route('/boards/<sortF>', methods=['GET', 'POST'])
+@app.route('/boards/<sortF>/<sortD>', methods=['GET', 'POST'])
+def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   print (sortF)
   
-  if (sortF == None):
-    return render_template('boards.html')
-  else:
-    return render_template('boards.html', boards=boards, sortF=sortF)
+  return render_template('boards.html', 
+    boards=boards, 
+    sortF=sortF
+  )
 
 # View Board Route
-@app.route('/board/<id>', methods=['GET'])
-def getBoard(id):
-  board = Board.query.get(id)
-  print(board.id, board.title)
+@app.route('/board/<bID>', methods=['GET'])
+def board(bID):
+  board = Board.query.get(bID)
   
-  # return render_template('board.html', board=board)
-  return redirect(url_for('home'))
+  posts = Post.query.filter_by(board=bID)
+  posts = [entry.toDict() for entry in posts]
+  
+  print(board.id, board.title)
+
+  return render_template("boardPosts.html", 
+    posts=posts
+  )
 
 # Create a Board Route
 @app.route('/create-board', methods=['GET'])
@@ -246,24 +254,24 @@ def createBoard():
 # Upload Board Route
 @app.route('/create-board', methods=['GET', 'POST'])
 def uploadBoard():
-  form = PostForm()
+  form = BoardForm()
   
   if (form.validate_on_submit()):
     title = request.form.get("title")
     faculty = request.form.get("faculty")
     dept = None
     
-    if (form.photo.data !=  None):
-      image = True
+    # if (form.photo.data !=  None):
+    #   image = True
       
-      f = request.files['photo']
-      f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+    #   f = request.files['photo']
+    #   f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
       
-      imageLocation = f.filename
-      print(imageLocation)
-    else:
-      image = False
-      imageLocation = ""
+    #   imageLocation = f.filename
+    #   print(imageLocation)
+    # else:
+    #   image = False
+    #   imageLocation = ""
     
     newBoard = Board (
       title=title,
@@ -320,10 +328,6 @@ def printline(var=None):
   
   return redirect(url_for('home'))
 
-@app.route('/renderBoardPosts/<id>',methods=['GET'] )  
-def renderBoardPosts(id):
-  post = Post.query
-  return render_template("boardPosts.html")
-  
+
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
