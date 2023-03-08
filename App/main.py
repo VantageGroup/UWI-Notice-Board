@@ -166,7 +166,7 @@ def search():
 '''Post Related Routes'''
 
 # Create a Post Route
-@app.route('/board/<boardID>/create-post', methods=['GET'])
+@app.route('/board<boardID>=create-post', methods=['GET'])
 def createPost(boardID):
   form = PostForm()
     
@@ -175,7 +175,7 @@ def createPost(boardID):
   )
 
 # Upload Post Route
-@app.route('/board/<boardID>/create-post', methods=['GET', 'POST'])
+@app.route('/board<boardID>=create-post', methods=['GET', 'POST'])
 def uploadPost(boardID):
   form = PostForm()
   
@@ -217,8 +217,8 @@ def uploadPost(boardID):
 
 # View Boards Route
 @app.route('/boards', methods=['GET', 'POST'])
-@app.route('/boards/<sortF>', methods=['GET', 'POST'])
-@app.route('/boards/<sortF>/<sortD>', methods=['GET', 'POST'])
+@app.route('/boards=<sortF>', methods=['GET', 'POST'])
+@app.route('/boards=<sortF>,<sortD>', methods=['GET', 'POST'])
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   print (sortF)
@@ -229,16 +229,16 @@ def boards(sortF = None, sortD = None):
   )
 
 # View Board Route
-@app.route('/board/<bID>', methods=['GET'])
+@app.route('/board<bID>', methods=['GET'])
 def board(bID):
+  # board = Board()
   board = Board.query.get(bID)
-  
   
   posts = Post.query.filter_by(board=bID)
   posts = [entry.toDict() for entry in posts]
-  boardId = board.id
+  boardId = bID
   
-  print(board.id, board.title)
+  print(board)
 
   return render_template("boardPosts.html", 
     posts=posts, boardId=boardId, board=board
