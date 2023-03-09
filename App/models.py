@@ -98,7 +98,9 @@ class User(db.Model):
 class FacultyDept(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   faculty = db.Column(db.String(64), nullable=False)
-  department = db.Column(db.String(64), nullable=False)
+  fLabel = db.Column(db.String(64), nullable=False)
+  department = db.Column(db.String(64), nullable=True)
+  fLabel = db.Column(db.String(64), nullable=True)
   
   def toDict(self):
     return{
