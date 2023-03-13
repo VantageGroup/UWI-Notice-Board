@@ -109,9 +109,6 @@ def RetrieveAllBoards():
   
   return boards
 
-# #
-# def createFD():
-#   faculty
 
 '''App Routes'''
 
