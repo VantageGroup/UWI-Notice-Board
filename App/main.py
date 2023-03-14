@@ -319,6 +319,68 @@ def uploadBoard():
   return redirect(url_for('boards'))
 
 
+'''User Related Routes'''
+
+# Login Form Route
+@app.route('/login', methods=['GET'])
+def login():
+    form = LogIn()
+    
+    return render_template('login.html', form=form)
+
+# Upload Login Route
+@app.route('/login', methods=['POST'])
+def loginAction():
+    form = LogIn()
+    
+    if form.validate_on_submit():
+        data = request.form
+        
+        user = User.query.filter_by(username=data['username']).first()
+        
+        if user and user.check_password(data['password']):
+            flash('Logged in successfully.')
+            login_user(user)
+            
+            return redirect(url_for('home'))
+          
+    flash('Invalid credentials')
+    return redirect(url_for('login'))
+
+# SIgnup Form Route
+@app.route('/signup', methods=['GET'])
+def signup():
+    signup = SignUp()
+    
+    return render_template('signup.html', form=signup)
+
+# Upload Signup Route
+@app.route('/signup', methods=['POST'])
+def signupAction():
+    form = SignUp()
+    
+    if form.validate_on_submit():
+        data = request.form
+        
+        newuser = User(
+          username=data['username'],
+          email=data['email'],
+          faculty=data['faculty'],
+          dept=data['dept']
+        )
+        
+        newuser.set_password(data['password'])
+        
+        db.session.add(newuser)
+        db.session.commit()
+        
+        flash('Account Created!')
+        return redirect(url_for('login'))
+      
+    flash('Error invalid input!')
+    return redirect(url_for('signup'))
+
+
 '''Remove from Production'''
 
 # Temp Route to purge all Databases
@@ -350,60 +412,16 @@ def dropAll():
   reCreate_db()
   db.session.commit()
   
-  FacultyDept.initalise()
+  FacultyDept.initialize()
+  Faculty.initialize()
   
   return redirect(url_for('home'))
 
-# LOGIN FORM
-@app.route('/login', methods=['GET'])
-def login():
-    form = LogIn()
-    return render_template('login.html', form=form)
-
-# SUBMIT LOGIN FORM
-@app.route('/login', methods=['POST'])
-def loginAction():
-    form = LogIn()
-    if form.validate_on_submit():  # respond to form submission
-        data = request.form
-        user = User.query.filter_by(username=data['username']).first()
-        if user and user.check_password(data['password']):  # check credentials
-            flash('Logged in successfully.')  # send message to next page
-            login_user(user)  # login the user
-            return redirect(url_for('home'))  # redirect to main page if login successful
-    flash('Invalid credentials')
-    return redirect(url_for('login'))
-
-# SHOW USER DATA
+# User Table
 @app.route('/users', methods=['GET'])
 def get_user():
     users = User.query.all()
     return json.dumps([user.toDict() for user in users])
-
-# SIGN UP FORM
-@app.route('/signup', methods=['GET'])
-def signup():
-    signup = SignUp()  # create form object
-    return render_template('signup.html', form=signup)  # pass form object to template
-
-# SUBMIT SIGN UP FORM
-@app.route('/signup', methods=['POST'])
-def signupAction():
-    form = SignUp()  # create form object
-    if form.validate_on_submit():
-        data = request.form  # get data from form submission
-        newuser = User(username=data['username'],
-                       email=data['email'],
-                       faculty=data['faculty'],
-                       dept=data['dept'])  # create user object
-        newuser.set_password(data['password'])  # set password
-        db.session.add(newuser)  # save new user
-        db.session.commit()
-        flash('Account Created!')  # send message
-        return redirect(url_for('login'))  # redirect to login page
-    flash('Error invalid input!')
-    return redirect(url_for('signup'))
-
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)

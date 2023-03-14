@@ -12,7 +12,8 @@ from wtforms import (
 from wtforms.validators import (
     InputRequired,
     EqualTo, 
-    Email
+    Email,
+    email_validator
 )
 
 app = Flask(__name__)
