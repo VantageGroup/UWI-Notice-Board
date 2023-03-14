@@ -1,0 +1,32 @@
+Faculty,Flabel,Department,Dlabel
+Science and Texhnology,FST,Computing and Information Technology,DCIT
+Science and Texhnology,FST,Chemistry,CHEM
+Science and Texhnology,FST,Physics,PHYS
+Science and Texhnology,FST,Life Sceinces,LSCI
+Science and Texhnology,FST,Mathematics and Statistics,MATH
+Engineering,ENG,Chemical Engineering,CHEM
+Engineering,ENG,Civil and Environmental Engineering,CEE
+Engineering,ENG,Electrical and Computer Engineering,ECE
+Engineering,ENG,Mechanical and Manufacturing Engineering,MME
+Engineering,ENG,Geomatics Engineering and Land Management,GELM
+Engineering,ENG,Engineering Institute,EI
+Food and Agiculture,FFA,,
+Humanities and Education,FHE,School of Education,EDU
+Humanities and Education,FHE,Centre of Language Learning,CLL
+Humanities and Education,FHE,Creative and Festival Arts,CFA
+Humanities and Education,FHE,History,HIST
+Humanities and Education,FHE,"Literary, Cultural and Communication Studies",LCCS
+Humanities and Education,FHE,Modern Language and Linguistics,MLL
+Humanities and Education,FHE,Film Programme,FILM
+Law,LAW,,
+Medical Sciences,FMS,Medicine,MED
+Medical Sciences,FMS,Optometry,OPT
+Medical Sciences,FMS,Dentistry,DENT
+Medical Sciences,FMS,Nursing,NURS
+Medical Sciences,FMS,Pharmacy,PHAR
+Medical Sciences,FMS,Veterinary,VET
+Social Sciences,FSS,Behavioral Sciences,DBS
+Social Sciences,FSS,Economics,ECON
+Social Sciences,FSS,Management Studies,DMS
+Social Sciences,FSS,Political Sciences,DPS
+St. Augustine Campus,STA,,

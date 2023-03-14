@@ -1,5 +1,9 @@
 import os
 import requests
+
+from sqlalchemy.exc import OperationalError
+from werkzeug.utils import secure_filename
+
 from flask import (
   Flask, 
   redirect, 
@@ -18,10 +22,9 @@ from flask_uploads import (
   IMAGES, 
   configure_uploads
 )
-from flask_ckeditor import CKEditor
-
-from sqlalchemy.exc import OperationalError
-from werkzeug.utils import secure_filename
+from flask_ckeditor import (
+  CKEditor
+)
 
 from models import (
   db, 
@@ -29,11 +32,12 @@ from models import (
   create_db,
   reCreate_db
 )
-
 from models import (
   Post, 
   Board, 
   User,
+  Faculty,
+  FacultyDept,
   SearchForm
 )
 
@@ -47,7 +51,6 @@ from functions.boardFunctions import (
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
-  # app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
   app.config['TEMPLATE_AUTO_RELOAD'] = True
@@ -63,9 +66,6 @@ def create_app():
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
-  # os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
-  # os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
-  # os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
   
   app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
   
@@ -81,8 +81,8 @@ def create_app():
   app.app_context().push()
   
   return app
-  
-  
+
+
 app = create_app()
 
 @app.context_processor
@@ -91,6 +91,9 @@ def base():
   return dict(form=searchPost) 
 
 migrate = get_migrate(app)
+
+FacultyDept.initialize()
+Faculty.initialize()
 
 
 '''Functions'''
@@ -193,7 +196,7 @@ def uploadPost(boardID):
       image = False
       imageLocation = ""
     
-    newPost = Post (
+    newPost = Post(
       title=title,
       message=message,
       board=bID,
@@ -218,7 +221,8 @@ def uploadPost(boardID):
 @app.route('/boards=<sortF>,<sortD>', methods=['GET', 'POST'])
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
-  print (sortF)
+  print ("Faculty: " + sortF)
+  print ("Department: " + sortD)
   
   return render_template('boards.html', 
     boards=boards, 
@@ -272,7 +276,7 @@ def uploadBoard():
     #   image = False
     #   imageLocation = ""
     
-    newBoard = Board (
+    newBoard = Board(
       title=title,
       faculty=faculty,
       dept=dept
@@ -319,11 +323,7 @@ def dropAll():
   reCreate_db()
   db.session.commit()
   
-  return redirect(url_for('home'))
-
-@app.route('/print/<var>')
-def printline(var=None):
-  print (var)
+  FacultyDept.initalise()
   
   return redirect(url_for('home'))
 
