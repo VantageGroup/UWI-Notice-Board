@@ -18,7 +18,10 @@ from werkzeug.security import (
 )
 from flask_login import UserMixin
 
-# from functions.static import *
+import os
+import click
+import csv
+
 
 db = SQLAlchemy()
 
@@ -62,6 +65,7 @@ class Post(db.Model):
       # "dateCreated": self.dateCreate
       
     }
+   
     
 '''#'''
 class Board(db.Model):
@@ -83,6 +87,7 @@ class Board(db.Model):
       # "imageLocation": self.imageLocation
       # "subscribers": self.subscribers
     }
+   
     
 '''#'''
 class User(db.Model, UserMixin):
@@ -117,20 +122,95 @@ class User(db.Model, UserMixin):
   def __repr__(self):
     return '<User {}>'.format(self.username)
     
+
+'''#'''
+class Faculty(db.Model):
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  title = db.Column(db.String(64), nullable=False, unique=True)
+  label = db.Column(db.String(64), nullable=False, unique=True)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "title": self.title,
+      "label": self.label
+    }
+  
+  def initialize():
+    facList = FacultyDept.facultyList()
+    
+    for val in facList:
+      if (
+        Faculty.query.filter(Faculty.label == val.label).first() == None
+      ):
+        db.session.add(val)
+        db.session.commit()
+    
+    print("Faculty Database initialised")
+    return
+
+
 '''#'''
 class FacultyDept(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   faculty = db.Column(db.String(64), nullable=False)
   fLabel = db.Column(db.String(64), nullable=False)
   department = db.Column(db.String(64), nullable=True)
-  fLabel = db.Column(db.String(64), nullable=True)
+  dLabel = db.Column(db.String(64), nullable=True)
   
   def toDict(self):
     return{
       "id": self.id,
       "faculty": self.faculty,
-      "department": self.department
+      "fLabel": self.fLabel,
+      "department": self.department,
+      "dLabel": self.dLabel
     }
+  
+  def initialize():
+    with open('fac-dept.csv') as csvFile:
+      csvData = csv.DictReader(csvFile, delimiter=',')
+      
+      facDept = []
+      for row in csvData:
+        fD = FacultyDept(
+          faculty = row['Faculty'],
+          fLabel = row['Flabel'],
+          department  = row['Department'],
+          dLabel = row['Dlabel']
+        )
+        
+        if (
+          FacultyDept.query.filter(
+            FacultyDept.department == fD.department and 
+            FacultyDept.dLabel == fD.dLabel).first()
+        ):
+          if (
+            FacultyDept.query.filter(
+              FacultyDept.fLabel == fD.fLabel).first() == None
+          ):
+            db.session.add(fD)
+            db.session.commit()
+        else:
+          db.session.add(fD)
+          db.session.commit()
+        
+      click.echo('Faculty-Department Database inialized')
+      return
+  
+  def facultyList():
+    facList = []
+    
+    for val in db.session.query(FacultyDept.fLabel).distinct():
+      fac = Faculty(
+        title=FacultyDept.query.filter_by(fLabel = val.fLabel).first().faculty,
+        label=val.fLabel
+      )
+      
+      facList.append(fac)
+    
+    return facList
+
     
 '''#'''
 class SearchForm(FlaskForm):

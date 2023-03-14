@@ -1,10 +1,39 @@
+import os
 import click
+import csv
 from flask import Flask
-from models import create_db, db, app
 
-@app.cli.command("init")
-def initialize():
-  create_db(app)
+from App import app
+from App.models import (
+  create_db, 
+  db, 
+  FacultyDept
+)
+
+
+# @app.cli.command('ínit', with_appcontext=True)
+# def initialize():
+#   create_db(app)
+  
+#   with open('fac-dept.csv') as csvFile:
+#     csvData = csv.DictReader(csvFile, delimiter=',')
+    
+#     facDept = []
+#     for row in csvData:
+#       fD = FacultyDept(
+#         faculty = row['Faculty'],
+#         fLabel = row['Flabel'],
+#         department  = row['Department'],
+#         dLabel = row['Dlabel']
+#       )
+      
+#       facDept.append(fD)
+    
+#     db.session.add(facDept)
+#     db.session.commit()
+#     click.echo('databse inialized')
+        
+  
   
 # import click, sys
 # from models import db, Post

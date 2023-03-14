@@ -38,25 +38,11 @@ app = Flask(__name__)
 # configure_uploads(app, photos)
 
 
-class BoardForm(FlaskForm):
-    title = StringField( "Title", validators =[DataRequired()] )
-    faculty = SelectField(
-        'Select Faculty', 
-        choices = [
-            ('FST', 'Science and Technology'),
-            ('FMS', 'Medical Sciences'),
-            ('FSS', 'Social Sciences'),
-            ('ENG', 'Engineering'),
-            ('LAW', 'Law'),
-            ('FHE', 'Humanities and Education'),
-            ('FFA', 'Food and Agriculture'),
-            ('SPORT', 'Sport')
-        ]
-    )
-    # dept = StringField( "Title", validators =[DataRequired()] )
-    # photo = FileField(validators=[
-    #     FileAllowed(photos, 'Only images are allowed')
-    # ]
-    # )
+class SignUpForm(FlaskForm):
+    
     submit= SubmitField("Submit")
- 
+
+
+class LoginForm(FlaskForm):
+    
+    submit= SubmitField("Submit")
