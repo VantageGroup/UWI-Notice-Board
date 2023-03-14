@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from flask import (
@@ -20,7 +21,7 @@ from flask_uploads import (
 )
 from flask_ckeditor import CKEditor
 
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, IntegrityError
 from werkzeug.utils import secure_filename
 
 from models import (
@@ -44,6 +45,28 @@ from functions.boardFunctions import (
   BoardForm
 )
 
+# FOR LOGIN
+from functions.loginFunctions import (
+  LogIn
+)
+
+from functions.signupFunctions import (
+  SignUp
+)
+
+# FOR LOGIN 
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+
+''' Begin Flask Login Functions '''
+login_manager = LoginManager()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+
+''' End Flask Login Functions '''
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -57,6 +80,9 @@ def create_app():
   
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   
+  # FOR LOGIN
+  login_manager.init_app(app)
+
   editor = CKEditor()
   editor.init_app(app)
   
@@ -326,6 +352,56 @@ def printline(var=None):
   print (var)
   
   return redirect(url_for('home'))
+
+# LOGIN FORM
+@app.route('/login', methods=['GET'])
+def login():
+    form = LogIn()
+    return render_template('login.html', form=form)
+
+# SUBMIT LOGIN FORM
+@app.route('/login', methods=['POST'])
+def loginAction():
+    form = LogIn()
+    if form.validate_on_submit():  # respond to form submission
+        data = request.form
+        user = User.query.filter_by(username=data['username']).first()
+        if user and user.check_password(data['password']):  # check credentials
+            flash('Logged in successfully.')  # send message to next page
+            login_user(user)  # login the user
+            return redirect(url_for('home'))  # redirect to main page if login successful
+    flash('Invalid credentials')
+    return redirect(url_for('login'))
+
+# SHOW USER DATA
+@app.route('/users', methods=['GET'])
+def get_user():
+    users = User.query.all()
+    return json.dumps([user.toDict() for user in users])
+
+# SIGN UP FORM
+@app.route('/signup', methods=['GET'])
+def signup():
+    signup = SignUp()  # create form object
+    return render_template('signup.html', form=signup)  # pass form object to template
+
+# SUBMIT SIGN UP FORM
+@app.route('/signup', methods=['POST'])
+def signupAction():
+    form = SignUp()  # create form object
+    if form.validate_on_submit():
+        data = request.form  # get data from form submission
+        newuser = User(username=data['username'],
+                       email=data['email'],
+                       faculty=data['faculty'],
+                       dept=data['dept'])  # create user object
+        newuser.set_password(data['password'])  # set password
+        db.session.add(newuser)  # save new user
+        db.session.commit()
+        flash('Account Created!')  # send message
+        return redirect(url_for('login'))  # redirect to login page
+    flash('Error invalid input!')
+    return redirect(url_for('signup'))
 
 
 if __name__ == '__main__':

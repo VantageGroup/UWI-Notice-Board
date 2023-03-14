@@ -49,5 +49,6 @@ class PostForm(FlaskForm):
 # class SearchForm(FlaskForm):
 #     search = StringField("searchCriteria")
 #     submit = SubmitField("Submit")
+
  
  
