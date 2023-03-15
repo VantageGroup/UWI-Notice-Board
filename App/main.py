@@ -68,7 +68,7 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return db.session.get(User, user_id)
 
 
 ''' End Flask Login Functions '''
@@ -248,8 +248,12 @@ def uploadPost(boardID):
 @app.route('/boards=<sortF>,<sortD>', methods=['GET', 'POST'])
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
-  print ("Faculty: " + sortF)
-  print ("Department: " + sortD)
+  
+  if sortF != None:
+    print ("Faculty: " + sortF)
+    
+  if sortD != None:
+    print ("Department: " + sortD)
   
   return render_template('boards.html', 
     boards=boards, 
@@ -259,8 +263,7 @@ def boards(sortF = None, sortD = None):
 # View Board Route
 @app.route('/board<bID>', methods=['GET'])
 def board(bID):
-  # board = Board()
-  board = Board.query.get(bID)
+  board = db.session.get(Board, bID)
   
   posts = Post.query.filter_by(board=bID)
   posts = [entry.toDict() for entry in posts]
