@@ -140,7 +140,7 @@
                       <div class="card-right">
                         <div class="flyer">
                           {% if file_url %}
-                            <img class="flyer-image" src="{{ formPost.photo }}" alt="">
+                            <img class="flyer-image" src="{{ url_for('get_file', filename=formPost.photo)  }}" alt="">
                           {% endif %}
                         </div>
                       </div>
@@ -181,7 +181,31 @@
                       <button>{{ formBoard.submit() }}</button>
                     </div>
                   </div>
-                  {{ formBoard.faculty }}          
+
+                  <select id='faculty' name='faculty'>
+                    {% for fac in faculty %}
+                      <option 
+                        value="{{ fac.label }}"
+                        
+                        {% if fac.label == "STA" %}
+                          selected
+                        {% endif %}
+                      > 
+                        {{ fac.title }} 
+                      </option>
+                    {% endfor %}
+                  </select>
+
+                  <br>
+
+                  <select id='department' name='department'>
+                    {% for dept in department %}
+                      {% if dept.department != "" %}
+                          <option value="{{ dept.dLabel }}"> {{ dept.department }} </option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+
                 </form>
                 {{ ckeditor.load(pkg_type="basic") }}
                 {{ ckeditor.config(name='message') }}
@@ -189,6 +213,10 @@
               {% endif %}
             {% endblock %}
       </main>
-  <script src="script.js"> </script>
+  <script src="script.js"> 
+    function selectedOption() {
+      selected = document.querySelector('#faculty')
+    }
+  </script>
 </body>
 </html>

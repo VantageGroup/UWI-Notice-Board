@@ -12,12 +12,8 @@ from flask_uploads import (
 )
 from wtforms import (
     StringField,
-    SubmitField,
-    TextAreaField,
-    IntegerField,
-    BooleanField,
-    SelectField,
-    RadioField
+    PasswordField,
+    SubmitField
 )
 from flask_wtf.file import (
     FileField, 
@@ -25,8 +21,10 @@ from flask_wtf.file import (
     FileAllowed
 )
 from wtforms.validators import (
-    DataRequired,
     InputRequired,
+    EqualTo, 
+    Email,
+    DataRequired,
     Length
 )
 
@@ -39,10 +37,16 @@ app = Flask(__name__)
 
 
 class SignUpForm(FlaskForm):
-    
-    submit= SubmitField("Submit")
+    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[Email(), InputRequired()])
+    password = PasswordField('New Password', validators=[InputRequired(), EqualTo('confirm', message='Passwords must match')])
+    confirm  = PasswordField('Repeat Password')
+    faculty = StringField('Faculty', validators=[InputRequired()])
+    dept = StringField('Department', validators=[InputRequired()])
+    submit = SubmitField('Sign Up', render_kw={'class': 'btn waves-effect waves-light white-text'})
 
 
 class LoginForm(FlaskForm):
-    
-    submit= SubmitField("Submit")
+    username = StringField('username', validators=[InputRequired()])
+    password = PasswordField('New Password', validators=[InputRequired()])
+    submit = SubmitField('Login', render_kw={'class': 'btn waves-effect waves-light white-text'})

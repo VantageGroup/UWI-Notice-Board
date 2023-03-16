@@ -15,6 +15,13 @@ from flask import (
   flash, 
   url_for
 )
+from flask_login import (
+  LoginManager, 
+  current_user, 
+  login_user, 
+  login_required, 
+  logout_user
+)
 from flask_cors import (
   CORS
 )
@@ -28,6 +35,7 @@ from flask_ckeditor import CKEditor
 from sqlalchemy.exc import OperationalError, IntegrityError
 from werkzeug.utils import secure_filename
 
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from models import (
   db, 
   get_migrate, 
@@ -49,29 +57,10 @@ from functions.postFunctions import (
 from functions.boardFunctions import (
   BoardForm
 )
-
-# FOR LOGIN
-from functions.loginFunctions import (
-  LogIn
+from functions.userFunctions import (
+  LoginForm,
+  SignUpForm
 )
-
-from functions.signupFunctions import (
-  SignUp
-)
-
-# FOR LOGIN 
-from flask_login import LoginManager, current_user, login_user, login_required, logout_user
-
-''' Begin Flask Login Functions '''
-login_manager = LoginManager()
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.get(User, user_id)
-
-
-''' End Flask Login Functions '''
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -84,19 +73,12 @@ def create_app():
   
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   
-  # FOR LOGIN
-  login_manager.init_app(app)
-
-  editor = CKEditor()
-  editor.init_app(app)
-  
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'user'), exist_ok=True)
-  
   app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
   
-  app.config['UPLOAD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'post')
+  app.config['POST_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'post')
   app.config['BOARD_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'board')
   app.config['PROFILE_FOLDER'] = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], 'user')
   
@@ -104,20 +86,30 @@ def create_app():
   
   configure_uploads(app, UploadSet('photos', IMAGES))
   create_db(app)
+
+  editor = CKEditor()
+  editor.init_app(app)
+  
+  login_manager.init_app(app)
   
   app.app_context().push()
   
   return app
 
 
+login_manager = LoginManager()
+
 app = create_app()
+migrate = get_migrate(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+  return db.session.get(User, user_id)
 
 @app.context_processor
 def base():
   searchPost = SearchForm()
-  return dict(form=searchPost) 
-
-migrate = get_migrate(app)
+  return dict(form=searchPost)
 
 FacultyDept.initialize()
 Faculty.initialize()
@@ -132,12 +124,26 @@ def RetrieveAllPosts():
   
   return posts
 
-#
+# Retrieve all Boards from the Database
 def RetrieveAllBoards():
   boards = Board.query.all()
   boards = [entry.toDict() for entry in boards]
   
   return boards
+
+#
+def RetrieveFacultyList():
+  list = Faculty.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
+
+#
+def RetrieveDepartmentList():
+  list = FacultyDept.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
 
 
 '''App Routes'''
@@ -153,7 +159,7 @@ def home():
 # Retrieve Uploaded Image
 @app.route('/<filename>')
 def get_file(filename): 
-  return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+  return send_from_directory(app.config['POST_FOLDER'], filename)
 
 #Search Posts
 @app.route('/search', methods=["POST"])
@@ -215,7 +221,7 @@ def uploadPost(boardID):
       image = True
       
       f = request.files['photo']
-      f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+      f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
       
       imageLocation = f.filename
       print(imageLocation)
@@ -279,13 +285,17 @@ def board(bID):
 @app.route('/create-board', methods=['GET'])
 def createBoard():
   form = BoardForm()
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
     
   return render_template("form.html",
-    formBoard = form
+    formBoard = form,
+    faculty=faculty,
+    department=department
   )
 
 # Upload Board Route
-@app.route('/create-board', methods=['GET', 'POST'])
+@app.route('/create-board', methods=['POST'])
 def uploadBoard():
   form = BoardForm()
   
@@ -298,7 +308,7 @@ def uploadBoard():
     #   image = True
       
     #   f = request.files['photo']
-    #   f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+    #   f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
       
     #   imageLocation = f.filename
     #   print(imageLocation)
@@ -327,14 +337,14 @@ def uploadBoard():
 # Login Form Route
 @app.route('/login', methods=['GET'])
 def login():
-    form = LogIn()
+    form = LoginForm()
     
     return render_template('login.html', form=form)
 
 # Upload Login Route
 @app.route('/login', methods=['POST'])
 def loginAction():
-    form = LogIn()
+    form = LoginForm()
     
     if form.validate_on_submit():
         data = request.form
@@ -353,14 +363,14 @@ def loginAction():
 # SIgnup Form Route
 @app.route('/signup', methods=['GET'])
 def signup():
-    signup = SignUp()
+    signup = SignUpForm()
     
     return render_template('signup.html', form=signup)
 
 # Upload Signup Route
 @app.route('/signup', methods=['POST'])
 def signupAction():
-    form = SignUp()
+    form = SignUpForm()
     
     if form.validate_on_submit():
         data = request.form
@@ -394,7 +404,7 @@ def delete():
   users = User.query
   
   for p in posts:
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], "/post/", p))
+    os.remove(os.path.join(app.config['POST_FOLDER'], p.imageLocation))
     db.session.delete(p)
   
   for b in boards:

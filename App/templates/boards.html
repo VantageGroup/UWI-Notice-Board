@@ -117,7 +117,7 @@
             {% block content %}
               {% for board in boards %}
 
-              {% if sortF is none%}
+              {% if sortF is none %}
               <a href="{{ url_for('board', bID = board.id ) }}">
                 <div class="board-card">
                   <div class="board-card-image">
