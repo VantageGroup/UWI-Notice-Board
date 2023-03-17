@@ -11,6 +11,13 @@
    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
+
+<script>
+  function selectedOption() {
+    selected = document.getElementByID("faculty").value;
+    alert(selected);
+  }
+</script>
   
 <body>
 
@@ -182,7 +189,7 @@
                     </div>
                   </div>
 
-                  <select id='faculty' name='faculty'>
+                  <select id='faculty' name='faculty' onchange="selectOption()">
                     {% for fac in faculty %}
                       <option 
                         value="{{ fac.label }}"
@@ -214,9 +221,6 @@
             {% endblock %}
       </main>
   <script src="script.js"> 
-    function selectedOption() {
-      selected = document.querySelector('#faculty')
-    }
   </script>
 </body>
 </html>

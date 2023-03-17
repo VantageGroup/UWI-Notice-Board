@@ -208,7 +208,7 @@ def createPost(boardID):
   )
 
 # Upload Post Route
-@app.route('/board<boardID>=create-post', methods=['GET', 'POST'])
+@app.route('/board<boardID>=create-post', methods=['POST'])
 def uploadPost(boardID):
   form = PostForm()
   
