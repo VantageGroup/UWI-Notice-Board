@@ -43,10 +43,12 @@ def reCreate_db():
 '''#'''
 class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  board = db.Column(db.Integer, db.ForeignKey('board.id'))
+  board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   # owner = db.Column(db.String(64), db.ForeignKey('user.id'))
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
+  faculty = db.Column(db.String(8), nullable=False)
+  dept = db.Column(db.String(8), nullable=True)
   # viewerCount = db.Column(db.Integer, nullable=True)
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
@@ -71,8 +73,8 @@ class Post(db.Model):
 class Board(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   title = db.Column(db.String(64), nullable=False)
-  faculty = db.Column(db.String(64), nullable=True)
-  dept = db.Column(db.String(64), nullable=True)
+  faculty = db.Column(db.String(8), nullable=False)
+  dept = db.Column(db.String(8), nullable=True)
   # image = db.Column(db.Boolean)
   # imageLocation = db.Column(db.String(256), nullable=True)
   # subscribers = db.Column(db.Integer, nullable=False)
@@ -95,8 +97,8 @@ class User(db.Model, UserMixin):
   username = db.Column(db.String(64), unique=True, nullable=False)
   email = db.Column(db.String(64), nullable=False)
   password = db.Column(db.String(64), nullable=False)
-  faculty = db.Column(db.String(64), nullable=False)
-  dept = db.Column(db.String(64), nullable=False)
+  faculty = db.Column(db.String(8), nullable=False)
+  dept = db.Column(db.String(8), nullable=False)
   
   
   def toDict(self):
@@ -127,7 +129,7 @@ class User(db.Model, UserMixin):
 class Faculty(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   title = db.Column(db.String(64), nullable=False, unique=True)
-  label = db.Column(db.String(64), nullable=False, unique=True)
+  label = db.Column(db.String(8), nullable=False, unique=True)
   
   def toDict(self):
     return{
@@ -154,9 +156,9 @@ class Faculty(db.Model):
 class FacultyDept(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   faculty = db.Column(db.String(64), nullable=False)
-  fLabel = db.Column(db.String(64), nullable=False)
+  fLabel = db.Column(db.String(8), nullable=False)
   department = db.Column(db.String(64), nullable=True)
-  dLabel = db.Column(db.String(64), nullable=True)
+  dLabel = db.Column(db.String(8), nullable=True)
   
   def toDict(self):
     return{
