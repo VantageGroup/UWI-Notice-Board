@@ -123,7 +123,23 @@ class User(db.Model, UserMixin):
   #To String method
   def __repr__(self):
     return '<User {}>'.format(self.username)
-    
+
+
+'''#'''
+class Subscriber(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
+  user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  isAdmin = db.Column(db.Boolean)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "board": self.board,
+      "user": self.user,
+      "isAdmin": self.isAdmin
+    }
+
 
 '''#'''
 class Faculty(db.Model):
@@ -197,7 +213,7 @@ class FacultyDept(db.Model):
           db.session.add(fD)
           db.session.commit()
         
-      click.echo('Faculty-Department Database inialized')
+      print('Faculty-Department Database inialized')
       return
   
   def facultyList():

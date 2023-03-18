@@ -46,6 +46,7 @@ from models import (
   Post, 
   Board, 
   User,
+  Subscriber,
   Faculty,
   FacultyDept,
   SearchForm
@@ -144,6 +145,24 @@ def RetrieveDepartmentList():
   list = [entry.toDict() for entry in list]
   
   return list
+
+#
+def RetrieveUserBoards(uID):
+  boards = Subscriber.query.filter(user=uID)
+  boards = [entry.toDict() for entry in boards]
+  
+  return boards
+
+#
+def RetrieveFeed(uID):
+  boards = RetrieveUserBoards(uID)
+  
+  for board in boards:
+    posts.append( Post.query.filter(board=board.id) )
+  
+  posts = [entry.toDict() for entry in posts]
+  
+  return posts
 
 
 '''App Routes'''
