@@ -150,8 +150,8 @@ def RetrieveDepartmentList():
 
 # Landing Page
 @app.route('/')
-@app.route('/<sortF>', methods=['GET', 'POST'])
-@app.route('/<sortF>,<sortD>', methods=['GET', 'POST'])
+@app.route('/|<sortF>', methods=['GET', 'POST'])
+@app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
   feed = RetrieveAllPosts()
   faculty = RetrieveFacultyList()
@@ -270,8 +270,8 @@ def uploadPost(boardID):
 
 # View Boards Route
 @app.route('/boards', methods=['GET', 'POST'])
-@app.route('/boards=<sortF>', methods=['GET', 'POST'])
-@app.route('/boards=<sortF>,<sortD>', methods=['GET', 'POST'])
+@app.route('/boards|<sortF>', methods=['GET', 'POST'])
+@app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
