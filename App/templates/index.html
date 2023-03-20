@@ -30,35 +30,36 @@
     </div>
 
      <div class="icons-right"> 
-       <div class="dropdown">
-          <button class="dropbtn">Faculty</button>
-          <div class="dropdown-content">
-            <a href="#">Science and Technology</a>
-            <a href="#">Medical Sciences</a>
-            <a href="#">Social Sciences</a>
-            <a href="#">Engineering</a>
-            <a href="#">Law</a>
-            <a href="#">Humanities and Education</a>
-            <a href="#">Food and Agriculture</a>
-            <a href="#">Sports</a>
-          </div>
+      <div class="dropdown">
+        <button class="dropbtn">
+          {% if sortF %}
+            {{ sortF }}
+          {% else %}
+            Faculty
+          {% endif %}
+        </button>
+        <div class="dropdown-content">
+          {% for fac in faculty %}
+            <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
+          {% endfor %}
         </div>
-       <div class="dropdown">
-          <button class="dropbtn">Department</button>
-          <div class="dropdown-content">
-            <a href="#">DCIT</a>
-            <a href="#">Chemisty</a>
-            <a href="#">Physics</a>
-            <a href="#">Life Sciences</a>
-            <a href="#">Math</a>
-          </div>
+      </div>
+     <div class="dropdown">
+        <button class="dropbtn">
+          {% if sortD %}
+            {{ sortD }}
+          {% else %}
+            Department
+          {% endif %}
+        </button>
+        <div class="dropdown-content">
+          {% for dept in department %}
+            {% if dept.fLabel == sortF %}
+              <a href="{{ url_for('home', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+            {% endif %}
+          {% endfor %}
         </div>
      </div>
-      <div class="create">
-        <a href="{{ url_for('createBoard') }}">
-          <button class="btn btn-outline-secondary" type="submit">Create Board</button>
-        </a>
-      </div>
   </header>
       <main>
           <div class="side-bar">
@@ -157,7 +158,20 @@
                       </div>
                     </div>
                   </div>
+                  {% if sortF is none %}
+                    
+                  {% elif post.faculty == sortF %}
+    
+                    {% if sortD is none %}
+
+                    {% elif post.dept == sortD %}
+
+                    {% endif %}
+                  
+                  {% endif %}
+
                 {% endfor %}
+
               {% endblock %}
             <!-- </div>--> 
           </div> <!-- Close container -->

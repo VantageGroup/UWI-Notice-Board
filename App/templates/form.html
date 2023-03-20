@@ -189,7 +189,7 @@
                     </div>
                   </div>
 
-                  <select id='faculty' name='faculty' onchange="selectOption()">
+                  <select name='faculty' onchange="selectOption()">
                     {% for fac in faculty %}
                       <option 
                         value="{{ fac.label }}"
@@ -198,20 +198,23 @@
                           selected
                         {% endif %}
                       > 
-                        {{ fac.title }} 
+                        {{ fac.title }}
                       </option>
+
+                      {% if department | selectattr('fLabel','equalto', fac.label) | list | length > 1 %}
+                        <optgroup label="Departments:">
+                          {% for dept in department %}
+                            {% if dept.department != "" and fac.label == dept.fLabel%}
+                                <option value="{{ fac.label }}+{{ dept.dLabel }}"> {{ dept.department }} </option>
+                            {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      {% endif %}
+
                     {% endfor %}
                   </select>
 
                   <br>
-
-                  <select id='department' name='department'>
-                    {% for dept in department %}
-                      {% if dept.department != "" %}
-                          <option value="{{ dept.dLabel }}"> {{ dept.department }} </option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
 
                 </form>
                 {{ ckeditor.load(pkg_type="basic") }}

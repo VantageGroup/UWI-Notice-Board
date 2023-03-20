@@ -37,30 +37,25 @@
             {% endif %}
           </button>
           <div class="dropdown-content">
-            <a href="{{ url_for('boards', sortF = 'FST' )  }}">Science and Technology</a>
-            <a href="{{ url_for('boards', sortF = 'FMS' )  }}">Medical Sciences</a>
-            <a href="{{ url_for('boards', sortF = 'FSS' )  }}">Social Sciences</a>
-            <a href="{{ url_for('boards', sortF = 'ENG' )  }}">Engineering</a>
-            <a href="{{ url_for('boards', sortF = 'LAW' )  }}">Law</a>
-            <a href="{{ url_for('boards', sortF = 'FHE' )  }}">Humanities and Education</a>
-            <a href="{{ url_for('boards', sortF = 'FFA' )  }}">Food and Agriculture</a>
-            <a href="{{ url_for('boards', sortF = 'SPORT' )  }}">Sports</a>
+            {% for fac in faculty %}
+              <a href="{{ url_for('boards', sortF = fac.label )  }}"> {{ fac.title }} </a>
+            {% endfor %}
           </div>
         </div>
        <div class="dropdown">
           <button class="dropbtn">
-            {% if sortDept %}
-              {{ sortDept }}
+            {% if sortD %}
+              {{ sortD }}
             {% else %}
               Department
             {% endif %}
           </button>
           <div class="dropdown-content">
-            <a href="#">DCIT</a>
-            <a href="#">Chemisty</a>
-            <a href="#">Physics</a>
-            <a href="#">Life Sciences</a>
-            <a href="#">Math</a>
+            {% for dept in department %}
+              {% if dept.fLabel == sortF %}
+                <a href="{{ url_for('boards', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
      </div>
@@ -118,63 +113,95 @@
               {% for board in boards %}
 
               {% if sortF is none %}
-              <a href="{{ url_for('board', bID = board.id ) }}">
-                <div class="board-card">
-                  <div class="board-card-image">
-                    <img src="static/images/dark.jpg">
-                  </div>
-                  <div class="board-card-content">
-                    <div class="board-title">
-                      <h3>
-                        {{ board.title }} 
-                      </h3>
+                <a href="{{ url_for('board', bID = board.id ) }}">
+                  <div class="board-card">
+                    <div class="board-card-image">
+                      <img src="static/images/dark.jpg">
                     </div>
-                    <div class="board-left-card">
-                      <div class="board-u-count">
-                        <p class="board-users-count">1.2k</p>
+                    <div class="board-card-content">
+                      <div class="board-title">
+                        <h3>
+                          {{ board.title }} 
+                        </h3>
                       </div>
-                      <div class="board-user-icon">
-                        <i class="material-icons">person</i>
+                      <div class="board-left-card">
+                        <div class="board-u-count">
+                          <p class="board-users-count">1.2k</p>
+                        </div>
+                        <div class="board-user-icon">
+                          <i class="material-icons">person</i>
+                        </div>
                       </div>
                     </div>
+                    <div class="board-join">
+                      <a href="{{ url_for('board', bID = board.id ) }}">
+                        <button>Join</button>
+                      </a>
+                    </div>
                   </div>
-                  <div class="board-join">
-                    <a href="{{ url_for('board', bID = board.id ) }}">
-                      <button>Join</button>
-                    </a>
-                  </div>
-                </div>
-              </a>
+                </a>
 
               {% elif board.faculty == sortF %}
+
+                {% if sortD is none %}
+                  <a href="{{ url_for('board', bID = board.id ) }}">
+                    <div class="board-card">
+                      <div class="board-card-image">
+                        <img src="static/images/dark.jpg">
+                      </div>
+                      <div class="board-card-content">
+                        <div class="board-title">
+                          <h3>
+                            {{ board.title }} 
+                          </h3>
+                        </div>
+                        <div class="board-left-card">
+                          <div class="board-u-count">
+                            <p class="board-users-count">1.2k</p>
+                          </div>
+                          <div class="board-user-icon">
+                            <i class="material-icons">person</i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="board-join">
+                        <a href="{{ url_for('board', bID = board.id ) }}">
+                          <button>Join</button>
+                        </a>
+                      </div>
+                    </div>
+                  </a>
+                {% elif board.dept == sortD %}
+                  <a href="{{ url_for('board', bID = board.id ) }}">
+                    <div class="board-card">
+                      <div class="board-card-image">
+                        <img src="static/images/dark.jpg">
+                      </div>
+                      <div class="board-card-content">
+                        <div class="board-title">
+                          <h3>
+                            {{ board.title }} 
+                          </h3>
+                        </div>
+                        <div class="board-left-card">
+                          <div class="board-u-count">
+                            <p class="board-users-count">1.2k</p>
+                          </div>
+                          <div class="board-user-icon">
+                            <i class="material-icons">person</i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="board-join">
+                        <a href="{{ url_for('board', bID = board.id ) }}">
+                          <button>Join</button>
+                        </a>
+                      </div>
+                    </div>
+                  </a>
+                {% endif %}
               
-              <a href="{{ url_for('board', bID = board.id ) }}">
-                <div class="board-card">
-                  <div class="board-card-image">
-                    <img src="static/images/dark.jpg">
-                  </div>
-                  <div class="board-card-content">
-                    <div class="board-title">
-                      <h3>
-                        {{ board.title }} 
-                      </h3>
-                    </div>
-                    <div class="board-left-card">
-                      <div class="board-u-count">
-                        <p class="board-users-count">1.2k</p>
-                      </div>
-                      <div class="board-user-icon">
-                        <i class="material-icons">person</i>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="board-join">
-                    <a href="{{ url_for('board', bID = board.id ) }}">
-                      <button>Join</button>
-                    </a>
-                  </div>
-                </div>
-              </a>
+              
               {% endif %}
 
               {% endfor %}

@@ -48,6 +48,7 @@ from models import (
   Post, 
   Board, 
   User,
+  Subscriber,
   Faculty,
   FacultyDept,
   SearchForm
@@ -147,16 +148,49 @@ def RetrieveDepartmentList():
   
   return list
 
+#
+def RetrieveUserBoards(uID):
+  boards = Subscriber.query.filter(user=uID)
+  boards = [entry.toDict() for entry in boards]
+  
+  return boards
+
+#
+def RetrieveFeed(uID):
+  boards = RetrieveUserBoards(uID)
+  
+  for board in boards:
+    posts.append( Post.query.filter(board=board.id) )
+  
+  posts = [entry.toDict() for entry in posts]
+  
+  return posts
+
 
 '''App Routes'''
 
 # Landing Page
 @app.route('/')
-def home():
+@app.route('/|<sortF>', methods=['GET', 'POST'])
+@app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
+def home(sortF = None, sortD = None):
   feed = RetrieveAllPosts()
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
+  
+  if sortF != None:
+    print ("Sorting by Faculty: " + sortF)
+    
+  if sortD != None:
+    print ("Sorting by Department: " + sortD)
   
   return render_template('index.html', 
-      posts=feed)
+    posts=feed,
+    sortF=sortF,
+    sortD=sortD,
+    faculty=faculty,
+    department=department
+  )
 
 # Retrieve Uploaded Image
 @app.route('/<filename>')
@@ -213,11 +247,14 @@ def createPost(boardID):
 @app.route('/board<boardID>=create-post', methods=['POST'])
 def uploadPost(boardID):
   form = PostForm()
+  board = db.session.get(Board, boardID)
   
   if (form.validate_on_submit()):
+    bID = boardID
     title = request.form.get("title")
     message = request.form.get("message")
-    bID = boardID
+    fac = board.faculty
+    dept = board.dept
     
     if (form.photo.data !=  None):
       image = True
@@ -232,9 +269,11 @@ def uploadPost(boardID):
       imageLocation = ""
     
     newPost = Post(
+      board=bID,
       title=title,
       message=message,
-      board=bID,
+      faculty=fac,
+      dept=dept,
       image=image,
       imageLocation=imageLocation
     )
@@ -252,20 +291,25 @@ def uploadPost(boardID):
 
 # View Boards Route
 @app.route('/boards', methods=['GET', 'POST'])
-@app.route('/boards=<sortF>', methods=['GET', 'POST'])
-@app.route('/boards=<sortF>,<sortD>', methods=['GET', 'POST'])
+@app.route('/boards|<sortF>', methods=['GET', 'POST'])
+@app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
   
   if sortF != None:
-    print ("Faculty: " + sortF)
+    print ("Sorting by Faculty: " + sortF)
     
   if sortD != None:
-    print ("Department: " + sortD)
+    print ("Sorting by Department: " + sortD)
   
   return render_template('boards.html', 
     boards=boards, 
-    sortF=sortF
+    sortF=sortF,
+    sortD=sortD,
+    faculty=faculty,
+    department=department
   )
 
 # View Board Route
@@ -300,11 +344,25 @@ def createBoard():
 @app.route('/create-board', methods=['POST'])
 def uploadBoard():
   form = BoardForm()
+  print(request.form.get("faculty"))
   
   if (form.validate_on_submit()):
     title = request.form.get("title")
-    faculty = request.form.get("faculty")
+    faculty = None
     dept = None
+    
+    assign = request.form.get("faculty")
+    if "+" in assign:
+      faculty = assign.split("+")[0]
+      dept = assign.split("+")[1]
+      
+      print("Faculty = " + faculty)
+      print("Department = " + dept)
+    else:
+      faculty = assign
+      dept = None
+      
+      print("Faculty = " + faculty)
     
     # if (form.photo.data !=  None):
     #   image = True
