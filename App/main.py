@@ -5,6 +5,8 @@ import requests
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
 
+
+
 from flask import (
   Flask, 
   redirect, 
@@ -435,6 +437,11 @@ def dropAll():
 def get_user():
     users = User.query.all()
     return json.dumps([user.toDict() for user in users])
+
+# App Route for Calendar
+@app.route('/cal')
+def cal():
+  return render_template("cal.html")
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
