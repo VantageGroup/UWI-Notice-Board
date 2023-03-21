@@ -130,8 +130,11 @@
                         <div class="top-right">
                           <div class="card-content">
                             <h3 class="title">{{ post.title }}</h3>
-                            <p>{{ post.message | safe }}</p>
-                          </div>
+                            <p>{{ post.message | safe }}
+                            {{post.startDate}}
+                            {{post.endDate}}
+                          </p>
+                            </div> 
                         </div>
                       </div>
                       <div class="card-bot">

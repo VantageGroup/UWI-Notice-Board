@@ -65,6 +65,9 @@ from functions.userFunctions import (
   SignUpForm
 )
 
+from datetime import datetime, date
+import datetime
+
 def create_app():
   app = Flask(__name__, static_url_path='/static')
   CORS(app)
@@ -249,12 +252,18 @@ def uploadPost(boardID):
   form = PostForm()
   board = db.session.get(Board, boardID)
   
-  if (form.validate_on_submit()):
+  if (1==1):
     bID = boardID
     title = request.form.get("title")
     message = request.form.get("message")
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
     fac = board.faculty
     dept = board.dept
+
+    startDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+    endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    
     
     if (form.photo.data !=  None):
       image = True
@@ -275,16 +284,32 @@ def uploadPost(boardID):
       faculty=fac,
       dept=dept,
       image=image,
+      startDate=startDateObj,
+      endDate=endDateObj,
       imageLocation=imageLocation
     )
     
     print("New Post Title:" + newPost.title + " to board: " + newPost.board)
     print("New Post Message:" + newPost.message)
+
     
     db.session.add(newPost)
     db.session.commit()
+
+    events = [{
+      'title' : title,
+      'start' : startDateObj,
+      'end' : endDateObj,
+      'url' : 'https://youtube.com'
+     }
+
+
+    ]
+
+  else:
+    print("Form did not validate on submit")  
   
-  return redirect(url_for('home'))
+  return render_template('cal.html', events=events)
 
 
 '''Board Related Routes'''
@@ -322,6 +347,7 @@ def board(bID):
   boardId = bID
   
   print(board)
+  print(posts)
 
   return render_template("boardPosts.html", 
     posts=posts, boardId=boardId, board=board
@@ -499,7 +525,28 @@ def get_user():
 # App Route for Calendar
 @app.route('/cal')
 def cal():
-  return render_template("cal.html")
+  posts = Post.query.all()
+
+  events = [{
+    'title' : 'TestEvent',
+      'start' : '2023-03-10',
+      'end'   :  '',
+      'url'   : 'https://youtube.com'
+
+  }, ]
+
+  
+  for post in posts: 
+   events.append({
+      'title' : post.title,
+      'start' : post.startDate,
+      'end'   :   post.endDate,
+      'url'   : 'https://youtube.com'
+     },
+  )
+
+
+  return render_template("cal.html", events=events)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)

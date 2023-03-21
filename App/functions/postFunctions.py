@@ -16,7 +16,8 @@ from wtforms import (
     TextAreaField,
     IntegerField,
     BooleanField,
-    RadioField
+    RadioField,
+    DateField
 )
 from flask_wtf.file import (
     FileField, 
@@ -28,6 +29,8 @@ from wtforms.validators import (
     InputRequired,
     Length
 )
+
+from datetime import datetime, date
 
 
 app = Flask(__name__)
@@ -41,9 +44,12 @@ class PostForm(FlaskForm):
     message = CKEditorField( "Message" )
     photo = FileField(validators=[
         FileAllowed(photos, 'Only images are allowed')
-    ]
-    )
-    submit= SubmitField("Submit")
+    ])
+    startDate = DateField('Start Date',  validators=[DataRequired()],format= '%Y-%m-%d')
+    endDate = DateField('End Date', validators=[DataRequired()],format= '%Y-%m-%d')
+    submit = SubmitField("Submit")
+
+    
 
 
 # class SearchForm(FlaskForm):

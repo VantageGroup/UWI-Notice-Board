@@ -129,7 +129,12 @@
                           <div class="top-right">
                             <div class="card-content">
                               <h3 class="title">{{ formPost.title(placeholder="Enter post title") }}</h3>
-                              <p>{{ formPost.message(placeholder="Add some text") }}</p>
+                              <p>{{ formPost.message(placeholder="Add some text") }}</p> 
+              
+                            </div>
+                            <div class="card-content">
+                              <p>{{ formPost.startDate.label}} {{formPost.startDate(class='DateTimeField')}}</p>
+                              <p>{{ formPost.endDate.label}} {{formPost.endDate(class='DateTimeField')}}</p>
                             </div>
                           </div>
                         </div>

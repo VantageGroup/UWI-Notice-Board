@@ -18,6 +18,8 @@ from werkzeug.security import (
 )
 from flask_login import UserMixin
 
+from datetime import datetime, date
+
 import os
 import click
 import csv
@@ -53,6 +55,8 @@ class Post(db.Model):
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
   # dateCreated = db.Column()
+  startDate = db.Column(db.Date,  default=date.today, index=True)
+  endDate = db.Column(db.Date,  default=date.today, index=True)
   
   def toDict(self):
     return{
@@ -63,9 +67,10 @@ class Post(db.Model):
       "message": self.message,
       # "viewerCount": self.viewerCount
       "image": self.image,
-      "imageLocation": self.imageLocation
+      "imageLocation": self.imageLocation,
       # "dateCreated": self.dateCreate
-      
+      "startDate" : self.startDate,
+      "endDate" : self.endDate
     }
    
     
