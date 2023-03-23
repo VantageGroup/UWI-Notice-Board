@@ -45,8 +45,8 @@ class PostForm(FlaskForm):
     photo = FileField(validators=[
         FileAllowed(photos, 'Only images are allowed')
     ])
-    startDate = DateField('Start Date',  validators=[DataRequired()],format= '%Y-%m-%d')
-    endDate = DateField('End Date', validators=[DataRequired()],format= '%Y-%m-%d')
+    startDate = DateField('Start Date', format= '%Y-%m-%d')
+    endDate = DateField('End Date', format= '%Y-%m-%d')
     submit = SubmitField("Submit")
 
     

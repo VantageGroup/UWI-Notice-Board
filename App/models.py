@@ -54,7 +54,8 @@ class Post(db.Model):
   # viewerCount = db.Column(db.Integer, nullable=True)
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
-  # dateCreated = db.Column()
+  dateCreated = db.Column(db.DateTime)
+  event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
   
@@ -72,8 +73,24 @@ class Post(db.Model):
       "startDate" : self.startDate,
       "endDate" : self.endDate
     }
-   
-    
+
+
+'''#'''
+class Event(db.Model):
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+  startDate = db.Column(db.Date,  default=date.today, index=True)
+  endDate = db.Column(db.Date,  default=date.today, index=True)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "post": self.post,
+      "startDate" : self.startDate,
+      "endDate" : self.endDate
+    }
+  
+
 '''#'''
 class Board(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -143,6 +160,19 @@ class Subscriber(db.Model):
       "board": self.board,
       "user": self.user,
       "isAdmin": self.isAdmin
+    }
+
+'''#'''
+class Follow(db.Model):
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+  user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "post": self.post,
+      "user": self.user
     }
 
 
