@@ -234,6 +234,37 @@ def search():
     posts = foundPosts
   )
 
+# User Table
+@app.route('/users', methods=['GET'])
+def get_user():
+  users = User.query.all()
+  return json.dumps([user.toDict() for user in users])
+
+# App Route for Calendar
+@app.route('/cal')
+def cal():
+  posts = Post.query.all()
+
+  events = [{
+    'title' : 'TestEvent',
+      'start' : '2023-03-10',
+      'end'   :  '',
+      'url'   : 'https://youtube.com'
+
+  }, ]
+
+  
+  for post in posts: 
+   events.append({
+      'title' : post.title,
+      'start' : post.startDate,
+      'end'   : post.endDate,
+      'url'   : 'https://youtube.com'
+     },
+  )
+
+  return render_template("cal.html", events=events)
+
 
 '''Post Related Routes'''
 
@@ -252,18 +283,32 @@ def uploadPost(boardID):
   form = PostForm()
   board = db.session.get(Board, boardID)
   
-  if (1==1):
+  if (form.validate_on_submit):
     bID = boardID
     title = request.form.get("title")
     message = request.form.get("message")
-    startDate = request.form.get("startDate")
-    endDate = request.form.get("endDate")
     fac = board.faculty
     dept = board.dept
-
-    startDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
-    endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
     
+    creation = datetime.datetime.now()
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
+
+    if (startDate != '' and endDate != ''):
+      event = True
+      
+      startDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+      endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    elif (startDate == '' and endDate != ''):
+      event = True
+      
+      startDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+      endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    else:
+      event = False
+      
+      startDateObj = datetime.datetime.now()
+      endDateObj = datetime.datetime.now()
     
     if (form.photo.data !=  None):
       image = True
@@ -281,31 +326,34 @@ def uploadPost(boardID):
       board=bID,
       title=title,
       message=message,
+      
       faculty=fac,
       dept=dept,
+      
       image=image,
+      imageLocation=imageLocation,
+      
+      dateCreated=creation,
+      
+      event=event,
       startDate=startDateObj,
-      endDate=endDateObj,
-      imageLocation=imageLocation
+      endDate=endDateObj
     )
     
     print("New Post Title:" + newPost.title + " to board: " + newPost.board)
     print("New Post Message:" + newPost.message)
-
+    print(newPost.dateCreated)
     
     db.session.add(newPost)
     db.session.commit()
 
-    events = [{
+    events = [ {
       'title' : title,
       'start' : startDateObj,
       'end' : endDateObj,
       'url' : 'https://youtube.com'
-     }
-
-
+      }
     ]
-
   else:
     print("Form did not validate on submit")  
   
@@ -516,37 +564,6 @@ def dropAll():
   
   return redirect(url_for('home'))
 
-# User Table
-@app.route('/users', methods=['GET'])
-def get_user():
-    users = User.query.all()
-    return json.dumps([user.toDict() for user in users])
-
-# App Route for Calendar
-@app.route('/cal')
-def cal():
-  posts = Post.query.all()
-
-  events = [{
-    'title' : 'TestEvent',
-      'start' : '2023-03-10',
-      'end'   :  '',
-      'url'   : 'https://youtube.com'
-
-  }, ]
-
-  
-  for post in posts: 
-   events.append({
-      'title' : post.title,
-      'start' : post.startDate,
-      'end'   :   post.endDate,
-      'url'   : 'https://youtube.com'
-     },
-  )
-
-
-  return render_template("cal.html", events=events)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)
