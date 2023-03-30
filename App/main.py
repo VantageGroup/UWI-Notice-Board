@@ -163,7 +163,7 @@ def RetrieveFeed(uID):
   boards = RetrieveUserBoards(uID)
   
   for board in boards:
-    posts.append( Post.query.filter(board=board.id) )
+    posts.append( Post.query.filter(bID=board.id) )
   
   posts = [entry.toDict() for entry in posts]
   
@@ -178,6 +178,7 @@ def RetrieveFeed(uID):
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
   feed = RetrieveAllPosts()
+  boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   
@@ -189,6 +190,7 @@ def home(sortF = None, sortD = None):
   
   return render_template('index.html', 
     posts=feed,
+    boards=boards,
     sortF=sortF,
     sortD=sortD,
     faculty=faculty,
@@ -234,12 +236,6 @@ def search():
     posts = foundPosts
   )
 
-# User Table
-@app.route('/users', methods=['GET'])
-def get_user():
-  users = User.query.all()
-  return json.dumps([user.toDict() for user in users])
-
 # App Route for Calendar
 @app.route('/cal')
 def cal():
@@ -269,22 +265,40 @@ def cal():
 '''Post Related Routes'''
 
 # Create a Post Route
-@app.route('/board<boardID>=create-post', methods=['GET'])
-def createPost(boardID):
+@app.route('/board<bID>=create-post', methods=['GET'])
+def createPost(bID):
   form = PostForm()
+    
+  return render_template("form.html",
+    formPost = form
+  )
+  
+# Edit a Post Route
+@app.route('/board<bID>=edit-post<pID>', methods=['GET'])
+def editPost(bID, pID):
+  board = db.session.get(Board, bID)
+  post = db.session.get(Post, pID)
+  
+  form = PostForm(
+    title = post.title,
+    message = post.message,
+    # photo = 
+    startDate = post.startDate,
+    endDate = post.endDate
+  )
     
   return render_template("form.html",
     formPost = form
   )
 
 # Upload Post Route
-@app.route('/board<boardID>=create-post', methods=['POST'])
-def uploadPost(boardID):
+@app.route('/board<bID>=create-post', methods=['POST'])
+def uploadPost(bID):
   form = PostForm()
-  board = db.session.get(Board, boardID)
+  board = db.session.get(Board, bID)
   
   if (form.validate_on_submit):
-    bID = boardID
+    bID = bID
     title = request.form.get("title")
     message = request.form.get("message")
     fac = board.faculty
@@ -323,7 +337,7 @@ def uploadPost(boardID):
       imageLocation = ""
     
     newPost = Post(
-      board=bID,
+      bID=bID,
       title=title,
       message=message,
       
@@ -340,7 +354,89 @@ def uploadPost(boardID):
       endDate=endDateObj
     )
     
-    print("New Post Title:" + newPost.title + " to board: " + newPost.board)
+    print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
+    print("New Post Message:" + newPost.message)
+    print(newPost.dateCreated)
+    
+    db.session.add(newPost)
+    db.session.commit()
+
+    events = [ {
+      'title' : title,
+      'start' : startDateObj,
+      'end' : endDateObj,
+      'url' : 'https://youtube.com'
+      }
+    ]
+  else:
+    print("Form did not validate on submit")  
+  
+  return render_template('cal.html', events=events)
+
+# Upload Editted Post Route
+@app.route('/board<bID>=edit-post,pID>', methods=['POST'])
+def uploadPost(bID):
+  board = db.session.get(Board, bID)
+  form = PostForm()
+  
+  if (form.validate_on_submit):
+    bID = bID
+    title = request.form.get("title")
+    message = request.form.get("message")
+    fac = board.faculty
+    dept = board.dept
+    
+    creation = datetime.datetime.now()
+    startDate = request.form.get("startDate")
+    endDate = request.form.get("endDate")
+
+    if (startDate != '' and endDate != ''):
+      event = True
+      
+      startDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+      endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    elif (startDate == '' and endDate != ''):
+      event = True
+      
+      startDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+      endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    else:
+      event = False
+      
+      startDateObj = datetime.datetime.now()
+      endDateObj = datetime.datetime.now()
+    
+    if (form.photo.data !=  None):
+      image = True
+      
+      f = request.files['photo']
+      f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
+      
+      imageLocation = f.filename
+      print(imageLocation)
+    else:
+      image = False
+      imageLocation = ""
+    
+    newPost = Post(
+      bID=bID,
+      title=title,
+      message=message,
+      
+      faculty=fac,
+      dept=dept,
+      
+      image=image,
+      imageLocation=imageLocation,
+      
+      dateCreated=creation,
+      
+      event=event,
+      startDate=startDateObj,
+      endDate=endDateObj
+    )
+    
+    print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
     print("New Post Message:" + newPost.message)
     print(newPost.dateCreated)
     
@@ -390,15 +486,17 @@ def boards(sortF = None, sortD = None):
 def board(bID):
   board = db.session.get(Board, bID)
   
-  posts = Post.query.filter_by(board=bID)
+  posts = Post.query.filter_by(bID=bID)
   posts = [entry.toDict() for entry in posts]
   boardId = bID
   
   print(board)
   print(posts)
 
-  return render_template("boardPosts.html", 
-    posts=posts, boardId=boardId, board=board
+  return render_template("boardPosts.html",  
+    boardId=boardId, 
+    board=board,
+    posts=posts
   )
 
 # Create a Board Route
@@ -411,14 +509,86 @@ def createBoard():
   return render_template("form.html",
     formBoard = form,
     faculty=faculty,
-    department=department
+    department=department,
+    choice=None
+  )
+
+# Edit a Board Route
+@app.route('/edit-board<bID>', methods=['GET'])
+def editBoardForm(bID):
+  board = db.session.get(Board, bID)
+  
+  form = BoardForm(
+    title=board.title
+  )
+  choice = str(board.faculty) + "+" + str(board.dept)
+  print(choice)
+  
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
+    
+  return render_template("form.html",
+    formBoard = form,
+    faculty=faculty,
+    department=department,
+    choice=choice
   )
 
 # Upload Board Route
 @app.route('/create-board', methods=['POST'])
 def uploadBoard():
   form = BoardForm()
-  print(request.form.get("faculty"))
+  
+  if (form.validate_on_submit()):
+    title = request.form.get("title")
+    faculty = None
+    dept = None
+    
+    assign = request.form.get("faculty")
+    if "+" in assign:
+      faculty = assign.split("+")[0]
+      dept = assign.split("+")[1]
+      
+      print("Faculty = " + faculty)
+      print("Department = " + dept)
+    else:
+      faculty = assign
+      dept = None
+      
+      print("Faculty = " + faculty)
+    
+    # if (form.photo.data !=  None):
+    #   image = True
+      
+    #   f = request.files['photo']
+    #   f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
+      
+    #   imageLocation = f.filename
+    #   print(imageLocation)
+    # else:
+    #   image = False
+    #   imageLocation = ""
+    
+    newBoard = Board(
+      title=title,
+      faculty=faculty,
+      dept=dept
+      # image=image,
+      # imageLocation=imageLocation
+    )
+    
+    print("New Board Title:" + newBoard.title)
+    
+    db.session.add(newBoard)
+    db.session.commit()
+  
+  return redirect(url_for('boards'))
+
+# Upload Editted Board Record Route
+@app.route('/edit-board<bID>', methods=['POST'])
+def uploadBoard(bID):
+  board = Board.query.get(bID)
+  form = BoardForm()
   
   if (form.validate_on_submit()):
     title = request.form.get("title")
@@ -471,25 +641,25 @@ def uploadBoard():
 # Login Form Route
 @app.route('/login', methods=['GET'])
 def login():
-    form = LoginForm()
+  form = LoginForm()
     
-    return render_template('login.html', form=form)
+  return render_template('login.html', form=form)
 
 # Upload Login Route
 @app.route('/login', methods=['POST'])
 def loginAction():
-    form = LoginForm()
+  form = LoginForm()
     
-    if form.validate_on_submit():
-        data = request.form
+  if form.validate_on_submit():
+    data = request.form
         
-        user = User.query.filter_by(username=data['username']).first()
+    user = User.query.filter_by(username=data['username']).first()
         
-        if user and user.check_password(data['password']):
-            flash('Logged in successfully.')
-            login_user(user)
+    if user and user.check_password(data['password']):
+      flash('Logged in successfully.')
+      login_user(user)
             
-            return redirect(url_for('home'))
+      return redirect(url_for('home'))
           
     flash('Invalid credentials')
     return redirect(url_for('login'))
@@ -497,35 +667,35 @@ def loginAction():
 # SIgnup Form Route
 @app.route('/signup', methods=['GET'])
 def signup():
-    signup = SignUpForm()
+  signup = SignUpForm()
     
-    return render_template('signup.html', form=signup)
+  return render_template('signup.html', form=signup)
 
 # Upload Signup Route
 @app.route('/signup', methods=['POST'])
 def signupAction():
-    form = SignUpForm()
+  form = SignUpForm()
     
-    if form.validate_on_submit():
-        data = request.form
+  if form.validate_on_submit():
+    data = request.form
         
-        newuser = User(
-          username=data['username'],
-          email=data['email'],
-          faculty=data['faculty'],
-          dept=data['dept']
-        )
+    newuser = User(
+      username=data['username'],
+      email=data['email'],
+      faculty=data['faculty'],
+      dept=data['dept']
+    )
         
-        newuser.set_password(data['password'])
+    newuser.set_password(data['password'])
         
-        db.session.add(newuser)
-        db.session.commit()
+    db.session.add(newuser)
+    db.session.commit()
         
-        flash('Account Created!')
-        return redirect(url_for('login'))
+    flash('Account Created!')
+    return redirect(url_for('login'))
       
-    flash('Error invalid input!')
-    return redirect(url_for('signup'))
+  flash('Error invalid input!')
+  return redirect(url_for('signup'))
 
 
 '''Remove from Production'''
@@ -563,6 +733,12 @@ def dropAll():
   Faculty.initialize()
   
   return redirect(url_for('home'))
+
+# User Table
+@app.route('/users', methods=['GET'])
+def get_user():
+  users = User.query.all()
+  return json.dumps([user.toDict() for user in users])
 
 
 if __name__ == '__main__':

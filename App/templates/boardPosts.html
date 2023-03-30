@@ -61,7 +61,7 @@
         </a>
       </div>
       <div class="create">
-      <a href="{{ url_for('createPost', boardID = board.id ) }}">
+      <a href="{{ url_for('createPost', bID = board.id ) }}">
         <button class="btn btn-outline-secondary" type="submit">Create Post</button>
       </a>
     </div>
@@ -130,16 +130,19 @@
                         <div class="top-right">
                           <div class="card-content">
                             <h3 class="title">{{ post.title }}</h3>
-                            <p>{{ post.message | safe }}
-                            {{post.startDate}}
-                            {{post.endDate}}
-                          </p>
-                            </div> 
+                            <p>{{ post.message | safe }}</p>
+                          </div>
                         </div>
                       </div>
                       <div class="card-bot">
                         <div class="card-bot-left">
-                          <p class="board-name">DCIT</p>
+                          <p class="board-name">
+                            {% for board in boards %}
+                              {% if board.id == post.bID %}
+                                {{ board.title }}
+                              {% endif %}
+                            {% endfor %}
+                          </p>
                         </div>
                         <div class="card-bot-mid">
                           <div class="card-footer">

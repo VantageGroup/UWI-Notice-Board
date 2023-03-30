@@ -45,16 +45,19 @@ def reCreate_db():
 '''#'''
 class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
+  bID = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   # owner = db.Column(db.String(64), db.ForeignKey('user.id'))
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=True)
   # viewerCount = db.Column(db.Integer, nullable=True)
+  
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
+  
   dateCreated = db.Column(db.DateTime)
+  
   event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
@@ -62,14 +65,16 @@ class Post(db.Model):
   def toDict(self):
     return{
       "id": self.id,
-      "board": self.board,
+      "bID": self.bID,
       # "owner": self.owner,
       "title": self.title,
       "message": self.message,
+      "faculty": self.faculty,
+      "dept": self.dept,
       # "viewerCount": self.viewerCount
       "image": self.image,
       "imageLocation": self.imageLocation,
-      # "dateCreated": self.dateCreate
+      "dateCreated": self.dateCreated,
       "startDate" : self.startDate,
       "endDate" : self.endDate
     }
@@ -100,6 +105,8 @@ class Board(db.Model):
   # image = db.Column(db.Boolean)
   # imageLocation = db.Column(db.String(256), nullable=True)
   # subscribers = db.Column(db.Integer, nullable=False)
+  
+  posts = db.relationship('Post', backref='b')
   
   def toDict(self):
     return{

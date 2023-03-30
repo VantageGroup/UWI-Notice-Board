@@ -193,23 +193,37 @@
                     </div>
                   </div>
 
-                  <select name='faculty' onchange="selectOption()">
+                  <select name='faculty'>
                     {% for fac in faculty %}
                       <option 
                         value="{{ fac.label }}"
-                        
-                        {% if fac.label == "STA" %}
+
+                        {% set value = fac.label + "+" + "None" %}
+
+                        {% if value == choice %}
+                          selected
+                        {% elif choice is none and fac.label == "STA" %}
                           selected
                         {% endif %}
                       > 
-                        {{ fac.title }}
+                        {{ fac.title }}"{{ choice}}"
                       </option>
 
                       {% if department | selectattr('fLabel','equalto', fac.label) | list | length > 1 %}
                         <optgroup label="Departments:">
                           {% for dept in department %}
                             {% if dept.department != "" and fac.label == dept.fLabel%}
-                                <option value="{{ fac.label }}+{{ dept.dLabel }}"> {{ dept.department }} </option>
+                                <option 
+                                  value="{{ fac.label }}+{{ dept.dLabel }}"
+
+                                    {% set value = fac.label + "+" + dept.dLabel %}
+                        
+                                    {% if value == choice %}
+                                      selected
+                                    {% endif %}
+                                >
+                                  {{ dept.department }}
+                                </option>
                             {% endif %}
                           {% endfor %}
                         </optgroup>
@@ -227,7 +241,7 @@
               {% endif %}
             {% endblock %}
       </main>
-  <script src="script.js"> 
+  <script src="script.js">
   </script>
 </body>
 </html>
