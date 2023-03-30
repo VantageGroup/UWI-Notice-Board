@@ -375,7 +375,7 @@ def uploadPost(bID):
 
 # Upload Editted Post Route
 @app.route('/board<bID>=edit-post,pID>', methods=['POST'])
-def uploadPost(bID):
+def uploadEdittedPost(bID):
   board = db.session.get(Board, bID)
   form = PostForm()
   
@@ -515,7 +515,7 @@ def createBoard():
 
 # Edit a Board Route
 @app.route('/edit-board<bID>', methods=['GET'])
-def editBoardForm(bID):
+def editBoard(bID):
   board = db.session.get(Board, bID)
   
   form = BoardForm(
@@ -586,7 +586,7 @@ def uploadBoard():
 
 # Upload Editted Board Record Route
 @app.route('/edit-board<bID>', methods=['POST'])
-def uploadBoard(bID):
+def uploadEdittedBoard(bID):
   board = Board.query.get(bID)
   form = BoardForm()
   
