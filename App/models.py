@@ -51,16 +51,18 @@ class Post(db.Model):
   message = db.Column(db.String(2048), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=True)
+  dateCreated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
   # viewerCount = db.Column(db.Integer, nullable=True)
   
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
   
-  dateCreated = db.Column(db.DateTime)
   
   event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
+  schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True) #date the user wants the post to be published
+  postNow = db.Column(db.Boolean)
   
   def toDict(self):
     return{
@@ -76,7 +78,9 @@ class Post(db.Model):
       "imageLocation": self.imageLocation,
       "dateCreated": self.dateCreated,
       "startDate" : self.startDate,
-      "endDate" : self.endDate
+      "endDate" : self.endDate,
+      "schedulePostDate" : self.schedulePostDate,
+      "postNow" : self.postNow
     }
 
 
@@ -104,7 +108,7 @@ class Board(db.Model):
   dept = db.Column(db.String(8), nullable=True)
   # image = db.Column(db.Boolean)
   # imageLocation = db.Column(db.String(256), nullable=True)
-  # subscribers = db.Column(db.Integer, nullable=False)
+  #subscribers = db.Column(db.Integer, nullable=True)
   
   posts = db.relationship('Post', backref='b')
   
@@ -113,10 +117,10 @@ class Board(db.Model):
       "id": self.id,
       "title": self.title,
       "faculty": self.faculty,
-      "dept": self.dept
+      "dept": self.dept,
       # "image": self.image,
       # "imageLocation": self.imageLocation
-      # "subscribers": self.subscribers
+     # "subscribers": self.subscribers
     }
    
     

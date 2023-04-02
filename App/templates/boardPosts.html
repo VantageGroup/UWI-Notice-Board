@@ -8,10 +8,10 @@
   <link href="static/css/page.css" rel="stylesheet" type="text/css" />
   <link href="static/css/post.css" rel="stylesheet" type="text/css" />
 
-   <!-- Material Icons -->
+  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
-  
+
 <body>
 
   <header class="header">
@@ -20,160 +20,166 @@
         <h3>UWI Notice Board</h3>
       </a>
     </div>
-     
+
     <div class="search center">
       <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
-        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchCriteria" />
         <button class="btn btn-outline-secondary" type="submit">
           <i class="material-icons">search</i>
         </button>
       </form>
     </div>
 
-     <div class="icons-right"> 
-       <div class="dropdown">
-          <button class="dropbtn">Faculty</button>
-          <div class="dropdown-content">
-            <a href="#">Science and Technology</a>
-            <a href="#">Medical Sciences</a>
-            <a href="#">Social Sciences</a>
-            <a href="#">Engineering</a>
-            <a href="#">Law</a>
-            <a href="#">Humanities and Education</a>
-            <a href="#">Food and Agriculture</a>
-            <a href="#">Sports</a>
-          </div>
+    <div class="icons-right">
+      <div class="dropdown">
+        <button class="dropbtn">Faculty</button>
+        <div class="dropdown-content">
+          <a href="#">Science and Technology</a>
+          <a href="#">Medical Sciences</a>
+          <a href="#">Social Sciences</a>
+          <a href="#">Engineering</a>
+          <a href="#">Law</a>
+          <a href="#">Humanities and Education</a>
+          <a href="#">Food and Agriculture</a>
+          <a href="#">Sports</a>
         </div>
-       <div class="dropdown">
-          <button class="dropbtn">Department</button>
-          <div class="dropdown-content">
-            <a href="#">DCIT</a>
-            <a href="#">Chemisty</a>
-            <a href="#">Physics</a>
-            <a href="#">Life Sciences</a>
-            <a href="#">Math</a>
-          </div>
-        </div>
-     </div>
-      <div class="create">
-        <a href="{{ url_for('createBoard') }}">
-          <button class="btn btn-outline-secondary" type="submit">Create Board</button>
-        </a>
       </div>
-      <div class="create">
+      <div class="dropdown">
+        <button class="dropbtn">Department</button>
+        <div class="dropdown-content">
+          <a href="#">DCIT</a>
+          <a href="#">Chemisty</a>
+          <a href="#">Physics</a>
+          <a href="#">Life Sciences</a>
+          <a href="#">Math</a>
+        </div>
+      </div>
+    </div>
+    <div class="create">
+      <a href="{{ url_for('createBoard') }}">
+        <button class="btn btn-outline-secondary" type="submit">Create Board</button>
+      </a>
+    </div>
+    <div class="create">
       <a href="{{ url_for('createPost', bID = board.id ) }}">
         <button class="btn btn-outline-secondary" type="submit">Create Post</button>
       </a>
     </div>
   </header>
-      <main>
-          <div class="side-bar">
-            <div class="nav">
-              <a href="{{ url_for('home') }}" class="nav-link active">
-                <i class="material-icons">home</i>
-                <span>Home</span>
-              </a>
+  <main>
+    <div class="side-bar">
+      <div class="nav">
+        <a href="{{ url_for('home') }}" class="nav-link active">
+          <i class="material-icons">home</i>
+          <span>Home</span>
+        </a>
 
-              <a class="nav-link">
-                <i class="material-icons">explore</i>
-                <span>Explore</span>
-              </a>
+        <a class="nav-link">
+          <i class="material-icons">explore</i>
+          <span>Explore</span>
+        </a>
 
-              <a href="{{ url_for('boards') }}" class="nav-link">
-                <i class="material-icons">collections</i>
-                <span>Boards</span>
-              </a>
+        <a href="{{ url_for('boards') }}" class="nav-link">
+          <i class="material-icons">collections</i>
+          <span>Boards</span>
+        </a>
 
-              <a class="nav-link">
-                <i class="material-icons">collections_bookmark</i>
-                <span>Boards Saved</span>
-              </a>
-            </div>
-            <hr>
-            <h4>Recommended</h4>
-            <a class="nav-link">
-              <i class="material-icons">desktop_windows</i>
-              <span>DCIT</span>
-            </a>
-            <a class="nav-link">
-              <i class="material-icons">science</i>
-              <span>Chemisty</span>
-            </a>
-            <a class="nav-link">
-              <i class="material-icons">science</i>
-              <span>Physics</span>
-            </a>
-            <a class="nav-link">
-              <i class="material-icons">science</i>
-              <span>Life Sciences</span>
-            </a>
-            <a class="nav-link">
-              <i class="material-icons">exposure</i>
-              <span>Math</span>
-            </a>
-          </div>
-          <div class="container-post"> <!-- Open container -->
-            <!-- <div class="for-date">
+        <a class="nav-link">
+          <i class="material-icons">collections_bookmark</i>
+          <span>Boards Saved</span>
+        </a>
+      </div>
+      <hr>
+      <h4>Recommended</h4>
+      <a class="nav-link">
+        <i class="material-icons">desktop_windows</i>
+        <span>DCIT</span>
+      </a>
+      <a class="nav-link">
+        <i class="material-icons">science</i>
+        <span>Chemisty</span>
+      </a>
+      <a class="nav-link">
+        <i class="material-icons">science</i>
+        <span>Physics</span>
+      </a>
+      <a class="nav-link">
+        <i class="material-icons">science</i>
+        <span>Life Sciences</span>
+      </a>
+      <a class="nav-link">
+        <i class="material-icons">exposure</i>
+        <span>Math</span>
+      </a>
+    </div>
+    <div class="container-post"> <!-- Open container -->
+      <!-- <div class="for-date">
               <p class="the-date">🟢Today</p> -->
-              {% block content %}
-                {% for post in posts %}
-                  <div class="card">
-                    <div class="card-left">
-                      <div class="card-top">
-                        <div class="top-left">
-                          <div class="profile-image">
-                            <img src="static/images/defaultProfile.jpg" alt="">
-                            <p class="name">Aaron S.</p>
-                            <p class="time">1hr ago</p>
-                          </div>
-                        </div>
-                        <div class="top-right">
-                          <div class="card-content">
-                            <h3 class="title">{{ post.title }}</h3>
-                            <p>{{ post.message | safe }}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="card-bot">
-                        <div class="card-bot-left">
-                          <p class="board-name">
-                            {% for board in boards %}
-                              {% if board.id == post.bID %}
-                                {{ board.title }}
-                              {% endif %}
-                            {% endfor %}
-                          </p>
-                        </div>
-                        <div class="card-bot-mid">
-                          <div class="card-footer">
-                            <button>Leave</button>
-                          </div>
-                        </div>
-                        <div class="card-bot-right-left">
-                          <p class="users-count">1.2k</p>
-                        </div>
-                        <div class="user-icon">
-                          <i class="material-icons">person</i>
-                        </div>
-                        <div class="card-bot-right-mid">
-                          <p class="views">15 views</p>
-                        </div>
-                        <div class="card-bot-right-right">
-                          <i class="material-icons">more_horiz</i>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-right">
-                      <div class="flyer">
-                        <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
-                      </div>
-                    </div>
-                  </div>
+      {% block content %}
+      {% for post in posts %}
+      {% if post.postNow == True %}
+      <div class="card">
+        <div class="card-left">
+          <div class="card-top">
+            <div class="top-left">
+              <div class="profile-image">
+                <img src="static/images/defaultProfile.jpg" alt="">
+                <p class="name">Aaron S.</p>
+                <p class="time">1hr ago</p>
+              </div>
+            </div>
+            <div class="top-right">
+              <div class="card-content">
+                <h3 class="title">{{ post.title }}</h3>
+                <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                <p>You Scheduled this post to be released on: <small class="text-muted">{{
+                    post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                <p>{{ post.message | safe }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-bot">
+            <div class="card-bot-left">
+              <p class="board-name">
+                {% for board in boards %}
+                {% if board.id == post.bID %}
+                {{ board.title }}
+                {% endif %}
                 {% endfor %}
-              {% endblock %}
-            <!-- </div>--> 
-          </div> <!-- Close container -->
-      </main>
+              </p>
+            </div>
+            <div class="card-bot-mid">
+              <div class="card-footer">
+                <button>Leave</button>
+              </div>
+            </div>
+            <div class="card-bot-right-left">
+              <p class="users-count">1.2k</p>
+            </div>
+            <div class="user-icon">
+              <i class="material-icons">person</i>
+            </div>
+            <div class="card-bot-right-mid">
+              <p class="views">15 views</p>
+            </div>
+            <div class="card-bot-right-right">
+              <i class="material-icons">more_horiz</i>
+            </div>
+          </div>
+        </div>
+        <div class="card-right">
+          <div class="flyer">
+            <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% endblock %}
+      <!-- </div>-->
+    </div> <!-- Close container -->
+  </main>
   <script src="script.js"></script>
 </body>
+
 </html>
