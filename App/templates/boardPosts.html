@@ -43,24 +43,18 @@
           <a href="#">Food and Agriculture</a>
           <a href="#">Sports</a>
         </div>
-      </div>
-      <div class="dropdown">
-        <button class="dropbtn">Department</button>
-        <div class="dropdown-content">
-          <a href="#">DCIT</a>
-          <a href="#">Chemisty</a>
-          <a href="#">Physics</a>
-          <a href="#">Life Sciences</a>
-          <a href="#">Math</a>
+       <div class="dropdown">
+          <button class="dropbtn">Department</button>
+          <div class="dropdown-content">
+            <a href="#">DCIT</a>
+            <a href="#">Chemisty</a>
+            <a href="#">Physics</a>
+            <a href="#">Life Sciences</a>
+            <a href="#">Math</a>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="create">
-      <a href="{{ url_for('createBoard') }}">
-        <button class="btn btn-outline-secondary" type="submit">Create Board</button>
-      </a>
-    </div>
-    <div class="create">
+     </div>
+      <div class="create">
       <a href="{{ url_for('createPost', bID = board.id ) }}">
         <button class="btn btn-outline-secondary" type="submit">Create Post</button>
       </a>

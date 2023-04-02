@@ -290,7 +290,6 @@ def createPost(bID):
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
 def editPost(bID, pID):
-  board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
   
   form = PostForm(
@@ -409,25 +408,25 @@ def uploadPost(bID):
   else:
     print("Form did not validate on submit")  
   
-  return render_template('cal.html', events=events)
+  return  redirect(url_for('board', bID=bID))
 
 
 
 
-# Upload Editted Post Route
-@app.route('/board<bID>=edit-post,pID>', methods=['POST'])
-def uploadEdittedPost(bID):
+# Upload Edited Post Route
+@app.route('/board<bID>=edit-post<pID>', methods=['POST'])
+def uploadEdittedPost(bID, pID):
   board = db.session.get(Board, bID)
+  post = db.session.get(Post, pID)
   form = PostForm()
+  creation = datetime.datetime.now()
   
   if (form.validate_on_submit):
-    bID = bID
     title = request.form.get("title")
     message = request.form.get("message")
     fac = board.faculty
     dept = board.dept
     
-    creation = datetime.datetime.now()
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
     schedulePostDate = request.form.get("schedulePostDate")
@@ -472,34 +471,23 @@ def uploadEdittedPost(bID):
     else:
       image = False
       imageLocation = ""
+                   
+    post.title = title
+    post.message = message
+      
+    post.faculty = fac
+    post.dept = dept
+      
+    post.image=image
+    post.imageLocation=imageLocation
+      
+    post.event=event
+    post.startDate=startDateObj
+    post.endDate=endDateObj
     
-    newPost = Post(
-      bID=bID,
-      title=title,
-      message=message,
-      
-      faculty=fac,
-      dept=dept,
-      
-      image=image,
-      imageLocation=imageLocation,
-      
-      dateCreated=creation,
-      
-      event=event,
-      startDate=startDateObj,
-      endDate=endDateObj,
-
-      schedulePostDate = schedulePostDateObj,
-
-      postNow = postNow
-    )
+    print("Editted Post Title:" + post.title)
+    print("Editted Post Message:" + post.message)
     
-    print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
-    print("New Post Message:" + newPost.message)
-    print(newPost.dateCreated)
-    
-    db.session.add(newPost)
     db.session.commit()
 
     events = [ {
@@ -512,7 +500,7 @@ def uploadEdittedPost(bID):
   else:
     print("Form did not validate on submit")  
   
-  return render_template('cal.html', events=events)
+  return  redirect(url_for('board', bID=bID))
 
 
 '''Board Related Routes'''
@@ -568,7 +556,7 @@ def board(bID):
   print(posts)
 
   return render_template("boardPosts.html",  
-    boardId=boardId, 
+    boardID=boardId, 
     board=board,
     posts=posts
   )
@@ -694,17 +682,15 @@ def uploadEdittedBoard(bID):
     #   image = False
     #   imageLocation = ""
     
-    newBoard = Board(
-      title=title,
-      faculty=faculty,
-      dept=dept
+    board.title = title
+    board.faculty = faculty
+    board.dept = dept
       # image=image,
       # imageLocation=imageLocation
-    )
     
-    print("New Board Title:" + newBoard.title)
+    print("New Board Title:" + board.title)
     
-    db.session.add(newBoard)
+    # db.session.add(newBoard)
     db.session.commit()
   
   return redirect(url_for('boards'))
