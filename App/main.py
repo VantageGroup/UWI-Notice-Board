@@ -71,6 +71,7 @@ from datetime import datetime, date
 import datetime
 import pytz
 
+
 def create_app():
   app = Flask(__name__, static_url_path='/static')
   CORS(app)
@@ -920,8 +921,6 @@ def dropAll():
 def get_user():
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
-
-
 
 
 

@@ -136,7 +136,7 @@ class User(db.Model, UserMixin):
   password = db.Column(db.String(64), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=False)
-  
+  #isAdmin = db.Column(db.Boolean, nullable=True)
   
   def toDict(self):
     return{
@@ -144,9 +144,13 @@ class User(db.Model, UserMixin):
       "username": self.username,
       "password": self.password,
       "faculty": self.faculty,
-      "dept": self.dept
+      "dept": self.dept,
+      #"isAdmin" : self.isAdmin
     }
   
+  
+
+
   #hashes the password parameter and stores it in the object
   def set_password(self, password):
     """Create hashed password."""
