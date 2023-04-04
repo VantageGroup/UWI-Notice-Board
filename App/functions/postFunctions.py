@@ -17,7 +17,8 @@ from wtforms import (
     IntegerField,
     BooleanField,
     RadioField,
-    DateField
+    DateField,
+    DateTimeLocalField
 )
 from flask_wtf.file import (
     FileField, 
@@ -48,6 +49,7 @@ class PostForm(FlaskForm):
     startDate = DateField('Start Date', format= '%Y-%m-%d')
     endDate = DateField('End Date', format= '%Y-%m-%d')
     submit = SubmitField("Submit")
+    schedulePostDate = DateTimeLocalField('When would you like this post to be published?', format= '%Y-%m-%dT%H:%M')
 
     
 

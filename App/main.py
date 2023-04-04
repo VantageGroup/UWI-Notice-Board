@@ -2,6 +2,7 @@ import json
 import os
 import requests
 
+
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
 
@@ -68,6 +69,7 @@ from functions.userFunctions import (
 
 from datetime import datetime, date
 import datetime
+import pytz
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -226,7 +228,7 @@ def feed(uID, sortF = None, sortD = None):
 @app.route('/|<sortF>', methods=['GET', 'POST'])
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
-  feed = RetrieveAllPosts()
+  feed = Post.query.all()
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
@@ -236,6 +238,18 @@ def home(sortF = None, sortD = None):
     
   if sortD != None:
     print ("Sorting by Department: " + sortD)
+
+  currentSysDateTime = datetime.datetime.now()
+  
+
+  for post in feed:
+    if(post.schedulePostDate <=  currentSysDateTime):
+      post.postNow = True
+      db.session.commit()
+
+    else:
+      post.postNow = False
+      db.session.commit()
   
   return render_template('index.html', 
     posts=feed,
@@ -325,7 +339,6 @@ def createPost(bID):
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
 def editPost(bID, pID):
-  board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
   
   form = PostForm(
@@ -333,7 +346,8 @@ def editPost(bID, pID):
     message = post.message,
     # photo = 
     startDate = post.startDate,
-    endDate = post.endDate
+    endDate = post.endDate,
+    schedulePostDate = post.schedulePostDate
   )
     
   return render_template("form.html",
@@ -356,6 +370,7 @@ def uploadPost(bID):
     creation = datetime.datetime.now()
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
+    schedulePostDate = request.form.get("schedulePostDate")
 
     if (startDate != '' and endDate != ''):
       event = True
@@ -372,6 +387,24 @@ def uploadPost(bID):
       
       startDateObj = datetime.datetime.now()
       endDateObj = datetime.datetime.now()
+
+
+
+
+    if (schedulePostDate != ''):
+      schedulePostDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
+
+    else:
+      schedulePostDateObj = datetime.datetime.now()
+
+
+    if (schedulePostDateObj > creation):
+      postNow = False
+
+    else:
+      postNow = True
+
+
     
     if (form.photo.data !=  None):
       image = True
@@ -400,7 +433,11 @@ def uploadPost(bID):
       
       event=event,
       startDate=startDateObj,
-      endDate=endDateObj
+      endDate=endDateObj,
+
+      schedulePostDate = schedulePostDateObj,
+
+      postNow = postNow
     )
     
     print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
@@ -420,24 +457,28 @@ def uploadPost(bID):
   else:
     print("Form did not validate on submit")  
   
-  return render_template('cal.html', events=events)
+  return  redirect(url_for('board', bID=bID))
 
-# Upload Editted Post Route
-@app.route('/board<bID>=edit-post,pID>', methods=['POST'])
-def uploadEdittedPost(bID):
+
+
+
+# Upload Edited Post Route
+@app.route('/board<bID>=edit-post<pID>', methods=['POST'])
+def uploadEdittedPost(bID, pID):
   board = db.session.get(Board, bID)
+  post = db.session.get(Post, pID)
   form = PostForm()
+  creation = datetime.datetime.now()
   
   if (form.validate_on_submit):
-    bID = bID
     title = request.form.get("title")
     message = request.form.get("message")
     fac = board.faculty
     dept = board.dept
     
-    creation = datetime.datetime.now()
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
+    schedulePostDate = request.form.get("schedulePostDate")
 
     if (startDate != '' and endDate != ''):
       event = True
@@ -454,6 +495,19 @@ def uploadEdittedPost(bID):
       
       startDateObj = datetime.datetime.now()
       endDateObj = datetime.datetime.now()
+
+    if (schedulePostDate != ''):
+      schedulePostDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
+
+    else:
+      schedulePostDateObj = datetime.datetime.now()
+
+
+    if (schedulePostDateObj > creation):
+      postNow = False
+
+    else:
+      postNow = True
     
     if (form.photo.data !=  None):
       image = True
@@ -466,30 +520,23 @@ def uploadEdittedPost(bID):
     else:
       image = False
       imageLocation = ""
+                   
+    post.title = title
+    post.message = message
+      
+    post.faculty = fac
+    post.dept = dept
+      
+    post.image=image
+    post.imageLocation=imageLocation
+      
+    post.event=event
+    post.startDate=startDateObj
+    post.endDate=endDateObj
     
-    newPost = Post(
-      bID=bID,
-      title=title,
-      message=message,
-      
-      faculty=fac,
-      dept=dept,
-      
-      image=image,
-      imageLocation=imageLocation,
-      
-      dateCreated=creation,
-      
-      event=event,
-      startDate=startDateObj,
-      endDate=endDateObj
-    )
+    print("Editted Post Title:" + post.title)
+    print("Editted Post Message:" + post.message)
     
-    print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
-    print("New Post Message:" + newPost.message)
-    print(newPost.dateCreated)
-    
-    db.session.add(newPost)
     db.session.commit()
 
     events = [ {
@@ -502,7 +549,7 @@ def uploadEdittedPost(bID):
   else:
     print("Form did not validate on submit")  
   
-  return render_template('cal.html', events=events)
+  return  redirect(url_for('board', bID=bID))
 
 
 '''Board Related Routes'''
@@ -534,8 +581,23 @@ def boards(sortF = None, sortD = None):
 @app.route('/board<bID>', methods=['GET'])
 def board(bID):
   board = db.session.get(Board, bID)
+
   
   posts = Post.query.filter_by(bID=bID)
+  
+  currentSysDateTime = datetime.datetime.now()
+  
+
+  for post in posts:
+    if(post.schedulePostDate <=  currentSysDateTime):
+      post.postNow = True
+      db.session.commit()
+
+    else:
+      post.postNow = False
+      db.session.commit()
+
+  
   posts = [entry.toDict() for entry in posts]
   boardId = bID
   
@@ -543,7 +605,7 @@ def board(bID):
   print(posts)
 
   return render_template("boardPosts.html",  
-    boardId=boardId, 
+    boardID=boardId, 
     board=board,
     posts=posts
   )
@@ -669,17 +731,15 @@ def uploadEdittedBoard(bID):
     #   image = False
     #   imageLocation = ""
     
-    newBoard = Board(
-      title=title,
-      faculty=faculty,
-      dept=dept
+    board.title = title
+    board.faculty = faculty
+    board.dept = dept
       # image=image,
       # imageLocation=imageLocation
-    )
     
-    print("New Board Title:" + newBoard.title)
+    print("New Board Title:" + board.title)
     
-    db.session.add(newBoard)
+    # db.session.add(newBoard)
     db.session.commit()
   
   return redirect(url_for('boards'))
@@ -788,6 +848,10 @@ def dropAll():
 def get_user():
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
+
+
+
+
 
 
 if __name__ == '__main__':

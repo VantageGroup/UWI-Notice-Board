@@ -114,6 +114,7 @@
                 {% for post in posts %}
 
                   {% if sortF is none %}
+                  {% if post.postNow == True %}
                     <div class="card">
                       <div class="card-left">
                         <div class="card-top">
@@ -127,6 +128,9 @@
                           <div class="top-right">
                             <div class="card-content">
                               <h3 class="title">{{ post.title }}</h3>
+                              <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                              <p>You Scheduled this post to be released on: <small class="text-muted">{{
+                                  post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
                               <p>{{ post.message | safe }}</p>
                             </div>
                           </div>
@@ -137,6 +141,7 @@
                               {% for board in boards %}
                                 {% if board.id == post.bID %}
                                   {{ board.title }}
+                                
                                 {% endif %}
                               {% endfor %}
                             </p>
@@ -166,10 +171,12 @@
                         </div>
                       </div>
                     </div>
+                    {% endif %}
                     
                   {% elif post.faculty == sortF %}
                   
                     {% if sortD is none %}
+                    {% if post.postNow == True %}
                       <div class="card">
                         <div class="card-left">
                           <div class="card-top">
@@ -183,7 +190,10 @@
                             <div class="top-right">
                               <div class="card-content">
                                 <h3 class="title">{{ post.title }}</h3>
-                                <p>{{ post.message | safe }}</p>
+                <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                <p>You Scheduled this post to be released on: <small class="text-muted">{{
+                    post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                <p>{{ post.message | safe }}</p>
                               </div>
                             </div>
                           </div>
@@ -194,6 +204,7 @@
                                   {% if board.id == post.bID %}
                                     {{ board.title }}
                                   {% endif %}
+                                  
                                 {% endfor %}
                               </p>
                             </div>
@@ -222,7 +233,11 @@
                           </div>
                         </div>
                       </div>
+                      {% endif %}
+
+
                     {% elif post.dept == sortD %}
+                    {% if post.postNow == True %}
                       <div class="card">
                         <div class="card-left">
                           <div class="card-top">
@@ -236,6 +251,9 @@
                             <div class="top-right">
                               <div class="card-content">
                                 <h3 class="title">{{ post.title }}</h3>
+                                <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                                <p>You Scheduled this post to be released on: <small class="text-muted">{{
+                                    post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
                                 <p>{{ post.message | safe }}</p>
                               </div>
                             </div>
@@ -247,6 +265,7 @@
                                   {% if board.id == post.bID %}
                                     {{ board.title }}
                                   {% endif %}
+                                 
                                 {% endfor %}
                               </p>
                             </div>
@@ -277,6 +296,7 @@
                       </div>
                     {% endif %}
                   
+                  {% endif %}
                   {% endif %}
 
                 {% endfor %}
