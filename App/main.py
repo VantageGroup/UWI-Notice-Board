@@ -244,7 +244,8 @@ def home(sortF = None, sortD = None):
   currentSysDateTime = datetime.datetime.now()
 
   for post in feed:
-   if(currentSysDateTime >= post.scheduledDeleteDate):
+   if(post.scheduledDeleteDate != None):  
+    if(currentSysDateTime >= post.scheduledDeleteDate):
       db.session.delete(post)
       db.session.commit
 
@@ -411,7 +412,8 @@ def uploadPost(bID):
     if (scheduledDeleteDate != ''):
       scheduledDeleteDateObj = datetime.datetime.strptime(scheduledDeleteDate, '%Y-%m-%dT%H:%M')
 
-    
+    else:
+      scheduledDeleteDateObj = None
 
     if (schedulePostDateObj > creation):
       postNow = False
@@ -601,6 +603,7 @@ def boards(sortF = None, sortD = None):
       board.subscribers = 0
       if(subscriber.board == board.id):
         board.subscribers = board.subscribers + 1
+        db.session.commit()
   
   if sortF != None:
     print ("Sorting by Faculty: " + sortF)
@@ -627,7 +630,8 @@ def board(bID):
   currentSysDateTime = datetime.datetime.now()
   
 
-  for post in posts:
+  for post in posts: 
+   if(post.scheduledDeleteDate != None):  
     if(currentSysDateTime >= post.scheduledDeleteDate):
       db.session.delete(post)
       db.session.commit
