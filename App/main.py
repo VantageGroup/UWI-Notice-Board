@@ -98,7 +98,7 @@ def create_app():
 
   editor = CKEditor()
   editor.init_app(app)
-  
+
   login_manager.init_app(app)
   
   app.app_context().push()
@@ -113,7 +113,8 @@ migrate = get_migrate(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-  return db.session.get(User, user_id)
+  #return db.session.get(User, user_id)
+  return User.query.get(int(user_id))
 
 @app.context_processor
 def base():
@@ -202,6 +203,7 @@ def RetrieveFeedSub(uID):
 @app.route('/feed<uID>', methods=['GET'])
 @app.route('/|<sortF>', methods=['GET', 'POST'])
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
+@login_required
 def feed(uID, sortF = None, sortD = None):
   posts = []
   faculty = RetrieveFacultyList()
@@ -230,6 +232,12 @@ def feed(uID, sortF = None, sortD = None):
 @app.route('/|<sortF>', methods=['GET', 'POST'])
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
+
+ if (current_user.is_authenticated):
+  print("User already logged in")
+ 
+
+
   feed = Post.query.all()
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
@@ -267,6 +275,9 @@ def home(sortF = None, sortD = None):
     faculty=faculty,
     department=department
   )
+ 
+ else:
+  return redirect(url_for('login'))
 
 # Retrieve Uploaded Image
 @app.route('/<filename>')
@@ -275,6 +286,7 @@ def get_file(filename):
 
 #Search Posts
 @app.route('/search', methods=["POST"])
+@login_required
 def search():
   postsDb = Post.query
   boardsDb = Board.query
@@ -309,6 +321,7 @@ def search():
 
 # App Route for Calendar
 @app.route('/cal')
+@login_required
 def cal():
   posts = Post.query.all()
 
@@ -337,6 +350,7 @@ def cal():
 
 # Create a Post Route (render form and take input)
 @app.route('/board<bID>=create-post', methods=['GET'])
+@login_required
 def createPost(bID):
   form = PostForm()
     
@@ -346,6 +360,7 @@ def createPost(bID):
   
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
+@login_required
 def editPost(bID, pID):
   post = db.session.get(Post, pID)
 
@@ -365,6 +380,7 @@ def editPost(bID, pID):
 
 # Upload Post Route
 @app.route('/board<bID>=create-post', methods=['POST'])
+@login_required
 def uploadPost(bID):
   form = PostForm()
   board = db.session.get(Board, bID) 
@@ -483,6 +499,7 @@ def uploadPost(bID):
 
 # Upload Edited Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['POST'])
+@login_required
 def uploadEdittedPost(bID, pID):
   board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
@@ -588,6 +605,7 @@ def uploadEdittedPost(bID, pID):
 @app.route('/boards', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
+@login_required
 def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
@@ -621,6 +639,7 @@ def boards(sortF = None, sortD = None):
 
 # View Board Route
 @app.route('/board<bID>', methods=['GET'])
+@login_required
 def board(bID):
   board = db.session.get(Board, bID)
 
@@ -854,7 +873,12 @@ def signupAction():
   flash('Error invalid input!')
   return redirect(url_for('signup'))
 
+#log out a user
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    return 'You have been logged out.'
 '''Remove from Production'''
 
 # Temp Route to purge all Databases
