@@ -327,7 +327,7 @@ def cal():
 
 '''Post Related Routes'''
 
-# Create a Post Route
+# Create a Post Route (render form and take input)
 @app.route('/board<bID>=create-post', methods=['GET'])
 def createPost(bID):
   form = PostForm()
@@ -340,6 +340,7 @@ def createPost(bID):
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
 def editPost(bID, pID):
   post = db.session.get(Post, pID)
+
   
   form = PostForm(
     title = post.title,
