@@ -840,7 +840,7 @@ def loginAction():
           
     flash('Invalid credentials')
     return redirect(url_for('login'))
-
+  
 # SIgnup Form Route
 @app.route('/signup', methods=['GET'])
 def signup():
