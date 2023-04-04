@@ -159,14 +159,14 @@ class Subscriber(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-  isAdmin = db.Column(db.Boolean)
+  # isAdmin = db.Column(db.Boolean)
   
   def toDict(self):
     return{
       "id": self.id,
       "board": self.board,
-      "user": self.user,
-      "isAdmin": self.isAdmin
+      "user": self.user
+      # "isAdmin": self.isAdmin
     }
 
 '''#'''

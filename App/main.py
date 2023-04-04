@@ -15,7 +15,8 @@ from flask import (
   jsonify, 
   send_from_directory, 
   flash, 
-  url_for
+  url_for,
+  session
 )
 from flask_login import (
   LoginManager, 
@@ -150,25 +151,73 @@ def RetrieveDepartmentList():
   list = [entry.toDict() for entry in list]
   
   return list
+#############################################
+# Join Button
+@app.route('/join<bID>=<uID>', methods=['GET'])
+def join(bID,uID):
+   
+  subscriber = Subscriber(
+    board = bID,
+    user = uID
+  )
 
-#
+  db.session.add(subscriber)
+  db.session.commit()
+  return render_template("index.html")
+
+# Subscriber Table
+@app.route('/subscribers', methods=['GET'])
+def get_subs():
+  subs = Subscriber.query.all()
+  return json.dumps([sub.toDict() for sub in subs])
+
+# Finds boards based on user id 
 def RetrieveUserBoards(uID):
-  boards = Subscriber.query.filter(user=uID)
+  boards = Subscriber.query.filter_by(user=uID)
   boards = [entry.toDict() for entry in boards]
-  
   return boards
 
-#
-def RetrieveFeed(uID):
+# Sub Feed
+def RetrieveFeedSub(uID):
+  posts = []
   boards = RetrieveUserBoards(uID)
   
+
+  all_posts = RetrieveAllPosts() 
+
   for board in boards:
-    posts.append( Post.query.filter(bID=board.id) )
+    for post in all_posts:
+      if post.bID == board.board:
+        posts.append(post)
+
+    # posts.append( Post.query.filter_by(bID=board.id) )
   
-  posts = [entry.toDict() for entry in posts]
+  # posts = [entry.toDict() for entry in posts]
   
   return posts
 
+# Feed Route
+@app.route('/feed<uID>', methods=['GET'])
+@app.route('/|<sortF>', methods=['GET', 'POST'])
+@app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
+def feed(uID, sortF = None, sortD = None):
+  posts = []
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
+  boards = Subscriber.query.filter_by(user=uID)
+  
+
+  all_posts = Post.query.all()
+
+  for board in boards:
+    for post in all_posts:
+      if post.bID == board.board:
+        posts.append(post)
+
+  posts = [post.toDict() for post in posts]
+  print(posts)
+
+  return render_template('index.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
 
 '''App Routes'''
 

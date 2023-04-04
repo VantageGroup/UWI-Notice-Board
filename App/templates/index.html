@@ -64,7 +64,7 @@
       <main>
           <div class="side-bar">
             <div class="nav">
-              <a href="{{ url_for('home') }}" class="nav-link active">
+              <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}" class="nav-link active">
                 <i class="material-icons">home</i>
                 <span>Home</span>
               </a>

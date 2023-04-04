@@ -134,7 +134,7 @@
                         </div>
                       </div>
                       <div class="board-join">
-                        <a href="{{ url_for('board', bID = board.id ) }}">
+                        <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
                           <button>Join</button>
                         </a>
                       </div>
@@ -165,7 +165,7 @@
                           </div>
                         </div>
                         <div class="board-join">
-                          <a href="{{ url_for('board', bID = board.id ) }}">
+                          <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
                             <button>Join</button>
                           </a>
                         </div>
@@ -193,7 +193,7 @@
                           </div>
                         </div>
                         <div class="board-join">
-                          <a href="{{ url_for('board', bID = board.id ) }}">
+                          <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
                             <button>Join</button>
                           </a>
                         </div>
