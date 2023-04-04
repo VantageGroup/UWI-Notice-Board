@@ -61,8 +61,10 @@ class Post(db.Model):
   event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
-  schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True) #date the user wants the post to be published
+  schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True)#date the user wants the post to be published
+  scheduledDeleteDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True, nullable=True) #date the user wants the post to be deleted
   postNow = db.Column(db.Boolean)
+  deleteNow = db.Column(db.Boolean)
   
   def toDict(self):
     return{
@@ -80,7 +82,9 @@ class Post(db.Model):
       "startDate" : self.startDate,
       "endDate" : self.endDate,
       "schedulePostDate" : self.schedulePostDate,
-      "postNow" : self.postNow
+      "postNow" : self.postNow,
+      "scheduledDeleteDate" : self.scheduledDeleteDate,
+      "deleteNow" : self.deleteNow
     }
 
 
@@ -108,7 +112,7 @@ class Board(db.Model):
   dept = db.Column(db.String(8), nullable=True)
   # image = db.Column(db.Boolean)
   # imageLocation = db.Column(db.String(256), nullable=True)
-  #subscribers = db.Column(db.Integer, nullable=True)
+  subscribers = db.Column(db.Integer, nullable=True)
   
   posts = db.relationship('Post', backref='b')
   
@@ -120,7 +124,7 @@ class Board(db.Model):
       "dept": self.dept,
       # "image": self.image,
       # "imageLocation": self.imageLocation
-     # "subscribers": self.subscribers
+     "subscribers": self.subscribers
     }
    
     

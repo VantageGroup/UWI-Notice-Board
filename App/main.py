@@ -211,6 +211,8 @@ def feed(uID, sortF = None, sortD = None):
 
   all_posts = Post.query.all()
 
+
+
   for board in boards:
     for post in all_posts:
       if post.bID == board.board:
@@ -240,7 +242,11 @@ def home(sortF = None, sortD = None):
     print ("Sorting by Department: " + sortD)
 
   currentSysDateTime = datetime.datetime.now()
-  
+
+  for post in feed:
+   if(currentSysDateTime >= post.scheduledDeleteDate):
+      db.session.delete(post)
+      db.session.commit
 
   for post in feed:
     if(post.schedulePostDate <=  currentSysDateTime):
@@ -250,6 +256,7 @@ def home(sortF = None, sortD = None):
     else:
       post.postNow = False
       db.session.commit()
+
   
   return render_template('index.html', 
     posts=feed,
@@ -359,7 +366,7 @@ def editPost(bID, pID):
 @app.route('/board<bID>=create-post', methods=['POST'])
 def uploadPost(bID):
   form = PostForm()
-  board = db.session.get(Board, bID)
+  board = db.session.get(Board, bID) 
   
   if (form.validate_on_submit):
     bID = bID
@@ -367,11 +374,14 @@ def uploadPost(bID):
     message = request.form.get("message")
     fac = board.faculty
     dept = board.dept
+    deleteNow = False
+    postNow = False
     
     creation = datetime.datetime.now()
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
     schedulePostDate = request.form.get("schedulePostDate")
+    scheduledDeleteDate = request.form.get("scheduledDeleteDate")
 
     if (startDate != '' and endDate != ''):
       event = True
@@ -398,6 +408,10 @@ def uploadPost(bID):
     else:
       schedulePostDateObj = datetime.datetime.now()
 
+    if (scheduledDeleteDate != ''):
+      scheduledDeleteDateObj = datetime.datetime.strptime(scheduledDeleteDate, '%Y-%m-%dT%H:%M')
+
+    
 
     if (schedulePostDateObj > creation):
       postNow = False
@@ -405,7 +419,7 @@ def uploadPost(bID):
     else:
       postNow = True
 
-
+  
     
     if (form.photo.data !=  None):
       image = True
@@ -437,8 +451,10 @@ def uploadPost(bID):
       endDate=endDateObj,
 
       schedulePostDate = schedulePostDateObj,
+      scheduledDeleteDate = scheduledDeleteDateObj,
 
-      postNow = postNow
+      postNow = postNow,
+      deleteNow = deleteNow
     )
     
     print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
@@ -480,6 +496,7 @@ def uploadEdittedPost(bID, pID):
     startDate = request.form.get("startDate")
     endDate = request.form.get("endDate")
     schedulePostDate = request.form.get("schedulePostDate")
+    scheduledDeleteDate = request.form.get("scheduledDeleteDate")
 
     if (startDate != '' and endDate != ''):
       event = True
@@ -504,11 +521,21 @@ def uploadEdittedPost(bID, pID):
       schedulePostDateObj = datetime.datetime.now()
 
 
+    if (scheduledDeleteDate != ''):
+      scheduledDeleteDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
+
+
     if (schedulePostDateObj > creation):
       postNow = False
 
     else:
       postNow = True
+
+    if (scheduledDeleteDateObj >= creation):
+      deleteNow = True
+
+    else:
+      deleteNow = False  
     
     if (form.photo.data !=  None):
       image = True
@@ -563,6 +590,17 @@ def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
+
+  boards = Board.query.all()
+
+  subs = Subscriber.query.all()
+  #boards = [entry.toDict() for entry in boards]
+
+  for subscriber in subs:
+    for board in boards:
+      board.subscribers = 0
+      if(subscriber.board == board.id):
+        board.subscribers = board.subscribers + 1
   
   if sortF != None:
     print ("Sorting by Faculty: " + sortF)
@@ -590,6 +628,11 @@ def board(bID):
   
 
   for post in posts:
+    if(currentSysDateTime >= post.scheduledDeleteDate):
+      db.session.delete(post)
+      db.session.commit
+
+  for post in posts:
     if(post.schedulePostDate <=  currentSysDateTime):
       post.postNow = True
       db.session.commit()
@@ -598,7 +641,7 @@ def board(bID):
       post.postNow = False
       db.session.commit()
 
-  
+    
   posts = [entry.toDict() for entry in posts]
   boardId = bID
   
