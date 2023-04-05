@@ -37,17 +37,18 @@ from models import (
 
 
 app = Flask(__name__)
-# app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
+app.config['UPLOADED_PHOTOS_DEST'] = app.instance_path
 
-# photos = UploadSet('photos', IMAGES)
-# configure_uploads(app, photos)
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 
 
 class BoardForm(FlaskForm):
     title = StringField( "Title", validators = [DataRequired()] )
-    # photo = FileField(validators=[
-    #     FileAllowed(photos, 'Only images are allowed')
-    # ]
-    # )
+    photo = FileField(
+        validators=[
+            FileAllowed(photos, 'Only images are allowed')
+        ]
+    )
     submit= SubmitField("Submit")
- 
+

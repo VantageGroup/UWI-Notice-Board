@@ -3,11 +3,8 @@ import json
 import os
 import requests
 
-
 from sqlalchemy.exc import OperationalError
 from werkzeug.utils import secure_filename
-
-
 
 from flask import (
   Flask, 
@@ -170,6 +167,7 @@ def RetrieveDepartmentList():
   
   return list
 #############################################
+
 # Join Button
 @app.route('/join<bID>=<uID>', methods=['GET'])
 def join(bID,uID):
@@ -200,7 +198,6 @@ def RetrieveFeedSub(uID):
   posts = []
   boards = RetrieveUserBoards(uID)
   
-
   all_posts = RetrieveAllPosts() 
 
   for board in boards:
@@ -225,10 +222,7 @@ def feed(uID, sortF = None, sortD = None):
   department = RetrieveDepartmentList()
   boards = Subscriber.query.filter_by(user=uID)
   
-
   all_posts = Post.query.all()
-
-
 
   for board in boards:
     for post in all_posts:
@@ -251,8 +245,6 @@ def home(sortF = None, sortD = None):
  if (current_user.is_authenticated):
   print("User already logged in")
  
-
-
   feed = Post.query.all()
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
@@ -294,10 +286,20 @@ def home(sortF = None, sortD = None):
  else:
   return redirect(url_for('login'))
 
-# Retrieve Uploaded Image
-@app.route('/<filename>')
-def get_file(filename): 
+# Retrieve Post Uploaded Image
+@app.route('/pimage<filename>')
+def get_post_image(filename): 
   return send_from_directory(app.config['POST_FOLDER'], filename)
+
+# Retrieve Board Uploaded Image
+@app.route('/bimage<filename>')
+def get_board_image(filename): 
+  return send_from_directory(app.config['BOARD_FOLDER'], filename)
+
+# Retrieve User Uploaded Image
+@app.route('/uimage<filename>')
+def get_user_image(filename): 
+  return send_from_directory(app.config['PROFILE_FOLDER'], filename)
 
 #Search Posts
 @app.route('/search', methods=["POST"])
@@ -759,24 +761,24 @@ def uploadBoard():
       
       print("Faculty = " + faculty)
     
-    # if (form.photo.data !=  None):
-    #   image = True
+    if (form.photo.data !=  None):
+      image = True
       
-    #   f = request.files['photo']
-    #   f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
+      f = request.files['photo']
+      f.save(os.path.join(app.config['BOARD_FOLDER'], f.filename))
       
-    #   imageLocation = f.filename
-    #   print(imageLocation)
-    # else:
-    #   image = False
-    #   imageLocation = ""
+      imageLocation = f.filename
+      print(imageLocation)
+    else:
+      image = False
+      imageLocation = ""
     
     newBoard = Board(
       title=title,
       faculty=faculty,
-      dept=dept
-      # image=image,
-      # imageLocation=imageLocation
+      dept=dept,
+      image=image,
+      imageLocation=imageLocation
     )
     
     print("New Board Title:" + newBoard.title)
@@ -920,9 +922,11 @@ def delete():
     db.session.delete(p)
   
   for b in boards:
+    os.remove(os.path.join(app.config['BOARD_FOLDER'], p.imageLocation))
     db.session.delete(b)
     
   for u in users:
+    os.remove(os.path.join(app.config['PROFILE_FOLDER'], p.imageLocation))
     db.session.delete(u)
   
   

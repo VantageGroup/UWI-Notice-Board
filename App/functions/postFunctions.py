@@ -51,12 +51,4 @@ class PostForm(FlaskForm):
     submit = SubmitField("Submit")
     schedulePostDate = DateTimeLocalField('When would you like this post to be published?', format= '%Y-%m-%dT%H:%M', validators =[DataRequired()])
     scheduledDeleteDate = DateTimeLocalField('When would you like this post to be removed?', format= '%Y-%m-%dT%H:%M')
-    
 
-
-# class SearchForm(FlaskForm):
-#     search = StringField("searchCriteria")
-#     submit = SubmitField("Submit")
-
- 
- 

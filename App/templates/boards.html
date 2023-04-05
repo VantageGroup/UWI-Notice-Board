@@ -116,7 +116,11 @@
                   <a href="{{ url_for('board', bID = board.id ) }}">
                     <div class="board-card">
                       <div class="board-card-image">
-                        <img src="static/images/dark.jpg">
+                        {% if board.image == talse %}
+                          <img src="static/images/dark.jpg">
+                        {% else %}
+                          <img src="{{ url_for('get_board_image', filename = board.imageLocation)  }}">
+                        {% endif %}
                       </div>
                       <div class="board-card-content">
                         <div class="board-title">

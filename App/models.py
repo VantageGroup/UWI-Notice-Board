@@ -110,8 +110,8 @@ class Board(db.Model):
   title = db.Column(db.String(64), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=True)
-  # image = db.Column(db.Boolean)
-  # imageLocation = db.Column(db.String(256), nullable=True)
+  image = db.Column(db.Boolean)
+  imageLocation = db.Column(db.String(256), nullable=True)
   subscribers = db.Column(db.Integer, nullable=True)
   
   posts = db.relationship('Post', backref='b')
@@ -122,9 +122,9 @@ class Board(db.Model):
       "title": self.title,
       "faculty": self.faculty,
       "dept": self.dept,
-      # "image": self.image,
-      # "imageLocation": self.imageLocation
-     "subscribers": self.subscribers
+      "image": self.image,
+      "imageLocation": self.imageLocation,
+      "subscribers": self.subscribers
     }
    
     
