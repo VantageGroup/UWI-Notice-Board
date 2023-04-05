@@ -237,7 +237,7 @@ def feed(uID, sortF = None, sortD = None):
   posts = [post.toDict() for post in posts]
   print(posts)
 
-  return render_template('index.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
+  return render_template('feed.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
 
 '''App Routes'''
 
@@ -885,7 +885,7 @@ def signupAction():
       email=data['email'],
       faculty=data['faculty'],
       dept=data['dept'],
-      isAdmin = False
+      isAdmin = True
     )
         
     newuser.set_password(data['password'])
