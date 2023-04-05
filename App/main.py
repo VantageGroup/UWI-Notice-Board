@@ -71,6 +71,9 @@ from datetime import datetime, date
 import datetime
 import pytz
 
+from functools import wraps
+from flask import abort
+
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -127,6 +130,16 @@ Faculty.initialize()
 
 
 '''Functions'''
+
+# Decorator function to restrict route access to admins
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.isAdmin:
+            abort(403) # Forbidden
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 # Retrieve all Posts from the Database
 def RetrieveAllPosts():
@@ -352,6 +365,7 @@ def cal():
 # Create a Post Route (render form and take input)
 @app.route('/board<bID>=create-post', methods=['GET'])
 @login_required
+@admin_required
 def createPost(bID):
   form = PostForm()
     
@@ -362,6 +376,7 @@ def createPost(bID):
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
 @login_required
+@admin_required
 def editPost(bID, pID):
   post = db.session.get(Post, pID)
 
@@ -372,7 +387,8 @@ def editPost(bID, pID):
     # photo = 
     startDate = post.startDate,
     endDate = post.endDate,
-    schedulePostDate = post.schedulePostDate
+    schedulePostDate = post.schedulePostDate,
+    scheduledDeleteDate = post.scheduledDeleteDate
   )
     
   return render_template("form.html",
@@ -501,6 +517,7 @@ def uploadPost(bID):
 # Upload Edited Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['POST'])
 @login_required
+@admin_required
 def uploadEdittedPost(bID, pID):
   board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
@@ -551,11 +568,10 @@ def uploadEdittedPost(bID, pID):
     else:
       postNow = True
 
-    if (scheduledDeleteDateObj >= creation):
-      deleteNow = True
-
-    else:
-      deleteNow = False  
+    if (creation  >= scheduledDeleteDateObj):
+      db.session.delete(post)
+      db.session.commit
+      
     
     if (form.photo.data !=  None):
       image = True
@@ -680,6 +696,8 @@ def board(bID):
 
 # Create a Board Route
 @app.route('/create-board', methods=['GET'])
+@login_required
+@admin_required
 def createBoard():
   form = BoardForm()
   faculty = RetrieveFacultyList()
@@ -694,6 +712,8 @@ def createBoard():
 
 # Edit a Board Route
 @app.route('/edit-board<bID>', methods=['GET'])
+@login_required
+@admin_required
 def editBoard(bID):
   board = db.session.get(Board, bID)
   
@@ -715,6 +735,8 @@ def editBoard(bID):
 
 # Upload Board Route
 @app.route('/create-board', methods=['POST'])
+@login_required
+@admin_required
 def uploadBoard():
   form = BoardForm()
   
@@ -765,6 +787,8 @@ def uploadBoard():
 
 # Upload Editted Board Record Route
 @app.route('/edit-board<bID>', methods=['POST'])
+@login_required
+@admin_required
 def uploadEdittedBoard(bID):
   board = Board.query.get(bID)
   form = BoardForm()
@@ -860,7 +884,8 @@ def signupAction():
       username=data['username'],
       email=data['email'],
       faculty=data['faculty'],
-      dept=data['dept']
+      dept=data['dept'],
+      isAdmin = False
     )
         
     newuser.set_password(data['password'])

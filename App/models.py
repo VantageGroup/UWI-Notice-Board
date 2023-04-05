@@ -136,7 +136,7 @@ class User(db.Model, UserMixin):
   password = db.Column(db.String(64), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=False)
-  #isAdmin = db.Column(db.Boolean, nullable=True)
+  isAdmin = db.Column(db.Boolean, nullable=True)
   
   def toDict(self):
     return{
@@ -145,7 +145,7 @@ class User(db.Model, UserMixin):
       "password": self.password,
       "faculty": self.faculty,
       "dept": self.dept,
-      #"isAdmin" : self.isAdmin
+      "isAdmin" : self.isAdmin
     }
   
   
@@ -280,7 +280,7 @@ class FacultyDept(db.Model):
       )
       
       facList.append(fac)
-    
+  
     return facList
 
     
