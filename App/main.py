@@ -834,7 +834,7 @@ def join(bID,uID):
 def login():
   form = LoginForm()
     
-  return render_template('login.html', form=form)
+  return render_template('newlogin.html', form=form)
 
 # Upload Login Route
 @app.route('/login', methods=['POST'])
@@ -860,7 +860,7 @@ def loginAction():
 def signup():
   signup = SignUpForm()
     
-  return render_template('signup.html', form=signup)
+  return render_template('newsignup.html', form=signup)
 
 # Upload Signup Route
 @app.route('/signup', methods=['POST'])
@@ -873,8 +873,6 @@ def signupAction():
     newuser = User(
       username=data['username'],
       email=data['email'],
-      faculty=data['faculty'],
-      dept=data['dept'],
       isAdmin = True
     )
         
