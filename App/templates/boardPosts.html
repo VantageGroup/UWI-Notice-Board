@@ -110,6 +110,7 @@
       <!-- <div class="for-date">
               <p class="the-date">🟢Today</p> -->
       {% block content %}
+      <h2 class="search-message-post">{{board.title}}</h2>
       {% for post in posts %}
       {% if post.postNow == True %}
       <div class="card">

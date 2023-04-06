@@ -112,7 +112,7 @@ class Board(db.Model):
   dept = db.Column(db.String(8), nullable=True)
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
-  subscribers = db.Column(db.Integer, nullable=True)
+  subscribers = db.Column(db.Integer, nullable=True, default = 1)
   
   posts = db.relationship('Post', backref='b')
   
@@ -171,14 +171,14 @@ class Subscriber(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-  # isAdmin = db.Column(db.Boolean)
+  isAdmin = db.Column(db.Boolean)
   
   def toDict(self):
     return{
       "id": self.id,
       "board": self.board,
-      "user": self.user
-      # "isAdmin": self.isAdmin
+      "user": self.user,
+      "isAdmin": self.isAdmin
     }
 
 '''#'''

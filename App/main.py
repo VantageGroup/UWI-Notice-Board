@@ -71,6 +71,8 @@ import pytz
 from functools import wraps
 from flask import abort
 
+from sqlalchemy import desc
+
 
 def create_app():
   app = Flask(__name__, static_url_path='/static')
@@ -170,15 +172,32 @@ def RetrieveDepartmentList():
 # Join Button
 @app.route('/join<bID>=<uID>', methods=['GET'])
 def join(bID,uID):
-   
-  subscriber = Subscriber(
-    board = bID,
-    user = uID
-  )
 
-  db.session.add(subscriber)
-  db.session.commit()
-  return render_template("index.html")
+  subs = Subscriber.query.all()
+  alreadySubscribed = False #boolean to check if user is already subscribed
+
+
+  if (Subscriber.query.filter_by(board=bID, user=uID).first()):
+      alreadySubscribed = True
+
+  if alreadySubscribed == True:
+   print("The user is already subscribed")
+   
+
+  else:
+   subscriber = Subscriber(
+    board = bID,
+    user = uID,
+    isAdmin = False
+    )
+   db.session.add(subscriber)
+   board = db.session.get(Board,bID)
+   board.subscribers = board.subscribers + 1
+   db.session.commit()
+
+
+
+  return redirect(url_for('board',bID=bID))
 
 # Subscriber Table
 @app.route('/subscribers', methods=['GET'])
@@ -638,17 +657,22 @@ def boards(sortF = None, sortD = None):
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
 
-  boards = Board.query.all()
+  # boards = Board.query.all()
 
-  subs = Subscriber.query.all()
-  #boards = [entry.toDict() for entry in boards]
+  # subs = Subscriber.query.all()
+  # #boards = [entry.toDict() for entry in boards]
 
-  for subscriber in subs:
-    for board in boards:
-      board.subscribers = 0
-      if(subscriber.board == board.id):
-        board.subscribers = board.subscribers + 1
-        db.session.commit()
+  # for subscriber in subs:
+  #   for board in boards:
+  #     board.subscribers = 0
+
+  #     if (Subscriber.query.filter_by(board=board.id, user=current_user.id).first()):
+  #         print("Already subscribed")
+
+  #     else:
+  #         if(subscriber.board == board.id):
+  #           board.subscribers = board.subscribers + 1
+  #           db.session.commit()
   
   if sortF != None:
     print ("Sorting by Faculty: " + sortF)
@@ -791,6 +815,21 @@ def uploadBoard():
     print("New Board Title:" + newBoard.title)
     
     db.session.add(newBoard)
+    db.session.commit()
+
+    latest_entry = Board.query.order_by(Board.id.desc()).first()
+
+    bID = latest_entry.id
+
+    print(bID)
+    print(current_user.username) 
+
+    subscriber = Subscriber(
+    board = bID,
+    user = current_user.id,
+    isAdmin = True
+    )
+    db.session.add(subscriber)
     db.session.commit()
   
   return redirect(url_for('boards'))
