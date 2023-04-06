@@ -175,7 +175,7 @@
           {% for fac in faculty %}
           <option value="{{ fac.label }}" {% set value=fac.label + "+" + "None" %} {% if value==choice %} selected {%
             elif choice is none and fac.label=="STA" %} selected {% endif %}>
-            {{ fac.title }}"{{ choice}}"
+            {{ fac.title }}
           </option>
 
           {% if department | selectattr('fLabel','equalto', fac.label) | list | length > 1 %}

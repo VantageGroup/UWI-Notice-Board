@@ -45,6 +45,7 @@ from models import (
 )
 from models import (
   Post, 
+  Event,
   Board, 
   User,
   Subscriber,
@@ -116,7 +117,6 @@ migrate = get_migrate(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-  #return db.session.get(User, user_id)
   return User.query.get(int(user_id))
 
 @app.context_processor
@@ -127,9 +127,6 @@ def base():
 FacultyDept.initialize()
 Faculty.initialize()
 
-
-'''Functions'''
-
 # Decorator function to restrict route access to admins
 def admin_required(f):
     @wraps(f)
@@ -139,6 +136,8 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+'''Functions'''
 
 # Retrieve all Posts from the Database
 def RetrieveAllPosts():
@@ -154,64 +153,27 @@ def RetrieveAllBoards():
   
   return boards
 
-#
+# Retrieve all Facuties from the Database
 def RetrieveFacultyList():
   list = Faculty.query.all()
   list = [entry.toDict() for entry in list]
   
   return list
 
-#
+# Retrieve all Departments from the Database
 def RetrieveDepartmentList():
   list = FacultyDept.query.all()
   list = [entry.toDict() for entry in list]
   
   return list
-#############################################
 
-# Join Button
-@app.route('/join<bID>=<uID>', methods=['GET'])
-def join(bID,uID):
-
-  subs = Subscriber.query.all()
-  alreadySubscribed = False #boolean to check if user is already subscribed
-
-
-  if (Subscriber.query.filter_by(board=bID, user=uID).first()):
-      alreadySubscribed = True
-
-  if alreadySubscribed == True:
-   print("The user is already subscribed")
-   
-
-  else:
-   subscriber = Subscriber(
-    board = bID,
-    user = uID,
-    isAdmin = False
-    )
-   db.session.add(subscriber)
-   board = db.session.get(Board,bID)
-   board.subscribers = board.subscribers + 1
-   db.session.commit()
-
-
-
-  return redirect(url_for('board',bID=bID))
-
-# Subscriber Table
-@app.route('/subscribers', methods=['GET'])
-def get_subs():
-  subs = Subscriber.query.all()
-  return json.dumps([sub.toDict() for sub in subs])
-
-# Finds boards based on user id 
+# Retrieve User Subscribed Boards
 def RetrieveUserBoards(uID):
   boards = Subscriber.query.filter_by(user=uID)
   boards = [entry.toDict() for entry in boards]
   return boards
 
-# Sub Feed
+# Retrieve User Post Feed
 def RetrieveFeedSub(uID):
   posts = []
   boards = RetrieveUserBoards(uID)
@@ -229,28 +191,8 @@ def RetrieveFeedSub(uID):
   
   return posts
 
-# Feed Route
-@app.route('/feed<uID>', methods=['GET'])
-@app.route('/|<sortF>', methods=['GET', 'POST'])
-@app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
-@login_required
-def feed(uID, sortF = None, sortD = None):
-  posts = []
-  faculty = RetrieveFacultyList()
-  department = RetrieveDepartmentList()
-  boards = Subscriber.query.filter_by(user=uID)
-  
-  all_posts = Post.query.all()
+#############################################
 
-  for board in boards:
-    for post in all_posts:
-      if post.bID == board.board:
-        posts.append(post)
-
-  posts = [post.toDict() for post in posts]
-  print(posts)
-
-  return render_template('feed.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
 
 '''App Routes'''
 
@@ -303,6 +245,29 @@ def home(sortF = None, sortD = None):
  
  else:
   return redirect(url_for('login'))
+
+# Feed Route
+@app.route('/feed<uID>', methods=['GET'])
+@app.route('/feed|<sortF>', methods=['GET', 'POST'])
+@app.route('/feed|<sortF>,<sortD>', methods=['GET', 'POST'])
+@login_required
+def feed(uID, sortF = None, sortD = None):
+  posts = []
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
+  boards = Subscriber.query.filter_by(user=uID)
+  
+  all_posts = Post.query.all()
+
+  for board in boards:
+    for post in all_posts:
+      if post.bID == board.board:
+        posts.append(post)
+
+  posts = [post.toDict() for post in posts]
+  print(posts)
+
+  return render_template('feed.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
 
 # Retrieve Post Uploaded Image
 @app.route('/pimage<filename>')
@@ -388,6 +353,8 @@ def cal():
 
   return render_template("cal.html", events=events)
 
+#############################################
+
 
 '''Post Related Routes'''
 
@@ -408,8 +375,8 @@ def createPost(bID):
 @admin_required
 def editPost(bID, pID):
   post = db.session.get(Post, pID)
+  print (db.session.get(Post, pID))
 
-  
   form = PostForm(
     title = post.title,
     message = post.message,
@@ -462,28 +429,20 @@ def uploadPost(bID):
       startDateObj = datetime.datetime.now()
       endDateObj = datetime.datetime.now()
 
-
-
-
     if (schedulePostDate != ''):
       schedulePostDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
-
     else:
       schedulePostDateObj = datetime.datetime.now()
 
     if (scheduledDeleteDate != ''):
       scheduledDeleteDateObj = datetime.datetime.strptime(scheduledDeleteDate, '%Y-%m-%dT%H:%M')
-
     else:
       scheduledDeleteDateObj = None
 
     if (schedulePostDateObj > creation):
       postNow = False
-
     else:
       postNow = True
-
-  
     
     if (form.photo.data !=  None):
       image = True
@@ -520,28 +479,24 @@ def uploadPost(bID):
       postNow = postNow,
       deleteNow = deleteNow
     )
-    
-    print("New Post Title:" + newPost.title + " to board: " + newPost.bID)
-    print("New Post Message:" + newPost.message)
-    print(newPost.dateCreated)
-    
     db.session.add(newPost)
     db.session.commit()
 
-    events = [ {
-      'title' : title,
-      'start' : startDateObj,
-      'end' : endDateObj,
-      'url' : 'https://youtube.com'
-      }
-    ]
+    latest_entry = Post.query.order_by(Post.id.desc()).first()
+    
+    newEvent = Event(
+      post = latest_entry.id,
+      startDate = startDateObj,
+      endDate = endDateObj,
+      url = 'url_for(post, )'
+    )
+    db.session.add(newEvent)
+    db.session.commit()
+
   else:
     print("Form did not validate on submit")  
   
   return  redirect(url_for('board', bID=bID))
-
-
-
 
 # Upload Edited Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['POST'])
@@ -580,28 +535,20 @@ def uploadEdittedPost(bID, pID):
       startDateObj = datetime.datetime.now()
       endDateObj = datetime.datetime.now()
 
+
     if (schedulePostDate != ''):
       schedulePostDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
-
     else:
       schedulePostDateObj = datetime.datetime.now()
-
 
     if (scheduledDeleteDate != ''):
       scheduledDeleteDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
 
-
     if (schedulePostDateObj > creation):
       postNow = False
-
     else:
       postNow = True
-
-    if (creation  >= scheduledDeleteDateObj):
-      db.session.delete(post)
-      db.session.commit
       
-    
     if (form.photo.data !=  None):
       image = True
       
@@ -627,22 +574,23 @@ def uploadEdittedPost(bID, pID):
     post.startDate=startDateObj
     post.endDate=endDateObj
     
-    print("Editted Post Title:" + post.title)
-    print("Editted Post Message:" + post.message)
-    
     db.session.commit()
 
-    events = [ {
-      'title' : title,
-      'start' : startDateObj,
-      'end' : endDateObj,
-      'url' : 'https://youtube.com'
-      }
-    ]
+    event = Event.query.filter_by(post=post.id).first()
+    print (event)
+    
+    event = Event(
+      startDate = startDateObj,
+      endDate = endDateObj,
+    )
+    
+    db.session.commit()
   else:
     print("Form did not validate on submit")  
   
   return  redirect(url_for('board', bID=bID))
+
+#############################################
 
 
 '''Board Related Routes'''
@@ -656,29 +604,6 @@ def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
-
-  # boards = Board.query.all()
-
-  # subs = Subscriber.query.all()
-  # #boards = [entry.toDict() for entry in boards]
-
-  # for subscriber in subs:
-  #   for board in boards:
-  #     board.subscribers = 0
-
-  #     if (Subscriber.query.filter_by(board=board.id, user=current_user.id).first()):
-  #         print("Already subscribed")
-
-  #     else:
-  #         if(subscriber.board == board.id):
-  #           board.subscribers = board.subscribers + 1
-  #           db.session.commit()
-  
-  if sortF != None:
-    print ("Sorting by Faculty: " + sortF)
-    
-  if sortD != None:
-    print ("Sorting by Department: " + sortD)
   
   return render_template('boards.html', 
     boards=boards, 
@@ -754,8 +679,8 @@ def editBoard(bID):
   form = BoardForm(
     title=board.title
   )
+  
   choice = str(board.faculty) + "+" + str(board.dept)
-  print(choice)
   
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
@@ -811,23 +736,16 @@ def uploadBoard():
       image=image,
       imageLocation=imageLocation
     )
-    
-    print("New Board Title:" + newBoard.title)
-    
     db.session.add(newBoard)
     db.session.commit()
 
+
     latest_entry = Board.query.order_by(Board.id.desc()).first()
 
-    bID = latest_entry.id
-
-    print(bID)
-    print(current_user.username) 
-
     subscriber = Subscriber(
-    board = bID,
-    user = current_user.id,
-    isAdmin = True
+      board = latest_entry.id,
+      user = current_user.id,
+      isAdmin = True
     )
     db.session.add(subscriber)
     db.session.commit()
@@ -860,30 +778,53 @@ def uploadEdittedBoard(bID):
       
       print("Faculty = " + faculty)
     
-    # if (form.photo.data !=  None):
-    #   image = True
+    if (form.photo.data !=  None):
+      image = True
       
-    #   f = request.files['photo']
-    #   f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
+      f = request.files['photo']
+      f.save(os.path.join(app.config['POST_FOLDER'], f.filename))
       
-    #   imageLocation = f.filename
-    #   print(imageLocation)
-    # else:
-    #   image = False
-    #   imageLocation = ""
+      imageLocation = f.filename
+      print(imageLocation)
+    else:
+      image = False
+      imageLocation = ""
     
     board.title = title
     board.faculty = faculty
     board.dept = dept
-      # image=image,
-      # imageLocation=imageLocation
+    board.image = image,
+    board.imageLocation = imageLocation
     
-    print("New Board Title:" + board.title)
-    
-    # db.session.add(newBoard)
     db.session.commit()
   
   return redirect(url_for('boards'))
+
+# Join Board Route
+@app.route('/join<bID>=<uID>', methods=['GET'])
+def join(bID,uID):
+  alreadySubscribed = False
+
+  if (Subscriber.query.filter_by(board=bID, user=uID).first()):
+    print("The user is already subscribed")
+  
+  else:
+    subscriber = Subscriber(
+      board = bID,
+      user = uID,
+      isAdmin = False
+    )
+    
+    db.session.add(subscriber)
+    
+    board = db.session.get(Board,bID)
+    board.subscribers = board.subscribers + 1
+    
+    db.session.commit()
+
+  return redirect(url_for('board',bID=bID))
+
+#############################################
 
 
 '''User Related Routes'''
@@ -914,7 +855,7 @@ def loginAction():
     flash('Invalid credentials')
     return redirect(url_for('login'))
   
-# SIgnup Form Route
+# Signup Form Route
 @app.route('/signup', methods=['GET'])
 def signup():
   signup = SignUpForm()
@@ -948,12 +889,15 @@ def signupAction():
   flash('Error invalid input!')
   return redirect(url_for('signup'))
 
-#log out a user
-
+# Logout a User
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('login'))
+  
+#############################################
+
+
 '''Remove from Production'''
 
 # Temp Route to purge all Databases
@@ -998,7 +942,13 @@ def get_user():
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
 
+# Subscriber Table
+@app.route('/subscribers', methods=['GET'])
+def get_subs():
+  subs = Subscriber.query.all()
+  return json.dumps([sub.toDict() for sub in subs])
 
+#############################################
 
 
 if __name__ == '__main__':

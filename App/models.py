@@ -94,6 +94,7 @@ class Event(db.Model):
   post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
+  url = db.Column(db.String, nullable=False)
   
   def toDict(self):
     return{

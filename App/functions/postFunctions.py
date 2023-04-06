@@ -49,6 +49,6 @@ class PostForm(FlaskForm):
     startDate = DateField('Event Start Date', format= '%Y-%m-%d')
     endDate = DateField('Event End Date', format= '%Y-%m-%d')
     submit = SubmitField("Submit")
-    schedulePostDate = DateTimeLocalField('When would you like this post to be published?', format= '%Y-%m-%dT%H:%M', validators =[DataRequired()])
+    schedulePostDate = DateTimeLocalField('When would you like this post to be published?', format= '%Y-%m-%dT%H:%M')
     scheduledDeleteDate = DateTimeLocalField('When would you like this post to be removed?', format= '%Y-%m-%dT%H:%M')
 
