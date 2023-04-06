@@ -1,4 +1,3 @@
-#Test
 import json
 import os
 import requests
@@ -907,7 +906,7 @@ def signupAction():
 @app.route('/logout')
 def logout():
     logout_user()
-    return 'You have been logged out.'
+    return redirect(url_for('login'))
 '''Remove from Production'''
 
 # Temp Route to purge all Databases
