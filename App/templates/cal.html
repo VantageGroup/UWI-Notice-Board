@@ -117,37 +117,7 @@
       </form>
     </div>
 
-    <div class="icons-right">
-      <div class="dropdown">
-        <button class="dropbtn">
-          {% if sortF %}
-          {{ sortF }}
-          {% else %}
-          Faculty
-          {% endif %}
-        </button>
-        <div class="dropdown-content">
-          {% for fac in faculty %}
-          <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
-          {% endfor %}
-        </div>
-      </div>
-      <div class="dropdown">
-        <button class="dropbtn">
-          {% if sortD %}
-          {{ sortD }}
-          {% else %}
-          Department
-          {% endif %}
-        </button>
-        <div class="dropdown-content">
-          {% for dept in department %}
-          {% if dept.fLabel == sortF %}
-          <a href="{{ url_for('home', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
-          {% endif %}
-          {% endfor %}
-        </div>
-      </div>
+    <div class="icons-right"></div>
   </header>
   <main>
     <div class="side-bar">

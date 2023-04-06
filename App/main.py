@@ -302,10 +302,14 @@ def get_user_image(filename):
 
 #Search Posts
 @app.route('/search', methods=["POST"])
+@app.route('/search|sortF=<sortF>', methods=['GET', 'POST'])
+@app.route('/search|sortF=<sortF>,sortD?=<sortD>', methods=['GET', 'POST'])
 @login_required
-def search():
+def search(sortF = None, sortD = None):
   postsDb = Post.query
   boardsDb = Board.query
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
   
   search = request.form.get('searchCriteria')
   
@@ -332,7 +336,11 @@ def search():
   return render_template('search.html',
     searched = search, 
     boards = foundBoards,
-    posts = foundPosts
+    posts = foundPosts,
+    sortF = sortF,
+    sortD = sortD,
+    faculty=faculty,
+    department=department
   )
 
 # Calendar
