@@ -57,7 +57,6 @@ class Post(db.Model):
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
   
-  
   event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
@@ -103,7 +102,7 @@ class Event(db.Model):
       "startDate" : self.startDate,
       "endDate" : self.endDate
     }
-  
+
 
 '''#'''
 class Board(db.Model):
@@ -149,9 +148,6 @@ class User(db.Model, UserMixin):
       "isAdmin" : self.isAdmin
     }
   
-  
-
-
   #hashes the password parameter and stores it in the object
   def set_password(self, password):
     """Create hashed password."""

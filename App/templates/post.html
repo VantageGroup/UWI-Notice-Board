@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>UWI Notice Board</title>
+  <link href="static/css/page.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/board.css" rel="stylesheet" type="text/css" />
+   <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+  
+<body>
+
+  <header class="header">
+    <div class="logo left">
+      <a href="{{ url_for('home') }}">
+        <h3>UWI Notice Board</h3>
+      </a>
+    </div>
+     
+    <div class="search center">
+      <form method="POST" action="{{ url_for('search') }}" class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
+      </form>
+    </div>
+
+     <div class="icons-right"> 
+       <div class="dropdown">
+          <button class="dropbtn">
+            {% if sortF %}
+              {{ sortF }}
+            {% else %}
+              Faculty
+            {% endif %}
+          </button>
+          <div class="dropdown-content">
+            {% for fac in faculty %}
+              <a href="{{ url_for('boards', sortF = fac.label )  }}"> {{ fac.title }} </a>
+            {% endfor %}
+          </div>
+        </div>
+       <div class="dropdown">
+          <button class="dropbtn">
+            {% if sortD %}
+              {{ sortD }}
+            {% else %}
+              Department
+            {% endif %}
+          </button>
+          <div class="dropdown-content">
+            {% for dept in department %}
+              {% if dept.fLabel == sortF %}
+                <a href="{{ url_for('boards', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+     </div>
+      <div class="create">
+        <a href="{{ url_for('createBoard') }}">
+          <button class="btn btn-outline-secondary" type="submit">Create Board</button>
+        </a>
+      </div>
+  </header>
+      <main>
+          <div class="side-bar">
+            <div class="nav">
+              <a href="{{ url_for('home') }}" class="nav-link">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+              </a>
+              <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}" class="nav-link">
+                <i class="material-icons">explore</i>
+                <span>Feed</span>
+              </a>
+              <a href="{{ url_for('boards') }}" class="nav-link active">
+                <i class="material-icons">collections</i>
+                <span>Boards</span>
+              </a>
+              <a href="{{ url_for('cal') }}" class="nav-link">
+                <i class="material-icons">date_range</i>
+                <span>Calendar</span>
+              </a>
+            </div>
+            <hr>
+            <!-- <h4>Recommended</h4>
+            <a class="nav-link">
+              <i class="material-icons">desktop_windows</i>
+              <span>DCIT</span>
+            </a>
+            <a class="nav-link">
+              <i class="material-icons">science</i>
+              <span>Chemisty</span>
+            </a>
+            <a class="nav-link">
+              <i class="material-icons">science</i>
+              <span>Physics</span>
+            </a>
+            <a class="nav-link">
+              <i class="material-icons">science</i>
+              <span>Life Sciences</span>
+            </a>
+            <a class="nav-link">
+              <i class="material-icons">exposure</i>
+              <span>Math</span>
+            </a> -->
+            <div>
+                <button onclick="window.location.href='/logout'">Log Out</button>
+              
+                <a href="window.location.href='/logout'" class="nav-link active">
+                    <i class="material-icons"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+          </div>
+          <div class="container-board">
+            {% block content %}
+            
+            <div>
+                {{ post.title }} <br>
+            </div>
+
+            <div>
+                {{ post.schedulePostDate }} <br>
+            </div>
+
+            <div>
+                {{ post.message }}
+            </div>
+
+            {% if post.immage %}
+                <div>
+                    {{ post.imageLocation }}
+                </div>
+            {% endif %}
+
+            {% endblock %}
+          </div>
+      </main>
+  <!--<script src="script.js"></script>-->
+</body>
+</html>

@@ -36,7 +36,14 @@ from flask_ckeditor import CKEditor
 from sqlalchemy.exc import OperationalError, IntegrityError
 from werkzeug.utils import secure_filename
 
-from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+from flask_login import (
+  LoginManager, 
+  current_user, 
+  login_user, 
+  login_required, 
+  logout_user
+)
+
 from models import (
   db, 
   get_migrate, 
@@ -46,6 +53,7 @@ from models import (
 from models import (
   Post, 
   Event,
+  Follow,
   Board, 
   User,
   Subscriber,
@@ -247,15 +255,15 @@ def home(sortF = None, sortD = None):
   return redirect(url_for('login'))
 
 # Feed Route
-@app.route('/feed<uID>', methods=['GET'])
+@app.route('/feed', methods=['GET'])
 @app.route('/feed|<sortF>', methods=['GET', 'POST'])
 @app.route('/feed|<sortF>,<sortD>', methods=['GET', 'POST'])
 @login_required
-def feed(uID, sortF = None, sortD = None):
+def feed(sortF = None, sortD = None):
   posts = []
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
-  boards = Subscriber.query.filter_by(user=uID)
+  boards = Subscriber.query.filter_by(user=current_user.id)
   
   all_posts = Post.query.all()
 
@@ -267,7 +275,13 @@ def feed(uID, sortF = None, sortD = None):
   posts = [post.toDict() for post in posts]
   print(posts)
 
-  return render_template('feed.html', posts=posts,sortF=sortF, sortD=sortD, faculty=faculty, department=department)
+  return render_template('feed.html', 
+    posts=posts,
+    sortF=sortF, 
+    sortD=sortD, 
+    faculty=faculty, 
+    department=department
+  )
 
 # Retrieve Post Uploaded Image
 @app.route('/pimage<filename>')
@@ -590,6 +604,24 @@ def uploadEdittedPost(bID, pID):
   
   return  redirect(url_for('board', bID=bID))
 
+# Follow a post
+@app.route('/follow<pID>', methods=['GET'])
+@login_required
+@admin_required
+def follow(pID):
+  if (Follow.query.filter_by(post=pID, user=current_user.id).first()):
+    print("The user is already following post")
+  else:
+    following = Follow(
+      post = pID,
+      user = current_user.id
+    )
+    
+    db.session.add(following)
+    db.session.commit()
+
+  return redirect(url_for('feed'))
+
 #############################################
 
 
@@ -801,17 +833,14 @@ def uploadEdittedBoard(bID):
   return redirect(url_for('boards'))
 
 # Join Board Route
-@app.route('/join<bID>=<uID>', methods=['GET'])
-def join(bID,uID):
-  alreadySubscribed = False
-
-  if (Subscriber.query.filter_by(board=bID, user=uID).first()):
+@app.route('/join<bID>', methods=['GET'])
+def join(bID):
+  if (Subscriber.query.filter_by(board=bID, user=current_user.id).first()):
     print("The user is already subscribed")
-  
   else:
     subscriber = Subscriber(
       board = bID,
-      user = uID,
+      user = current_user.id,
       isAdmin = False
     )
     

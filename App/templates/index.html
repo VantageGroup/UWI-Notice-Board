@@ -84,7 +84,9 @@
                 <span>Calendar</span>
               </a>
             </div>
+
             <hr>
+            
             <!-- <h4>Recommended</h4>
             <a class="nav-link">
               <i class="material-icons">desktop_windows</i>
@@ -107,7 +109,19 @@
               <span>Math</span>
             </a> -->
             <div>
+              <h4>-Username-</h4>
+
               <button onclick="window.location.href='/logout'">Log Out</button>
+
+              <a href="" class="nav-link">
+                <i class="material-icons">collections_bookmark</i>
+                <span>Saved Boards</span>
+              </a>
+              
+              <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="material-icons">logout</i>
+                <span>Logout</span>
+              </a>
             </div>
           </div>
           <div class="container-post"> <!-- Open container -->
@@ -152,7 +166,9 @@
                           </div>
                           <div class="card-bot-mid">
                             <div class="card-footer">
-                              <button>Leave</button>
+                              <a href="{{ url_for('follow', pID = post.id )  }}">
+                                <span>Leave</span>
+                              </a>
                             </div>
                           </div>
                           <div class="card-bot-right-left">
