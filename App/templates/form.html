@@ -54,13 +54,13 @@
           <span>Boards</span>
         </a>
 
-        <a class="nav-link">
-          <i class="material-icons">collections_bookmark</i>
-          <span>Boards Saved</span>
+        <a href="{{ url_for('cal') }}" class="nav-link">
+          <i class="material-icons">date_range</i>
+          <span>Calendar</span>
         </a>
       </div>
       <hr>
-      <h4>Recommended</h4>
+      <!-- <h4>Recommended</h4>
       <a class="nav-link">
         <i class="material-icons">desktop_windows</i>
         <span>DCIT</span>
@@ -80,7 +80,10 @@
       <a class="nav-link">
         <i class="material-icons">exposure</i>
         <span>Math</span>
-      </a>
+      </a> -->
+      <div>
+        <button onclick="window.location.href='/logout'">Log Out</button>
+      </div>
     </div>
     {% block content %}
     {% if formPost %}

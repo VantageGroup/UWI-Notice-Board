@@ -41,9 +41,9 @@
               <span>Home</span>
             </a>
 
-            <a class="nav-link">
+            <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}" class="nav-link">
               <i class="material-icons">explore</i>
-              <span>Explore</span>
+              <span>Feed</span>
             </a>
 
             <a href="{{ url_for('boards') }}" class="nav-link">
@@ -51,15 +51,15 @@
               <span>Boards</span>
             </a>
 
-            <a class="nav-link">
-              <i class="material-icons">collections_bookmark</i>
-              <span>Boards Saved</span>
+            <a href="{{ url_for('cal') }}" class="nav-link">
+              <i class="material-icons">date_range</i>
+              <span>Calendar</span>
             </a>
           </div>
 
           <hr>
 
-          <h4>Recommended</h4>
+          <!-- <h4>Recommended</h4>
 
           <a class="nav-link">
             <i class="material-icons">desktop_windows</i>
@@ -84,7 +84,10 @@
           <a class="nav-link">
             <i class="material-icons">exposure</i>
             <span>Math</span>
-          </a>
+          </a> -->
+          <div>
+            <button onclick="window.location.href='/logout'">Log Out</button>
+          </div>
         </div>
           
           {% block content %}
