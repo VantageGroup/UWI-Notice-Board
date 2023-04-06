@@ -893,7 +893,7 @@ def uploadEdittedBoard(bID):
 def login():
   form = LoginForm()
     
-  return render_template('login.html', form=form)
+  return render_template('newlogin.html', form=form)
 
 # Upload Login Route
 @app.route('/login', methods=['POST'])
@@ -914,12 +914,12 @@ def loginAction():
     flash('Invalid credentials')
     return redirect(url_for('login'))
   
-# SIgnup Form Route
+# Signup Form Route
 @app.route('/signup', methods=['GET'])
 def signup():
   signup = SignUpForm()
     
-  return render_template('signup.html', form=signup)
+  return render_template('newsignup.html', form=signup)
 
 # Upload Signup Route
 @app.route('/signup', methods=['POST'])
@@ -932,8 +932,6 @@ def signupAction():
     newuser = User(
       username=data['username'],
       email=data['email'],
-      faculty=data['faculty'],
-      dept=data['dept'],
       isAdmin = True
     )
         
@@ -948,7 +946,7 @@ def signupAction():
   flash('Error invalid input!')
   return redirect(url_for('signup'))
 
-#log out a user
+# Logout a user
 
 @app.route('/logout')
 def logout():
@@ -997,9 +995,6 @@ def dropAll():
 def get_user():
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
-
-
-
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True, port=8080)

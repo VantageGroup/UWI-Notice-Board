@@ -41,13 +41,13 @@ class SignUpForm(FlaskForm):
     email = StringField('Email', validators=[Email(), InputRequired()])
     password = PasswordField('New Password', validators=[InputRequired(), EqualTo('confirm', message='Passwords must match')])
     confirm  = PasswordField('Repeat Password')
-    faculty = StringField('Faculty', validators=[InputRequired()])
-    dept = StringField('Department', validators=[InputRequired()])
-    submit = SubmitField('Sign Up', render_kw={'class': 'btn waves-effect waves-light white-text'})
+    # faculty = StringField('Faculty', validators=[InputRequired()])
+    # dept = StringField('Department', validators=[InputRequired()])
+    submit = SubmitField('Sign Up')
 
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired()])
     password = PasswordField('New Password', validators=[InputRequired()])
-    submit = SubmitField('Login', render_kw={'class': 'btn waves-effect waves-light white-text'})
+    submit = SubmitField('Login')
 

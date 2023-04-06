@@ -134,8 +134,8 @@ class User(db.Model, UserMixin):
   username = db.Column(db.String(64), unique=True, nullable=False)
   email = db.Column(db.String(64), nullable=False)
   password = db.Column(db.String(64), nullable=False)
-  faculty = db.Column(db.String(8), nullable=False)
-  dept = db.Column(db.String(8), nullable=False)
+  # faculty = db.Column(db.String(8), nullable=False)
+  # dept = db.Column(db.String(8), nullable=False)
   isAdmin = db.Column(db.Boolean, nullable=True)
   
   def toDict(self):
@@ -143,8 +143,8 @@ class User(db.Model, UserMixin):
       "id": self.id,
       "username": self.username,
       "password": self.password,
-      "faculty": self.faculty,
-      "dept": self.dept,
+      # "faculty": self.faculty,
+      # "dept": self.dept,
       "isAdmin" : self.isAdmin
     }
   
