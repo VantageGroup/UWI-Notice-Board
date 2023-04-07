@@ -217,12 +217,6 @@ def home(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
-  
-  if sortF != None:
-    print ("Sorting by Faculty: " + sortF)
-    
-  if sortD != None:
-    print ("Sorting by Department: " + sortD)
 
   currentSysDateTime = datetime.datetime.now()
 
@@ -260,6 +254,9 @@ def home(sortF = None, sortD = None):
 @app.route('/feed|<sortF>,<sortD>', methods=['GET', 'POST'])
 @login_required
 def feed(sortF = None, sortD = None):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   posts = []
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
@@ -304,6 +301,9 @@ def get_user_image(filename):
 @app.route('/search|sortF=<sortF>,sortD?=<sortD>', methods=['GET', 'POST'])
 @login_required
 def search(sortF = None, sortD = None):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   postsDb = Post.query
   boardsDb = Board.query
   faculty = RetrieveFacultyList()
@@ -345,6 +345,9 @@ def search(sortF = None, sortD = None):
 @app.route('/cal')
 @login_required
 def cal():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   posts = Post.query.all()
 
   events = [{
@@ -377,6 +380,9 @@ def cal():
 @login_required
 @admin_required
 def createPost(bID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   form = PostForm()
     
   return render_template("form.html",
@@ -388,6 +394,9 @@ def createPost(bID):
 @login_required
 @admin_required
 def editPost(bID, pID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   post = db.session.get(Post, pID)
   print (db.session.get(Post, pID))
 
@@ -409,6 +418,9 @@ def editPost(bID, pID):
 @app.route('/board<bID>=create-post', methods=['POST'])
 @login_required
 def uploadPost(bID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   form = PostForm()
   board = db.session.get(Board, bID) 
   
@@ -517,6 +529,9 @@ def uploadPost(bID):
 @login_required
 @admin_required
 def uploadEdittedPost(bID, pID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
   form = PostForm()
@@ -609,6 +624,9 @@ def uploadEdittedPost(bID, pID):
 @login_required
 @admin_required
 def follow(pID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   if (Follow.query.filter_by(post=pID, user=current_user.id).first()):
     print("The user is already following post")
   else:
@@ -633,6 +651,9 @@ def follow(pID):
 @app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
 @login_required
 def boards(sortF = None, sortD = None):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
@@ -649,9 +670,10 @@ def boards(sortF = None, sortD = None):
 @app.route('/board<bID>', methods=['GET'])
 @login_required
 def board(bID):
-  board = db.session.get(Board, bID)
-
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
   
+  board = db.session.get(Board, bID)
   posts = Post.query.filter_by(bID=bID)
   
   currentSysDateTime = datetime.datetime.now()
@@ -690,6 +712,9 @@ def board(bID):
 @login_required
 @admin_required
 def createBoard():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   form = BoardForm()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
@@ -706,6 +731,9 @@ def createBoard():
 @login_required
 @admin_required
 def editBoard(bID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   board = db.session.get(Board, bID)
   
   form = BoardForm(
@@ -729,6 +757,9 @@ def editBoard(bID):
 @login_required
 @admin_required
 def uploadBoard():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   form = BoardForm()
   
   if (form.validate_on_submit()):
@@ -789,6 +820,9 @@ def uploadBoard():
 @login_required
 @admin_required
 def uploadEdittedBoard(bID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   board = Board.query.get(bID)
   form = BoardForm()
   
@@ -835,6 +869,9 @@ def uploadEdittedBoard(bID):
 # Join Board Route
 @app.route('/join<bID>', methods=['GET'])
 def join(bID):
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   if (Subscriber.query.filter_by(board=bID, user=current_user.id).first()):
     print("The user is already subscribed")
   else:
@@ -919,8 +956,8 @@ def signupAction():
 # Logout a User
 @app.route('/logout')
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+  logout_user()
+  return redirect(url_for('login'))
   
 #############################################
 
@@ -930,6 +967,9 @@ def logout():
 # Temp Route to purge all Databases
 @app.route('/purge', methods=['GET', 'POST'])
 def delete():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   posts = Post.query
   boards = Board.query
   users = User.query
@@ -954,6 +994,9 @@ def delete():
 # Drops all tables and recreates them
 @app.route('/drop', methods=['GET', 'POST'])
 def dropAll():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   db.drop_all()
   reCreate_db()
   db.session.commit()
@@ -966,12 +1009,18 @@ def dropAll():
 # User Table
 @app.route('/users', methods=['GET'])
 def get_user():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
 
 # Subscriber Table
 @app.route('/subscribers', methods=['GET'])
 def get_subs():
+  if (current_user.is_authenticated):
+    return redirect(url_for('login'))
+  
   subs = Subscriber.query.all()
   return json.dumps([sub.toDict() for sub in subs])
 
