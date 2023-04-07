@@ -252,9 +252,9 @@ def home(sortF = None, sortD = None):
 @app.route('/feed', methods=['GET'])
 @app.route('/feed|<sortF>', methods=['GET', 'POST'])
 @app.route('/feed|<sortF>,<sortD>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def feed(sortF = None, sortD = None):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   posts = []
@@ -299,9 +299,9 @@ def get_user_image(filename):
 @app.route('/search', methods=["POST"])
 @app.route('/search|sortF=<sortF>', methods=['GET', 'POST'])
 @app.route('/search|sortF=<sortF>,sortD?=<sortD>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def search(sortF = None, sortD = None):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   postsDb = Post.query
@@ -343,9 +343,9 @@ def search(sortF = None, sortD = None):
 
 # Calendar
 @app.route('/cal')
-@login_required
+# @login_required
 def cal():
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   posts = Post.query.all()
@@ -377,10 +377,10 @@ def cal():
 
 # Create a Post Route (render form and take input)
 @app.route('/board<bID>=create-post', methods=['GET'])
-@login_required
+# @login_required
 @admin_required
 def createPost(bID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   form = PostForm()
@@ -391,10 +391,10 @@ def createPost(bID):
   
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
-@login_required
+# @login_required
 @admin_required
 def editPost(bID, pID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   post = db.session.get(Post, pID)
@@ -416,9 +416,9 @@ def editPost(bID, pID):
 
 # Upload Post Route
 @app.route('/board<bID>=create-post', methods=['POST'])
-@login_required
+# @login_required
 def uploadPost(bID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   form = PostForm()
@@ -526,10 +526,10 @@ def uploadPost(bID):
 
 # Upload Edited Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['POST'])
-@login_required
+# @login_required
 @admin_required
 def uploadEdittedPost(bID, pID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   board = db.session.get(Board, bID)
@@ -621,10 +621,9 @@ def uploadEdittedPost(bID, pID):
 
 # Follow a post
 @app.route('/follow<pID>', methods=['GET'])
-@login_required
-@admin_required
+# @login_required
 def follow(pID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   if (Follow.query.filter_by(post=pID, user=current_user.id).first()):
@@ -649,9 +648,9 @@ def follow(pID):
 @app.route('/boards', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def boards(sortF = None, sortD = None):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   boards = RetrieveAllBoards()
@@ -668,9 +667,9 @@ def boards(sortF = None, sortD = None):
 
 # View Board Route
 @app.route('/board<bID>', methods=['GET'])
-@login_required
+# @login_required
 def board(bID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   board = db.session.get(Board, bID)
@@ -709,10 +708,10 @@ def board(bID):
 
 # Create a Board Route
 @app.route('/create-board', methods=['GET'])
-@login_required
+# @login_required
 @admin_required
 def createBoard():
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   form = BoardForm()
@@ -728,7 +727,7 @@ def createBoard():
 
 # Edit a Board Route
 @app.route('/edit-board<bID>', methods=['GET'])
-@login_required
+# @login_required
 @admin_required
 def editBoard(bID):
   if (current_user.is_authenticated):
@@ -754,10 +753,10 @@ def editBoard(bID):
 
 # Upload Board Route
 @app.route('/create-board', methods=['POST'])
-@login_required
+# @login_required
 @admin_required
 def uploadBoard():
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   form = BoardForm()
@@ -817,10 +816,10 @@ def uploadBoard():
 
 # Upload Editted Board Record Route
 @app.route('/edit-board<bID>', methods=['POST'])
-@login_required
+# @login_required
 @admin_required
 def uploadEdittedBoard(bID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   board = Board.query.get(bID)
@@ -869,7 +868,7 @@ def uploadEdittedBoard(bID):
 # Join Board Route
 @app.route('/join<bID>', methods=['GET'])
 def join(bID):
-  if (current_user.is_authenticated):
+  if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
   if (Subscriber.query.filter_by(board=bID, user=current_user.id).first()):
