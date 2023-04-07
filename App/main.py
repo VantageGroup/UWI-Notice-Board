@@ -54,9 +54,13 @@ from models import (
   Post, 
   Event,
   Follow,
+  
   Board, 
-  User,
   Subscriber,
+  
+  User,
+  Profile,
+  
   Faculty,
   FacultyDept,
   SearchForm
@@ -149,17 +153,31 @@ def admin_required(f):
 
 # Retrieve all Posts from the Database
 def RetrieveAllPosts():
-  posts = Post.query.all()
-  posts = [entry.toDict() for entry in posts]
+  list = Post.query.all()
+  list = [entry.toDict() for entry in list]
   
-  return posts
+  return list
 
 # Retrieve all Boards from the Database
 def RetrieveAllBoards():
-  boards = Board.query.all()
-  boards = [entry.toDict() for entry in boards]
+  list = Board.query.all()
+  list = [entry.toDict() for entry in list]
   
-  return boards
+  return list
+
+# Retrieve all Events from the Database
+def RetrieveAllEvents():
+  list = Event.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
+
+# Retrieves all User Profiles from the Database
+def RetreveProfiles():
+  list = Profile.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
 
 # Retrieve all Facuties from the Database
 def RetrieveFacultyList():
@@ -179,25 +197,36 @@ def RetrieveDepartmentList():
 def RetrieveUserBoards():
   boards = Subscriber.query.filter_by(user=current_user.id)
   boards = [entry.toDict() for entry in boards]
+  
   return boards
 
 # Retrieve User Post Feed
 def RetrieveFeedSub():
-  posts = []
+  all_posts = RetrieveAllPosts() 
   boards = RetrieveUserBoards()
   
-  all_posts = RetrieveAllPosts() 
+  posts = []
 
   for board in boards:
     for post in all_posts:
       if post.bID == board.board:
         posts.append(post)
-
-    # posts.append( Post.query.filter_by(bID=board.id) )
-  
-  # posts = [entry.toDict() for entry in posts]
   
   return posts
+
+# Retrieve User Followed Events
+def RetrieveFollowedEvents():
+  all_events = RetrieveAllPosts() 
+  posts = RetrieveFeedSub()
+  
+  events = []
+
+  for post in posts:
+    for event in all_events:
+      if event.pID == post.post:
+        events.append(event)
+  
+  return events
 
 #############################################
 
@@ -209,71 +238,46 @@ def RetrieveFeedSub():
 @app.route('/|<sortF>', methods=['GET', 'POST'])
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
+  if (current_user.is_authenticated):
+    print("User already logged in")
 
- if (current_user.is_authenticated):
-  print("User already logged in")
+    currentSysDateTime = datetime.datetime.now()
+
+    feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+    boards = RetrieveAllBoards()
+    faculty = RetrieveFacultyList()
+    department = RetrieveDepartmentList()
+    
+    return render_template('index.html', 
+      posts=feed,
+      boards=boards,
+      sortF=sortF,
+      sortD=sortD,
+      faculty=faculty,
+      department=department
+    )
  
-  feed = Post.query.all()
-  boards = RetrieveAllBoards()
-  faculty = RetrieveFacultyList()
-  department = RetrieveDepartmentList()
-
-  currentSysDateTime = datetime.datetime.now()
-
-  for post in feed:
-   if(post.scheduledDeleteDate != None):  
-    if(currentSysDateTime >= post.scheduledDeleteDate):
-      db.session.delete(post)
-      db.session.commit
-
-  for post in feed:
-    if(post.schedulePostDate <=  currentSysDateTime):
-      post.postNow = True
-      db.session.commit()
-
-    else:
-      post.postNow = False
-      db.session.commit()
-
-  
-  return render_template('index.html', 
-    posts=feed,
-    boards=boards,
-    sortF=sortF,
-    sortD=sortD,
-    faculty=faculty,
-    department=department
-  )
- 
- else:
-  return redirect(url_for('login'))
+  else:
+    return redirect(url_for('login'))
 
 # Feed Route
 @app.route('/feed', methods=['GET'])
 @app.route('/feed|<sortF>', methods=['GET', 'POST'])
 @app.route('/feed|<sortF>,<sortD>', methods=['GET', 'POST'])
-# @login_required
 def feed(sortF = None, sortD = None):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
-  posts = []
+  currentSysDateTime = datetime.datetime.now()
+  
+  posts = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
-  boards = Subscriber.query.filter_by(user=current_user.id)
-  
-  all_posts = Post.query.all()
-
-  for board in boards:
-    for post in all_posts:
-      if post.bID == board.board:
-        posts.append(post)
-
-  posts = [post.toDict() for post in posts]
-  print(posts)
+  boards = RetrieveAllBoards()
 
   return render_template('feed.html', 
     posts=posts,
+    # boards=boards,
     sortF=sortF, 
     sortD=sortD, 
     faculty=faculty, 
@@ -299,19 +303,18 @@ def get_user_image(filename):
 @app.route('/search', methods=["POST"])
 @app.route('/search|sortF=<sortF>', methods=['GET', 'POST'])
 @app.route('/search|sortF=<sortF>,sortD?=<sortD>', methods=['GET', 'POST'])
-# @login_required
 def search(sortF = None, sortD = None):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
-  postsDb = Post.query
-  boardsDb = Board.query
+  currentSysDateTime = datetime.datetime.now()
+  
+  postsDb = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+  boardsDb = Board.query.all()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   
   search = request.form.get('searchCriteria')
-  
-  print("Searched for " + request.form.get('searchCriteria'))
   
   found = postsDb.filter( db.or_ 
     (
@@ -343,31 +346,12 @@ def search(sortF = None, sortD = None):
 
 # Calendar
 @app.route('/cal')
-# @login_required
 def cal():
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
-  posts = Post.query.all()
-
-  events = [{
-    'title' : 'TestEvent',
-      'start' : '2023-03-10',
-      'end'   :  '',
-      'url'   : 'https://youtube.com'
-
-  }, ]
-
+  events = RetrieveFollowedEvents()
   
-  for post in posts: 
-   events.append({
-      'title' : post.title,
-      'start' : post.startDate,
-      'end'   : post.endDate,
-      'url'   : 'https://youtube.com'
-     },
-  )
-
   return render_template("cal.html", events=events)
 
 #############################################
@@ -375,9 +359,20 @@ def cal():
 
 '''Post Related Routes'''
 
-# Create a Post Route (render form and take input)
+# View Post
+@app.route('/post<pID>', methods=['GET'])
+def viewPost(pID):
+  if (current_user.is_authenticated == False):
+    return redirect(url_for('login'))
+  
+  post = db.session.get(Post, pID)
+  
+  return render_template('post.html',
+    post=post
+  )
+
+# Create a Post Route
 @app.route('/board<bID>=create-post', methods=['GET'])
-# @login_required
 @admin_required
 def createPost(bID):
   if (current_user.is_authenticated == False):
@@ -391,7 +386,6 @@ def createPost(bID):
   
 # Edit a Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['GET'])
-# @login_required
 @admin_required
 def editPost(bID, pID):
   if (current_user.is_authenticated == False):
@@ -416,7 +410,6 @@ def editPost(bID, pID):
 
 # Upload Post Route
 @app.route('/board<bID>=create-post', methods=['POST'])
-# @login_required
 def uploadPost(bID):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
@@ -430,8 +423,6 @@ def uploadPost(bID):
     message = request.form.get("message")
     fac = board.faculty
     dept = board.dept
-    deleteNow = False
-    postNow = False
     
     creation = datetime.datetime.now()
     startDate = request.form.get("startDate")
@@ -464,11 +455,6 @@ def uploadPost(bID):
       scheduledDeleteDateObj = datetime.datetime.strptime(scheduledDeleteDate, '%Y-%m-%dT%H:%M')
     else:
       scheduledDeleteDateObj = None
-
-    if (schedulePostDateObj > creation):
-      postNow = False
-    else:
-      postNow = True
     
     if (form.photo.data !=  None):
       image = True
@@ -500,10 +486,7 @@ def uploadPost(bID):
       endDate=endDateObj,
 
       schedulePostDate = schedulePostDateObj,
-      scheduledDeleteDate = scheduledDeleteDateObj,
-
-      postNow = postNow,
-      deleteNow = deleteNow
+      scheduledDeleteDate = scheduledDeleteDateObj
     )
     db.session.add(newPost)
     db.session.commit()
@@ -512,9 +495,10 @@ def uploadPost(bID):
     
     newEvent = Event(
       post = latest_entry.id,
+      title = latest_entry.title,
       startDate = startDateObj,
       endDate = endDateObj,
-      url = 'url_for(post, )'
+      url = url_for('viewPost', latest_entry.id)
     )
     db.session.add(newEvent)
     db.session.commit()
@@ -526,7 +510,6 @@ def uploadPost(bID):
 
 # Upload Edited Post Route
 @app.route('/board<bID>=edit-post<pID>', methods=['POST'])
-# @login_required
 @admin_required
 def uploadEdittedPost(bID, pID):
   if (current_user.is_authenticated == False):
@@ -572,11 +555,6 @@ def uploadEdittedPost(bID, pID):
 
     if (scheduledDeleteDate != ''):
       scheduledDeleteDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
-
-    if (schedulePostDateObj > creation):
-      postNow = False
-    else:
-      postNow = True
       
     if (form.photo.data !=  None):
       image = True
@@ -592,26 +570,17 @@ def uploadEdittedPost(bID, pID):
                    
     post.title = title
     post.message = message
-      
     post.faculty = fac
     post.dept = dept
-      
-    post.image=image
-    post.imageLocation=imageLocation
-      
-    post.event=event
-    post.startDate=startDateObj
-    post.endDate=endDateObj
+    post.image = image
+    post.imageLocation = imageLocation
+    post.event = event
+    post.startDate = startDateObj
+    post.endDate = endDateObj
     
-    db.session.commit()
-
-    event = Event.query.filter_by(post=post.id).first()
-    print (event)
-    
-    event = Event(
-      startDate = startDateObj,
-      endDate = endDateObj,
-    )
+    event.title = post.title
+    event.startDate = startDateObj
+    event.endDate = endDateObj
     
     db.session.commit()
   else:
@@ -621,7 +590,6 @@ def uploadEdittedPost(bID, pID):
 
 # Follow a post
 @app.route('/follow<pID>', methods=['GET'])
-# @login_required
 def follow(pID):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
@@ -648,7 +616,6 @@ def follow(pID):
 @app.route('/boards', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>', methods=['GET', 'POST'])
 @app.route('/boards|<sortF>,<sortD>', methods=['GET', 'POST'])
-# @login_required
 def boards(sortF = None, sortD = None):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
@@ -667,7 +634,6 @@ def boards(sortF = None, sortD = None):
 
 # View Board Route
 @app.route('/board<bID>', methods=['GET'])
-# @login_required
 def board(bID):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
@@ -676,23 +642,6 @@ def board(bID):
   posts = Post.query.filter_by(bID=bID)
   
   currentSysDateTime = datetime.datetime.now()
-  
-
-  for post in posts: 
-   if(post.scheduledDeleteDate != None):  
-    if(currentSysDateTime >= post.scheduledDeleteDate):
-      db.session.delete(post)
-      db.session.commit
-
-  for post in posts:
-    if(post.schedulePostDate <=  currentSysDateTime):
-      post.postNow = True
-      db.session.commit()
-
-    else:
-      post.postNow = False
-      db.session.commit()
-
     
   posts = [entry.toDict() for entry in posts]
   boardId = bID
@@ -708,7 +657,6 @@ def board(bID):
 
 # Create a Board Route
 @app.route('/create-board', methods=['GET'])
-# @login_required
 @admin_required
 def createBoard():
   if (current_user.is_authenticated == False):
@@ -753,7 +701,6 @@ def editBoard(bID):
 
 # Upload Board Route
 @app.route('/create-board', methods=['POST'])
-# @login_required
 @admin_required
 def uploadBoard():
   if (current_user.is_authenticated == False):
@@ -816,7 +763,6 @@ def uploadBoard():
 
 # Upload Editted Board Record Route
 @app.route('/edit-board<bID>', methods=['POST'])
-# @login_required
 @admin_required
 def uploadEdittedBoard(bID):
   if (current_user.is_authenticated == False):
@@ -935,17 +881,25 @@ def signupAction():
   if form.validate_on_submit():
     data = request.form
         
-    newuser = User(
-      username=data['username'],
-      email=data['email'],
+    newUser = User(
+      username = data['username'],
+      email = data['email'],
       isAdmin = True
     )
+    newUser.set_password(data['password'])
         
-    newuser.set_password(data['password'])
-        
-    db.session.add(newuser)
+    db.session.add(newUser)
     db.session.commit()
-        
+    
+    profile = Profile(
+      user = db.session.get(User, newUser.username),
+      username = newUser.username,
+      image = False,
+      imageLoaction = None
+    )
+    db.session.add(profile)
+    db.session.commit()
+    
     flash('Account Created!')
     return redirect(url_for('login'))
       

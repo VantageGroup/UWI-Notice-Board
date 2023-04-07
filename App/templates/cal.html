@@ -16,8 +16,6 @@
 
   {% block body %}
   <script>
-
-
     document.addEventListener('DOMContentLoaded', function () {
       var Calendar = FullCalendar.Calendar
 
@@ -42,13 +40,13 @@
         aspectRatio : 2.25,
 
         events: [
-          {%for event in events %}
-  {
-          title: '{{event.title}}',
-          start: '{{event.start}}',
-          end: '{{event.end}}',
-          url: '{{event.url}}'
-        },
+          {% for event in events %}
+          {
+            title: '{{event.title}}',
+            start: '{{event.startDate}}',
+            end: '{{event.endDate}}',
+            url: '{{event.url}}'
+          },
         {% endfor %}
 ],
 });

@@ -52,7 +52,6 @@ class Post(db.Model):
   faculty = db.Column(db.String(8), nullable=False)
   dept = db.Column(db.String(8), nullable=True)
   dateCreated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-  # viewerCount = db.Column(db.Integer, nullable=True)
   
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
@@ -60,10 +59,8 @@ class Post(db.Model):
   event = db.Column(db.Boolean)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
-  schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True)#date the user wants the post to be published
-  scheduledDeleteDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True, nullable=True) #date the user wants the post to be deleted
-  postNow = db.Column(db.Boolean)
-  deleteNow = db.Column(db.Boolean)
+  schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True)
+  scheduledDeleteDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True, nullable=True)
   
   def toDict(self):
     return{
@@ -86,11 +83,11 @@ class Post(db.Model):
       "deleteNow" : self.deleteNow
     }
 
-
 '''#'''
 class Event(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+  title = db.Column(db.String(64), nullable=False)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
   url = db.Column(db.String, nullable=False)
@@ -101,6 +98,19 @@ class Event(db.Model):
       "post": self.post,
       "startDate" : self.startDate,
       "endDate" : self.endDate
+    }
+
+'''#'''
+class Follow(db.Model):
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+  user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "post": self.post,
+      "user": self.user
     }
 
 
@@ -127,15 +137,28 @@ class Board(db.Model):
       "subscribers": self.subscribers
     }
    
-    
+'''#'''
+class Subscriber(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
+  user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  isAdmin = db.Column(db.Boolean)
+  
+  def toDict(self):
+    return{
+      "id": self.id,
+      "board": self.board,
+      "user": self.user,
+      "isAdmin": self.isAdmin
+    }
+
+
 '''#'''
 class User(db.Model, UserMixin):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(64), unique=True, nullable=False)
   email = db.Column(db.String(64), nullable=False)
   password = db.Column(db.String(64), nullable=False)
-  # faculty = db.Column(db.String(8), nullable=False)
-  # dept = db.Column(db.String(8), nullable=False)
   isAdmin = db.Column(db.Boolean, nullable=True)
   
   def toDict(self):
@@ -162,35 +185,23 @@ class User(db.Model, UserMixin):
   def __repr__(self):
     return '<User {}>'.format(self.username)
 
-
 '''#'''
-class Subscriber(db.Model):
+class Profile(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-  isAdmin = db.Column(db.Boolean)
+  username = db.Column(db.String(64), unique=True, nullable=False)
+  image = db.Column(db.Boolean, nullable = False)
+  imageLocation = db.Column(db.String(256), nullable=True)
   
   def toDict(self):
     return{
       "id": self.id,
-      "board": self.board,
       "user": self.user,
-      "isAdmin": self.isAdmin
+      "username": self.username,
+      "image": self.image,
+      "imageLocation": self.imageLocation
     }
-
-'''#'''
-class Follow(db.Model):
-  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  post = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-  user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
   
-  def toDict(self):
-    return{
-      "id": self.id,
-      "post": self.post,
-      "user": self.user
-    }
-
 
 '''#'''
 class Faculty(db.Model):
@@ -217,7 +228,6 @@ class Faculty(db.Model):
     
     print("Faculty Database initialised")
     return
-
 
 '''#'''
 class FacultyDept(db.Model):

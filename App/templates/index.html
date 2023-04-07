@@ -131,7 +131,6 @@
                 {% for post in posts %}
 
                   {% if sortF is none %}
-                  {% if post.postNow == True %}
             
                     <div class="card">
                       <div class="card-left">
@@ -191,13 +190,10 @@
                         </div>
                       </div>
                     </div>
-                    {% endif %}
-
                     
                   {% elif post.faculty == sortF %}
                   
                     {% if sortD is none %}
-                    {% if post.postNow == True %}
                       <div class="card">
                         <div class="card-left">
                           <div class="card-top">
@@ -254,10 +250,8 @@
                           </div>
                         </div>
                       </div>
-                      {% endif %}
 
                     {% elif post.dept == sortD %}
-                    {% if post.postNow == True %}
                       <div class="card">
                         <div class="card-left">
                           <div class="card-top">
@@ -314,8 +308,6 @@
                           </div>
                         </div>
                       </div>
-                    {% endif %}
-             
                   
                   {% endif %}
                   {% endif %}

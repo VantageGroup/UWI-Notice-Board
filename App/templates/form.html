@@ -101,10 +101,70 @@
                 </div>
 
                 <div class="card-content">
-                  <p>{{ formPost.startDate.label}} {{formPost.startDate(class='DateTimeField')}}</p>
-                  <p>{{ formPost.endDate.label}} {{formPost.endDate(class='DateTimeField')}}</p>
-                  <p>{{ formPost.schedulePostDate.label}} {{formPost.schedulePostDate(class='form-control')}}</p>
-                  <p>{{ formPost.scheduledDeleteDate.label}} {{formPost.scheduledDeleteDate(class='form-control')}}</p>
+                  <label for="eventCheck">Create Event</label>
+                  <input type="checkBox" id="eventCheck" onclick="scheduleEvent()">
+
+                  <div id="eventDrop" style="display:none">
+                    <p>{{ formPost.startDate.label}} {{formPost.startDate(class='DateTimeField')}}</p>
+                    <p>{{ formPost.endDate.label}} {{formPost.endDate(class='DateTimeField')}}</p>
+                  </div><br>
+
+                  <br>
+                  
+                  <label for="postCheck">Schedule Post</label>
+                  <input type="checkBox" id="postCheck" onclick="schedulePost()">
+
+                  <div id="postDrop" style="display:none">
+                    <p>{{ formPost.schedulePostDate.label}} {{formPost.schedulePostDate(class='form-control')}}</p>
+                  </div><br>
+
+                  <br>
+
+                  <label for="deleteCheck">Schedule Delete</label>
+                  <input type="checkBox" id="deleteCheck" onclick="scheduleDelete()">
+
+                  <div id="deleteDrop" style="display:none">
+                    <p>{{ formPost.scheduledDeleteDate.label}} {{formPost.scheduledDeleteDate(class='form-control')}}</p>
+                  </div><br>
+
+                  <br>
+                    <script>
+                      function scheduleEvent() {
+                        var box = document.getElementById("eventCheck");
+                        var drop = document.getElementById("eventDrop");
+
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
+
+                      function schedulePost() {
+                        var box = document.getElementById("postCheck");
+                        var drop = document.getElementById("postDrop");
+
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
+
+                      function scheduleDelete() {
+                        var box = document.getElementById("deleteCheck");
+                        var drop = document.getElementById("deleteDrop");
+
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
+                    </script>
                 </div>
               </div>
             </div>
