@@ -176,15 +176,15 @@ def RetrieveDepartmentList():
   return list
 
 # Retrieve User Subscribed Boards
-def RetrieveUserBoards(uID):
-  boards = Subscriber.query.filter_by(user=uID)
+def RetrieveUserBoards():
+  boards = Subscriber.query.filter_by(user=current_user.id)
   boards = [entry.toDict() for entry in boards]
   return boards
 
 # Retrieve User Post Feed
-def RetrieveFeedSub(uID):
+def RetrieveFeedSub():
   posts = []
-  boards = RetrieveUserBoards(uID)
+  boards = RetrieveUserBoards()
   
   all_posts = RetrieveAllPosts() 
 
