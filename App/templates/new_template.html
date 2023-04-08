@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title>UWI Notice Board</title>
+    <link rel="stylesheet" href="./static/css/test.css">
+    <link href="static/css/post.css" rel="stylesheet" type="text/css" />
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bx-notepad icon'></i>
+        <div class="logo_name">Notice Board</div>
+        <i class='bx bx-menu' id="btn" ></i>
+    </div>
+    <ul class="nav-list">
+      <li>
+          <i class='bx bx-search' ></i>
+         <input type="text" placeholder="Search...">
+         <span class="tooltip">Search</span>
+      </li>
+      <li>
+        <a href="{{ url_for('home') }}">
+          <i class='bx bx-home'></i>
+          <span class="links_name">Home</span>
+        </a>
+         <span class="tooltip">Home</span>
+      </li>
+      <li>
+       <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}">
+         <i class='bx bx-compass' ></i>
+         <span class="links_name">Feed</span>
+       </a>
+       <span class="tooltip">Feed</span>
+     </li>
+     <li>
+       <a href="{{ url_for('boards') }}">
+         <i class='bx bx-collection' ></i>
+         <span class="links_name">Boards</span>
+       </a>
+       <span class="tooltip">Boards</span>
+     </li>
+     <li>
+      <a href="{{ url_for('savedBoards') }}">
+        <i class='bx bx-heart' ></i>
+        <span class="links_name">Saved Boards</span>
+      </a>
+      <span class="tooltip">Saved Boards</span>
+    </li>
+     <li>
+       <a href="{{ url_for('cal') }}">
+         <i class='bx bx-calendar' ></i>
+         <span class="links_name">Calendar</span>
+       </a>
+       <span class="tooltip">Calendar</span>
+     </li>
+     <!-- <li>
+       <a href="#">
+         <i class='bx bx-folder' ></i>
+         <span class="links_name">File Manager</span>
+       </a>
+       <span class="tooltip">Files</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-cart-alt' ></i>
+         <span class="links_name">Order</span>
+       </a>
+       <span class="tooltip">Order</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-heart' ></i>
+         <span class="links_name">Saved</span>
+       </a>
+       <span class="tooltip">Saved</span>
+     </li> -->
+     <li>
+       <a href="#">
+         <i class='bx bx-cog' ></i>
+         <span class="links_name">Setting</span>
+       </a>
+       <span class="tooltip">Setting</span>
+     </li>
+     <li class="profile">
+         <div class="profile-details">
+           <!--<img src="profile.jpg" alt="profileImg">-->
+           <div class="name_job">
+             <div class="name">{{ current_user.username }}</div>
+             <!-- <div class="job">Web designer</div> -->
+           </div>
+         </div>
+         <a href="{{ url_for('logout') }}">
+          <i class='bx bx-log-out' id="log_out" ></i>
+         </a>
+     </li>
+    </ul>
+  </div>
+  <section class="home-section">
+      <div class="button-container">
+        <div class="text">Home</div>
+        <div class="act-container">
+          <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
+            {{ sortF }}
+          {% else %}
+            Faculty
+          {% endif %}</button>
+          <div class="dropdown-content">
+            {% for fac in faculty %}
+              <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
+            {% endfor %}
+          </div>
+          <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortD %}
+            {{ sortD }}
+          {% else %}
+            Department
+          {% endif %}</button>
+          <div class="dropdown-content">
+            {% for dept in department %}
+              {% if dept.fLabel == sortF %}
+                <a href="{{ url_for('home', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+<!-- Your Stuff Goes, Use a main tag-->
+
+  </section>
+
+  <script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();//calling the function(optional)
+  });
+
+  searchBtn.addEventListener("click", ()=>{ // Sidebar open when you click on the search iocn
+    sidebar.classList.toggle("open");
+    menuBtnChange(); //calling the function(optional)
+  });
+
+  // following are the code to change sidebar button(optional)
+  function menuBtnChange() {
+   if(sidebar.classList.contains("open")){
+     closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+   }else {
+     closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//replacing the iocns class
+   }
+  }
+  </script>
+</body>
+</html>
