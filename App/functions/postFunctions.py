@@ -41,7 +41,12 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 
 class PostForm(FlaskForm):
-    title = StringField( "Title", validators =[DataRequired()] )
+    title = StringField( "Title", 
+        validators = [
+            InputRequired(), 
+            Length(min=1, max=24, message="Name must be a between of %(min)d and %(max)d characters in length")
+        ] 
+    )
     message = CKEditorField( "Message" )
     photo = FileField(validators=[
         FileAllowed(photos, 'Only images are allowed')
