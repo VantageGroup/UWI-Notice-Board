@@ -285,11 +285,21 @@ def feed(sortF = None, sortD = None):
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   boards = RetrieveAllBoards()
+  subBoards = Subscriber.query.filter_by(user = current_user.id)
+  subBoards = [entry.toDict() for entry in subBoards]
+  
+  newFeed = []
 
-  print()
+  for board in subBoards:
+    for singlePost in feed:
+      if singlePost.bID == board['board']:
+        newFeed.append(singlePost)
 
+  newFeed = [singlePost.toDict() for singlePost in newFeed]
+  
+  
   return render_template('feed.html', 
-    posts=feed,
+    posts=newFeed,
     boards=boards,
     sortF=sortF, 
     sortD=sortD, 
@@ -442,7 +452,7 @@ def uploadPost(bID):
     endDate = request.form.get("endDate")
     schedulePostDate = request.form.get("schedulePostDate")
     scheduledDeleteDate = request.form.get("scheduledDeleteDate")
-
+    
     if (startDate != '' and endDate != ''):
       event = True
       
@@ -453,11 +463,16 @@ def uploadPost(bID):
       
       startDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
       endDateObj = datetime.datetime.strptime(endDate, '%Y-%m-%d')
+    elif (startDate != '' and endDate == ''):
+      event = True
+      
+      startDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+      endDateObj = datetime.datetime.strptime(startDate, '%Y-%m-%d')
     else:
       event = False
       
-      startDateObj = datetime.datetime.now()
-      endDateObj = datetime.datetime.now()
+      startDateObj = None
+      endDateObj = None
 
     if (schedulePostDate != ''):
       schedulePostDateObj = datetime.datetime.strptime(schedulePostDate, '%Y-%m-%dT%H:%M')
@@ -506,7 +521,8 @@ def uploadPost(bID):
 
     latest_entry = Post.query.order_by(Post.id.desc()).first()
     
-    if (event == True):
+    print(latest_entry.event)
+    if (latest_entry.event == True):
       newEvent = Event(
         post = latest_entry.id,
         title = latest_entry.title,
@@ -514,7 +530,14 @@ def uploadPost(bID):
         endDate = endDateObj,
         url = request.base_url + url_for('viewPost', pID=latest_entry.id)
       )
+      
+      follow = Follow(
+        post = latest_entry.id,
+        user = current_user.id
+      )
+      
       db.session.add(newEvent)
+      db.session.add(follow)
       db.session.commit()
 
   else:
@@ -531,8 +554,9 @@ def uploadEdittedPost(bID, pID):
   
   board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
+  eventObj = Event.query.filter_by(post=post.id)
+  
   form = PostForm()
-  creation = datetime.datetime.now()
   
   if (form.validate_on_submit):
     title = request.form.get("title")
@@ -591,10 +615,12 @@ def uploadEdittedPost(bID, pID):
     post.event = event
     post.startDate = startDateObj
     post.endDate = endDateObj
+    post.schedulePostDate = schedulePostDateObj
+    post.scheduledDeleteDate = scheduledDeleteDateObj
     
-    event.title = post.title
-    event.startDate = startDateObj
-    event.endDate = endDateObj
+    eventObj.title = post.title
+    eventObj.startDate = startDateObj
+    eventObj.endDate = endDateObj
     
     db.session.commit()
   else:
@@ -683,9 +709,6 @@ def board(bID):
     
   posts = [entry.toDict() for entry in posts]
   boardId = bID
-  
-  print(board)
-  print(posts)
 
   return render_template("boardPosts.html",  
     boardID=boardId, 
