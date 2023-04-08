@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>UWI Notice Board</title>
+  <link href="static/css/page.css" rel="stylesheet" type="text/css" />
+  <link href="static/css/board.css" rel="stylesheet" type="text/css" />
+   <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+  
+<body>
+
+  <header class="header">
+    <div class="logo left">
+      <a href="{{ url_for('home') }}">
+        <h3>UWI Notice Board</h3>
+      </a>
+    </div>
+     
+    <div class="search center">
+      <form method="POST" action="{{ url_for('search') }}" class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        <button class="btn btn-outline-secondary" type="submit"><i class="material-icons">search</i></button>
+      </form>
+    </div>
+
+     <div class="icons-right"> 
+       <div class="dropdown">
+          <button class="dropbtn">
+            {% if sortF %}
+              {{ sortF }}
+            {% else %}
+              Faculty
+            {% endif %}
+          </button>
+          <div class="dropdown-content">
+            {% for fac in faculty %}
+              <a href="{{ url_for('boards', sortF = fac.label )  }}"> {{ fac.title }} </a>
+            {% endfor %}
+          </div>
+        </div>
+       <div class="dropdown">
+          <button class="dropbtn">
+            {% if sortD %}
+              {{ sortD }}
+            {% else %}
+              Department
+            {% endif %}
+          </button>
+          <div class="dropdown-content">
+            {% for dept in department %}
+              {% if dept.fLabel == sortF %}
+                <a href="{{ url_for('boards', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+     </div>
+      <div class="create">
+        <a href="{{ url_for('createBoard') }}">
+          <button class="btn btn-outline-secondary" type="submit">Create Board</button>
+        </a>
+      </div>
+  </header>
+      <main>
+          <div class="side-bar">
+            <div class="nav">
+              <a href="{{ url_for('home') }}" class="nav-link">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+              </a>
+              <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}" class="nav-link">
+                <i class="material-icons">explore</i>
+                <span>Feed</span>
+              </a>
+              <a href="{{ url_for('boards') }}" class="nav-link active">
+                <i class="material-icons">collections</i>
+                <span>Boards</span>
+              </a>
+              <a href="{{ url_for('cal') }}" class="nav-link">
+                <i class="material-icons">date_range</i>
+                <span>Calendar</span>
+              </a>
+            </div>
+
+            <hr>
+      
+            <div>
+              <h4>-Username-</h4>
+      
+              <button onclick="window.location.href='/logout'">Log Out</button>
+      
+              <a href="" class="nav-link">
+                <i class="material-icons">collections_bookmark</i>
+                <span>Saved Boards</span>
+              </a>
+              
+              <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="material-icons">logout</i>
+                <span>Logout</span>
+              </a>
+            </div>
+          </div>
+          <div class="container-board">
+            {% block content %}
+              {% for board in boards %}
+
+                {% if sortF is none %}
+                  <a href="{{ url_for('board', bID = board.id ) }}">
+                    <div class="board-card">
+                      <div class="board-card-image">
+                        {% if board.image == false %}
+                          <img src="static/images/dark.jpg">
+                        {% else %}
+                          <img src="{{ url_for('get_board_image', filename = board.imageLocation)  }}">
+                        {% endif %}
+                      </div>
+                      <div class="board-card-content">
+                        <div class="board-title">
+                          <h3>
+                            {{ board.title }} 
+                          </h3>
+                        </div>
+                        <div class="board-left-card">
+                          <div class="board-u-count">
+                            <p class="board-users-count">  {{ board.subscribers }} </p>
+                          </div>
+                          <div class="board-user-icon">
+                            <i class="material-icons">person</i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="board-join">
+                        <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
+                          <button>Join</button>
+                        </a>
+                      </div>
+                    </div>
+                  </a>
+
+                {% elif board.faculty == sortF %}
+
+                  {% if sortD is none %}
+                    <a href="{{ url_for('board', bID = board.id ) }}">
+                      <div class="board-card">
+                        <div class="board-card-image">
+                          <img src="static/images/dark.jpg">
+                        </div>
+                        <div class="board-card-content">
+                          <div class="board-title">
+                            <h3>
+                              {{ board.title }} 
+                            </h3>
+                          </div>
+                          <div class="board-left-card">
+                            <div class="board-u-count">
+                              <p class="board-users-count"> {{ board.subscribers }}</p>
+                            </div>
+                            <div class="board-user-icon">
+                              <i class="material-icons">person</i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="board-join">
+                          <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
+                            <button>Join</button>
+                          </a>
+                        </div>
+                      </div>
+                    </a>
+                  {% elif board.dept == sortD %}
+                    <a href="{{ url_for('board', bID = board.id ) }}">
+                      <div class="board-card">
+                        <div class="board-card-image">
+                          <img src="static/images/dark.jpg">
+                        </div>
+                        <div class="board-card-content">
+                          <div class="board-title">
+                            <h3>
+                              {{ board.title }} 
+                            </h3>
+                          </div>
+                          <div class="board-left-card">
+                            <div class="board-u-count">
+                              <p class="board-users-count">1.2k</p>
+                            </div>
+                            <div class="board-user-icon">
+                              <i class="material-icons">person</i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="board-join">
+                          <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
+                            <button>Join</button>
+                          </a>
+                        </div>
+                      </div>
+                    </a>
+                  {% endif %}
+                
+                {% endif %}
+
+              {% endfor %}
+            {% endblock %}
+          </div>
+      </main>
+  <!--<script src="script.js"></script>-->
+</body>
+</html>

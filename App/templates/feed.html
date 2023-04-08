@@ -1,115 +1,196 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>UWI Notice Board</title>
-  <link href="static/css/page.css" rel="stylesheet" type="text/css" />
-  <link href="static/css/post.css" rel="stylesheet" type="text/css" />
-   <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-</head>
-  
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <title>UWI Notice Board</title>
+    <link rel="stylesheet" href="./static/css/test.css">
+    <link href="static/css/post.css" rel="stylesheet" type="text/css" />
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
 <body>
-
-  <header class="header">
-    <div class="logo left">
-      <a href="{{ url_for('home') }}">
-        <h3>UWI Notice Board</h3>
-      </a>
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bx-notepad icon'></i>
+        <div class="logo_name">Notice Board</div>
+        <i class='bx bx-menu' id="btn" ></i>
     </div>
-     
-    <div class="search center">
-      <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
-        <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
-        <button class="btn btn-outline-secondary" type="submit">
-          <i class="material-icons">search</i>
-        </button>
-      </form>
-    </div>
-
-     <div class="icons-right"> 
-      <div class="dropdown">
-        <button class="dropbtn">
-          {% if sortF %}
+    <ul class="nav-list">
+      <li>
+          <i class='bx bx-search' ></i>
+         <input type="text" placeholder="Search...">
+         <span class="tooltip">Search</span>
+      </li>
+      <li>
+        <a href="{{ url_for('home') }}">
+          <i class='bx bx-home'></i>
+          <span class="links_name">Home</span>
+        </a>
+         <span class="tooltip">Home</span>
+      </li>
+      <li>
+       <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}">
+         <i class='bx bx-compass' ></i>
+         <span class="links_name">Feed</span>
+       </a>
+       <span class="tooltip">Feed</span>
+     </li>
+     <li>
+       <a href="{{ url_for('boards') }}">
+         <i class='bx bx-collection' ></i>
+         <span class="links_name">Boards</span>
+       </a>
+       <span class="tooltip">Boards</span>
+     </li>
+     <li>
+       <a href="{{ url_for('cal') }}">
+         <i class='bx bx-calendar' ></i>
+         <span class="links_name">Calendar</span>
+       </a>
+       <span class="tooltip">Calendar</span>
+     </li>
+     <!-- <li>
+       <a href="#">
+         <i class='bx bx-folder' ></i>
+         <span class="links_name">File Manager</span>
+       </a>
+       <span class="tooltip">Files</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-cart-alt' ></i>
+         <span class="links_name">Order</span>
+       </a>
+       <span class="tooltip">Order</span>
+     </li>
+     <li>
+       <a href="#">
+         <i class='bx bx-heart' ></i>
+         <span class="links_name">Saved</span>
+       </a>
+       <span class="tooltip">Saved</span>
+     </li> -->
+     <li>
+       <a href="#">
+         <i class='bx bx-cog' ></i>
+         <span class="links_name">Setting</span>
+       </a>
+       <span class="tooltip">Setting</span>
+     </li>
+     <li class="profile">
+         <div class="profile-details">
+           <!--<img src="profile.jpg" alt="profileImg">-->
+           <div class="name_job">
+             <div class="name">{{ current_user.username }}</div>
+             <!-- <div class="job">Web designer</div> -->
+           </div>
+         </div>
+         <a href="{{ url_for('logout') }}">
+          <i class='bx bx-log-out' id="log_out" ></i>
+         </a>
+     </li>
+    </ul>
+  </div>
+  <section class="home-section">
+      <div class="button-container">
+        <div class="text">Feed</div>
+        <div class="act-container">
+          <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
             {{ sortF }}
           {% else %}
             Faculty
-          {% endif %}
-        </button>
-        <div class="dropdown-content">
-          {% for fac in faculty %}
-            <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
-          {% endfor %}
-        </div>
-      </div>
-     <div class="dropdown">
-        <button class="dropbtn">
-          {% if sortD %}
+          {% endif %}</button>
+          <div class="dropdown-content">
+            {% for fac in faculty %}
+              <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
+            {% endfor %}
+          </div>
+          <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortD %}
             {{ sortD }}
           {% else %}
             Department
-          {% endif %}
-        </button>
-        <div class="dropdown-content">
-          {% for dept in department %}
-            {% if dept.fLabel == sortF %}
-              <a href="{{ url_for('home', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
-            {% endif %}
-          {% endfor %}
-        </div>
-     </div>
-  </header>
-      <main>
-          <div class="side-bar">
-            <div class="nav">
-              <a href="{{ url_for('home') }}" class="nav-link">
-                <i class="material-icons">home</i>
-                <span>Home</span>
-              </a>
-
-              <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}" class="nav-link active">
-                <i class="material-icons">explore</i>
-                <span>Global Feed</span>
-              </a>
-
-              <a href="{{ url_for('boards') }}" class="nav-link">
-                <i class="material-icons">collections</i>
-                <span>Boards</span>
-              </a>
-
-              <a href="{{ url_for('cal') }}" class="nav-link">
-                <i class="material-icons">date_range</i>
-                <span>Calendar</span>
-              </a>
-            </div>
-
-            <hr>
-      
-            <div>
-              <h4>-Username-</h4>
-      
-              <button onclick="window.location.href='/logout'">Log Out</button>
-      
-              <a href="" class="nav-link">
-                <i class="material-icons">collections_bookmark</i>
-                <span>Saved Boards</span>
-              </a>
-              
-              <a href="{{ url_for('logout') }}" class="nav-link">
-                <i class="material-icons">logout</i>
-                <span>Logout</span>
-              </a>
-            </div>
+          {% endif %}</button>
+          <div class="dropdown-content">
+            {% for dept in department %}
+              {% if dept.fLabel == sortF %}
+                <a href="{{ url_for('home', sortF = sortF, sortD = dept.dLabel )  }}"> {{ dept.department }} </a>
+              {% endif %}
+            {% endfor %}
           </div>
-          <div class="container-post"> <!-- Open container -->
-            <!-- <div class="for-date">
-              <p class="the-date">🟢Today</p> -->
-              {% block content %}
-                {% for post in posts %}
+        </div>
+      </div>
+      <main>
+        <div class="container-post"> <!-- Open container -->
+          {% block content %}
+              {% for post in posts %}
 
-                  {% if sortF is none %}
+                {% if sortF is none %}
+          <div class="for-date">
+            <p class="the-date"><i class='bx bxs-circle'></i> {{post.schedulePostDate.strftime('%Y-%m-%d') }}</p>
+            
+          
+                  <div class="card">
+                    <div class="card-left">
+                      <div class="card-top">
+                        <div class="top-left">
+                          <div class="profile-image">
+                            <img src="static/images/defaultProfile.jpg" alt="">
+                            <p class="name">{{current_user.username }}</p>
+                            <p class="time">{{post.schedulePostDate.strftime(' %H:%M') }}</p>
+                          </div>
+                        </div>
+                        <div class="top-right">
+                          <div class="card-content">
+                            <h3 class="title">{{ post.title }}</h3>
+                            
+                            <p>{{ post.message | safe }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-bot">
+                        <div class="card-bot-left">
+                          <p class="board-name">
+                            {% for board in boards %}
+                              {% if board.id == post.bID %}
+                                {{ board.title }}
+                              
+                              {% endif %}
+                            {% endfor %}
+                          </p>
+                        </div>
+                        <div class="card-bot-mid">
+                          <div class="card-footer">
+                            <a href="{{ url_for('follow', pID = post.id )  }}">
+                              <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-bot-right-left">
+                          <p class="users-count">1.2k</p>
+                        </div>
+                        <div class="user-icon">
+                          <i class='bx bxs-user'></i>
+                        </div>
+                        <div class="card-bot-right-mid">
+                          <p class="views">15 views</p>
+                        </div>
+                        <div class="card-bot-right-right">
+                          <i class='bx bx-dots-horizontal-rounded'></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-right">
+                      <div class="flyer">
+                        <img class="flyer-image" src="{{ url_for('get_post_image', filename = post.imageLocation)  }}" alt="">
+                      </div>
+                    </div>
+                  </div>
+                  
+                {% elif post.faculty == sortF %}
+                
+                  {% if sortD is none %}
                     <div class="card">
                       <div class="card-left">
                         <div class="card-top">
@@ -117,16 +198,16 @@
                             <div class="profile-image">
                               <img src="static/images/defaultProfile.jpg" alt="">
                               <p class="name">Aaron S.</p>
-                              <p class="time">1hr ago</p>
+                              <p class="time">{{post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                             </div>
                           </div>
                           <div class="top-right">
                             <div class="card-content">
                               <h3 class="title">{{ post.title }}</h3>
-                              <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                              <p>You Scheduled this post to be released on: <small class="text-muted">{{
-                                  post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                              <p>{{ post.message | safe }}</p>
+              <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+              <p>You Scheduled this post to be released on: <small class="text-muted">{{
+                  post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+              <p>{{ post.message | safe }}</p>
                             </div>
                           </div>
                         </div>
@@ -136,14 +217,16 @@
                               {% for board in boards %}
                                 {% if board.id == post.bID %}
                                   {{ board.title }}
-                                
                                 {% endif %}
+                                
                               {% endfor %}
                             </p>
                           </div>
                           <div class="card-bot-mid">
                             <div class="card-footer">
-                              <button>Leave</button>
+                              <a href="{{ url_for('follow', pID = post.id )  }}">
+                                <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                              </a>
                             </div>
                           </div>
                           <div class="card-bot-right-left">
@@ -166,134 +249,101 @@
                         </div>
                       </div>
                     </div>
-                    
-                  {% elif post.faculty == sortF %}
-                  
-                    {% if sortD is none %}
-                      <div class="card">
-                        <div class="card-left">
-                          <div class="card-top">
-                            <div class="top-left">
-                              <div class="profile-image">
-                                <img src="static/images/defaultProfile.jpg" alt="">
-                                <p class="name">Aaron S.</p>
-                                <p class="time">1hr ago</p>
-                              </div>
-                            </div>
-                            <div class="top-right">
-                              <div class="card-content">
-                                <h3 class="title">{{ post.title }}</h3>
-                <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                <p>You Scheduled this post to be released on: <small class="text-muted">{{
-                    post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                <p>{{ post.message | safe }}</p>
-                              </div>
+
+                  {% elif post.dept == sortD %}
+                    <div class="card">
+                      <div class="card-left">
+                        <div class="card-top">
+                          <div class="top-left">
+                            <div class="profile-image">
+                              <img src="static/images/defaultProfile.jpg" alt="">
+                              <p class="name">Aaron S.</p>
+                              <p class="time">{{post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                             </div>
                           </div>
-                          <div class="card-bot">
-                            <div class="card-bot-left">
-                              <p class="board-name">
-                                {% for board in boards %}
-                                  {% if board.id == post.bID %}
-                                    {{ board.title }}
-                                  {% endif %}
-                                  
-                                {% endfor %}
-                              </p>
-                            </div>
-                            <div class="card-bot-mid">
-                              <div class="card-footer">
-                                <button>Leave</button>
-                              </div>
-                            </div>
-                            <div class="card-bot-right-left">
-                              <p class="users-count">1.2k</p>
-                            </div>
-                            <div class="user-icon">
-                              <i class="material-icons">person</i>
-                            </div>
-                            <div class="card-bot-right-mid">
-                              <p class="views">15 views</p>
-                            </div>
-                            <div class="card-bot-right-right">
-                              <i class="material-icons">more_horiz</i>
+                          <div class="top-right">
+                            <div class="card-content">
+                              <h3 class="title">{{ post.title }}</h3>
+                              <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                              <p>You Scheduled this post to be released on: <small class="text-muted">
+                                {{post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                              <p>{{ post.message | safe }}</p>
                             </div>
                           </div>
                         </div>
-                        <div class="card-right">
-                          <div class="flyer">
-                            <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
+                        <div class="card-bot">
+                          <div class="card-bot-left">
+                            <p class="board-name">
+                              {% for board in boards %}
+                                {% if board.id == post.bID %}
+                                  {{ board.title }}
+                                {% endif %}
+                               
+                              {% endfor %}
+                            </p>
+                          </div>
+                          <div class="card-bot-mid">
+                            <div class="card-footer">
+                              <a href="{{ url_for('follow', pID = post.id )  }}">
+                                <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="card-bot-right-left">
+                            <p class="users-count">1.2k</p>
+                          </div>
+                          <div class="user-icon">
+                            <i class="material-icons">person</i>
+                          </div>
+                          <div class="card-bot-right-mid">
+                            <p class="views">15 views</p>
+                          </div>
+                          <div class="card-bot-right-right">
+                            <i class="material-icons">more_horiz</i>
                           </div>
                         </div>
                       </div>
-
-                    {% elif post.dept == sortD %}
-                      <div class="card">
-                        <div class="card-left">
-                          <div class="card-top">
-                            <div class="top-left">
-                              <div class="profile-image">
-                                <img src="static/images/defaultProfile.jpg" alt="">
-                                <p class="name">Aaron S.</p>
-                                <p class="time">1hr ago</p>
-                              </div>
-                            </div>
-                            <div class="top-right">
-                              <div class="card-content">
-                                <h3 class="title">{{ post.title }}</h3>
-                                <p>Posted on: <small class="text-muted">{{ post.dateCreated.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                                <p>You Scheduled this post to be released on: <small class="text-muted">{{
-                                    post.schedulePostDate.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
-                                <p>{{ post.message | safe }}</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="card-bot">
-                            <div class="card-bot-left">
-                              <p class="board-name">
-                                {% for board in boards %}
-                                  {% if board.id == post.bID %}
-                                    {{ board.title }}
-                                  {% endif %}
-                                 
-                                {% endfor %}
-                              </p>
-                            </div>
-                            <div class="card-bot-mid">
-                              <div class="card-footer">
-                                <button>Leave</button>
-                              </div>
-                            </div>
-                            <div class="card-bot-right-left">
-                              <p class="users-count">1.2k</p>
-                            </div>
-                            <div class="user-icon">
-                              <i class="material-icons">person</i>
-                            </div>
-                            <div class="card-bot-right-mid">
-                              <p class="views">15 views</p>
-                            </div>
-                            <div class="card-bot-right-right">
-                              <i class="material-icons">more_horiz</i>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="card-right">
-                          <div class="flyer">
-                            <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
-                          </div>
+                      <div class="card-right">
+                        <div class="flyer">
+                          <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
                         </div>
                       </div>
-                  
-                    {% endif %}
-                  {% endif %}
-
-                {% endfor %}
+                    </div>
                 
-              {% endblock %}
-            <!-- </div>--> 
-          </div> <!-- Close container -->
-      </main>
-  <script src="script.js"></script>
+                {% endif %}
+                {% endif %}
+
+              {% endfor %}
+              
+            {% endblock %}
+          </div> 
+        </div> <!-- Close container -->
+    </main>
+  </section>
+
+  <script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();//calling the function(optional)
+  });
+
+  searchBtn.addEventListener("click", ()=>{ // Sidebar open when you click on the search iocn
+    sidebar.classList.toggle("open");
+    menuBtnChange(); //calling the function(optional)
+  });
+
+  // following are the code to change sidebar button(optional)
+  function menuBtnChange() {
+   if(sidebar.classList.contains("open")){
+     closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+   }else {
+     closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//replacing the iocns class
+   }
+  }
+  </script>
 </body>
 </html>

@@ -1,5 +1,12 @@
 /* This is for styling the board cards */
 
+.container-board{
+  margin-left: 100px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .board-card {
   position: relative;
   font-family: "Candara", sans-serif;
@@ -13,6 +20,7 @@
   flex-direction: column;
   transition-duration: 0.4s;
   transition-property: transform;
+  background-color: ghostwhite;
 }
 
 .board-card-image img{
@@ -39,12 +47,13 @@
   position: absolute;
   display: flex;
   justify-content: center;
-  bottom: 5px;
+  bottom: 0px;
+  margin-bottom: 0px;
   width: 100%;
 }
 
 .board-join button {
-  background-color: #4CAF50;
+  /* background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px;
@@ -55,7 +64,7 @@
   cursor: pointer;
   transition: background-color 0.3s;
   padding-left: 50px;
-  padding-right: 50px;
+  padding-right: 50px; */
 }
 
 .board-left-card {
@@ -83,3 +92,4 @@ button, input[type="submit"], input[type="reset"] {
 	cursor: pointer;
 	outline: inherit;
 }
+

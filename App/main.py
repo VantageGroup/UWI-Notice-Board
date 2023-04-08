@@ -277,7 +277,7 @@ def feed(sortF = None, sortD = None):
 
   return render_template('feed.html', 
     posts=posts,
-    # boards=boards,
+    boards=boards,
     sortF=sortF, 
     sortD=sortD, 
     faculty=faculty, 
@@ -497,8 +497,8 @@ def uploadPost(bID):
       post = latest_entry.id,
       title = latest_entry.title,
       startDate = startDateObj,
-      endDate = endDateObj,
-      url = url_for('viewPost', latest_entry.id)
+      endDate = endDateObj
+      # url = url_for('viewPost')
     )
     db.session.add(newEvent)
     db.session.commit()
@@ -891,13 +891,13 @@ def signupAction():
     db.session.add(newUser)
     db.session.commit()
     
-    profile = Profile(
-      user = db.session.get(User, newUser.username),
-      username = newUser.username,
-      image = False,
-      imageLoaction = None
-    )
-    db.session.add(profile)
+    # profile = Profile(
+    #   user = db.session.get(User, newUser.username),
+    #   username = newUser.username,
+    #   image = False,
+    #   imageLoaction = None
+    # )
+    # db.session.add(profile)
     db.session.commit()
     
     flash('Account Created!')
@@ -978,6 +978,12 @@ def get_subs():
   return json.dumps([sub.toDict() for sub in subs])
 
 #############################################
+
+# Test Page
+@app.route('/test')
+def testpage():
+  
+  return render_template('test.html')
 
 
 if __name__ == '__main__':
