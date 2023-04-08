@@ -252,7 +252,8 @@ def home(sortF = None, sortD = None):
 
     currentSysDateTime = datetime.datetime.now()
 
-    feed = RetrieveFeedSub()
+    feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+    feed = feed.order_by(Post.schedulePostDate.desc())
     boards = RetrieveAllBoards()
     faculty = RetrieveFacultyList()
     department = RetrieveDepartmentList()
@@ -284,6 +285,8 @@ def feed(sortF = None, sortD = None):
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   boards = RetrieveAllBoards()
+
+  print()
 
   return render_template('feed.html', 
     posts=feed,

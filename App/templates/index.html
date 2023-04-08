@@ -122,6 +122,14 @@
         </div>
       </div>
       <main>
+        <div class="search center">
+          <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
+            <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+            <button class="btn btn-outline-secondary" type="submit">
+              <i class="material-icons">search</i>
+            </button>
+          </form>
+        </div>
         <div class="container-post"> <!-- Open container -->
           {% block content %}
               {% for post in posts %}
@@ -305,7 +313,7 @@
                       </div>
                       <div class="card-right">
                         <div class="flyer">
-                          <img class="flyer-image" src="{{ url_for('get_file', filename = post.imageLocation)  }}" alt="">
+                          <img class="flyer-image" src="{{ url_for('get_user', filename = post.imageLocation)  }}" alt="">
                         </div>
                       </div>
                     </div>
