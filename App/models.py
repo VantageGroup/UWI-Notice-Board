@@ -71,16 +71,13 @@ class Post(db.Model):
       "message": self.message,
       "faculty": self.faculty,
       "dept": self.dept,
-      # "viewerCount": self.viewerCount
       "image": self.image,
       "imageLocation": self.imageLocation,
       "dateCreated": self.dateCreated,
       "startDate" : self.startDate,
       "endDate" : self.endDate,
       "schedulePostDate" : self.schedulePostDate,
-      # "postNow" : self.postNow,
-      "scheduledDeleteDate" : self.scheduledDeleteDate,
-      # "deleteNow" : self.deleteNow
+      "scheduledDeleteDate" : self.scheduledDeleteDate
     }
 
 '''#'''
@@ -90,14 +87,14 @@ class Event(db.Model):
   title = db.Column(db.String(64), nullable=False)
   startDate = db.Column(db.Date,  default=date.today, index=True)
   endDate = db.Column(db.Date,  default=date.today, index=True)
-  # url = db.Column(db.String, nullable=False)
+  url = db.Column(db.String, nullable=False)
   
   def toDict(self):
     return{
       "id": self.id,
       "post": self.post,
-      "startDate" : self.startDate
-      # "endDate" : self.endDate
+      "startDate" : self.startDate,
+      "endDate" : self.endDate
     }
 
 '''#'''

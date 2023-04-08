@@ -153,7 +153,7 @@ def admin_required(f):
 
 # Retrieve all Posts from the Database
 def RetrieveAllPosts():
-  list = Post.query.all()
+  list = Post.query.order_by(Post.id.desc()).all()
   list = [entry.toDict() for entry in list]
   
   return list
@@ -195,10 +195,10 @@ def RetrieveDepartmentList():
 
 # Retrieve User Subscribed Boards
 def RetrieveUserBoards():
-  boards = Subscriber.query.filter_by(user=current_user.id)
-  boards = [entry.toDict() for entry in boards]
+  list = Subscriber.query.filter_by(user=current_user.id)
+  list = [entry.toDict() for entry in list]
   
-  return boards
+  return list
 
 # Retrieve User Post Feed
 def RetrieveFeedSub():
@@ -209,21 +209,30 @@ def RetrieveFeedSub():
 
   for board in boards:
     for post in all_posts:
-      if post.bID == board.board:
+      if (post['bID'] == board['board']):
         posts.append(post)
   
   return posts
 
+#
+def RetrieveUserFollowed():
+  list = Follow.query.filter_by(user=current_user.id)
+  list = [entry.toDict() for entry in list]
+  
+  return list
+  
+
 # Retrieve User Followed Events
 def RetrieveFollowedEvents():
-  all_events = RetrieveAllPosts() 
-  posts = RetrieveFeedSub()
+  all_events = RetrieveAllEvents() 
+  follow = RetrieveUserFollowed()
   
   events = []
 
-  for post in posts:
+  for post in follow:
     for event in all_events:
-      if event.pID == post.post:
+      print(post['id'])
+      if (event['post'] == post['post']):
         events.append(event)
   
   return events
@@ -243,7 +252,7 @@ def home(sortF = None, sortD = None):
 
     currentSysDateTime = datetime.datetime.now()
 
-    feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+    feed = RetrieveFeedSub()
     boards = RetrieveAllBoards()
     faculty = RetrieveFacultyList()
     department = RetrieveDepartmentList()
@@ -270,13 +279,14 @@ def feed(sortF = None, sortD = None):
   
   currentSysDateTime = datetime.datetime.now()
   
-  posts = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+  feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+  feed = feed.order_by(Post.schedulePostDate.desc())
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   boards = RetrieveAllBoards()
 
   return render_template('feed.html', 
-    posts=posts,
+    posts=feed,
     boards=boards,
     sortF=sortF, 
     sortD=sortD, 
@@ -493,15 +503,16 @@ def uploadPost(bID):
 
     latest_entry = Post.query.order_by(Post.id.desc()).first()
     
-    newEvent = Event(
-      post = latest_entry.id,
-      title = latest_entry.title,
-      startDate = startDateObj,
-      endDate = endDateObj
-      # url = url_for('viewPost')
-    )
-    db.session.add(newEvent)
-    db.session.commit()
+    if (event == True):
+      newEvent = Event(
+        post = latest_entry.id,
+        title = latest_entry.title,
+        startDate = startDateObj,
+        endDate = endDateObj,
+        url = request.base_url + url_for('viewPost', pID=latest_entry.id)
+      )
+      db.session.add(newEvent)
+      db.session.commit()
 
   else:
     print("Form did not validate on submit")  
@@ -596,6 +607,8 @@ def follow(pID):
   
   if (Follow.query.filter_by(post=pID, user=current_user.id).first()):
     print("The user is already following post")
+  elif (Event.query.filter_by(post=pID).first() == None):
+    print("Post is not event")
   else:
     following = Follow(
       post = pID,
@@ -625,6 +638,28 @@ def boards(sortF = None, sortD = None):
   department = RetrieveDepartmentList()
   
   return render_template('boards.html', 
+    boards=boards, 
+    sortF=sortF,
+    sortD=sortD,
+    faculty=faculty,
+    department=department
+  )
+  
+# View Saved Boards Route
+@app.route('/user-boards', methods=['GET', 'POST'])
+@app.route('/user-boards|<sortF>', methods=['GET', 'POST'])
+@app.route('/user-boards|<sortF>,<sortD>', methods=['GET', 'POST'])
+def savedBoards(sortF = None, sortD = None):
+  if (current_user.is_authenticated == False):
+    return redirect(url_for('login'))
+  
+  userBoards = RetrieveUserBoards()
+  boards = RetrieveAllBoards()
+  faculty = RetrieveFacultyList()
+  department = RetrieveDepartmentList()
+  
+  return render_template('savedBoards.html', 
+    userBoards=userBoards,
     boards=boards, 
     sortF=sortF,
     sortD=sortD,
@@ -887,17 +922,17 @@ def signupAction():
       isAdmin = True
     )
     newUser.set_password(data['password'])
-        
     db.session.add(newUser)
     db.session.commit()
     
-    # profile = Profile(
-    #   user = db.session.get(User, newUser.username),
-    #   username = newUser.username,
-    #   image = False,
-    #   imageLoaction = None
-    # )
-    # db.session.add(profile)
+    latest_entry = User.query.order_by(User.id.desc()).first()
+    profile = Profile(
+      user = latest_entry.id,
+      username = latest_entry.username,
+      image = False,
+      imageLocation = None
+    )
+    db.session.add(profile)
     db.session.commit()
     
     flash('Account Created!')
@@ -978,12 +1013,6 @@ def get_subs():
   return json.dumps([sub.toDict() for sub in subs])
 
 #############################################
-
-# Test Page
-@app.route('/test')
-def testpage():
-  
-  return render_template('test.html')
 
 
 if __name__ == '__main__':
