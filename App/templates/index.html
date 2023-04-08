@@ -113,7 +113,7 @@
 
               <button onclick="window.location.href='/logout'">Log Out</button>
 
-              <a href="" class="nav-link">
+              <a href="{{ url_for('savedBoards', sortF = None, sortD = None) }}" class="nav-link">
                 <i class="material-icons">collections_bookmark</i>
                 <span>Saved Boards</span>
               </a>

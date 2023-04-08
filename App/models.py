@@ -71,16 +71,13 @@ class Post(db.Model):
       "message": self.message,
       "faculty": self.faculty,
       "dept": self.dept,
-      # "viewerCount": self.viewerCount
       "image": self.image,
       "imageLocation": self.imageLocation,
       "dateCreated": self.dateCreated,
       "startDate" : self.startDate,
       "endDate" : self.endDate,
       "schedulePostDate" : self.schedulePostDate,
-      "postNow" : self.postNow,
-      "scheduledDeleteDate" : self.scheduledDeleteDate,
-      "deleteNow" : self.deleteNow
+      "scheduledDeleteDate" : self.scheduledDeleteDate
     }
 
 '''#'''
