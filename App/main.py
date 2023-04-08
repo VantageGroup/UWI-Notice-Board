@@ -285,11 +285,21 @@ def feed(sortF = None, sortD = None):
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
   boards = RetrieveAllBoards()
+  subBoards = Subscriber.query.filter_by(user = current_user.id)
+  subBoards = [entry.toDict() for entry in subBoards]
+  
+  newFeed = []
 
-  print()
+  for board in subBoards:
+    for singlePost in feed:
+      if singlePost.bID == board['board']:
+        newFeed.append(singlePost)
 
+  newFeed = [singlePost.toDict() for singlePost in newFeed]
+  
+  
   return render_template('feed.html', 
-    posts=feed,
+    posts=newFeed,
     boards=boards,
     sortF=sortF, 
     sortD=sortD, 
