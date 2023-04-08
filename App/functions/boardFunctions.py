@@ -21,7 +21,6 @@ from wtforms import (
 )
 from flask_wtf.file import (
     FileField, 
-    FileRequired, 
     FileAllowed
 )
 from wtforms.validators import (
@@ -44,7 +43,12 @@ configure_uploads(app, photos)
 
 
 class BoardForm(FlaskForm):
-    title = StringField( "Title", validators = [DataRequired()] )
+    title = StringField( "Title", 
+        validators = [
+            InputRequired(), 
+            Length(min=3, max=16, message="Name must be a between of %(min)d and %(max)d characters in length")
+        ] 
+    )
     photo = FileField(
         validators=[
             FileAllowed(photos, 'Only images are allowed')
