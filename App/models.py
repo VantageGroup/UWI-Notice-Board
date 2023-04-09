@@ -120,7 +120,6 @@ class Board(db.Model):
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
   subscribers = db.Column(db.Integer, nullable=True, default = 1)
-  currentUserIsSubd = db.Column(db.Boolean, default = False)
   
   posts = db.relationship('Post', backref='b')
   
@@ -132,8 +131,7 @@ class Board(db.Model):
       "dept": self.dept,
       "image": self.image,
       "imageLocation": self.imageLocation,
-      "subscribers": self.subscribers,
-      "currentUserIsSubd": self.currentUserIsSubd
+      "subscribers": self.subscribers
     }
    
 '''#'''

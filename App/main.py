@@ -676,9 +676,6 @@ def boards(sortF = None, sortD = None):
             board['currentUserIsSubd'] = True  # set the attribute to True for the matching board
             break  # exit the inner loop because a match was found
     
-  db.session.commit()
-
-  
   return render_template('boards.html', 
     boards=boards, 
     sortF=sortF,
@@ -828,8 +825,7 @@ def uploadBoard():
       faculty=faculty,
       dept=dept,
       image=image,
-      imageLocation=imageLocation,
-      currentUserIsSubd = True
+      imageLocation=imageLocation
     )
     db.session.add(newBoard)
     db.session.commit()
@@ -917,7 +913,6 @@ def join(bID):
     )
     db.session.add(subscriber)
 
-  board.currentUserIsSubd = True
   board.subscribers = board.subscribers + 1
 
   db.session.commit()
@@ -934,7 +929,6 @@ def leave(bID):
   
   if (Subscriber.query.filter_by(board=board.id, user=current_user.id).first()):
     print("deleting entry")
-    board.currentUserIsSubd == False
     Subscriber.query.filter_by(board=bID, user=current_user.id).first().delete()
     board.subscribers = board.subscribers - 1
     db.session.commit()
