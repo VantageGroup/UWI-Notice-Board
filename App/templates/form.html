@@ -133,15 +133,30 @@
     {% block content %}
     {% if formPost %}
     <div class="container-post">
-      <h4>Please fill out the form to create your post</h4></br>
+      <p>Please fill out the form to create your post.</p></br>
       <form method="POST" enctype="multipart/form-data" style="width:100%">
         {{ formPost.hidden_tag() }}
-        {{ formPost.photo(class="form.control") }}
-        <h3 class="title">{{ formPost.title(placeholder="Enter post title") }}</h3>
-        <p>{{ formPost.message(placeholder="Add some text") }}</p>
+        <p>Upload Flyer</p>
+        <div>
+          {{ formPost.photo(class="form-control") }}
+        </div><br>
+        
+    
+        <p>Title</p>
+        <div>
+          {{ formPost.title(placeholder="Add text") }}
+        </div><br>
+        
+        
+        <p>Message</p>
+        <div>
+          {{ formPost.message(placeholder="Add some text") }}
+        </div><br>
+        
    
         <!-- This is for Events and Dates -->
         <div class="card-content">
+            <h4>Post Options</h4></br>
             <label for="eventCheck">Create Event</label>
             <input type="checkBox" id="eventCheck" onclick="scheduleEvent()">
 
@@ -206,29 +221,33 @@
                 }
                 }
             </script>
+          <button class="custom-btn btn-5"><i class='bx bxs-paper-plane'></i> {{ formPost.submit() }}</button>
         </div>
         <!-- This is end of Events and Dates -->
-
-        <button class="custom-btn btn-5"><i class='bx bxs-paper-plane'></i> {{ formPost.submit() }}</button>
-        
       </form>
       {{ ckeditor.load(pkg_type="basic") }}
       {{ ckeditor.config(name='message') }}
     </div>
-
     {% else %}
-
     <div class="container-board">
-      <h4>Please fill out the form to create your board</h4><br />
+      <p>Please fill out the form to create your board.</p><br />
       
       <form method="POST" enctype="multipart/form-data" style="width:100%">
         {{ formBoard.hidden_tag() }}
+        <p>Upload Thumbnail</p>
+        <div>
+          {{ formBoard.photo(class="form.control") }}
+        </div><br>
+        
+        <p>Title</p>
 
-        {{ formBoard.photo(class="form.control") }}
-        <p>{{ formBoard.title(placeholder="Enter board name") }}</p>
+        <div>
+          {{ formBoard.title(placeholder="Enter board name") }}
+        </div><br>
             
-
+        <p>Select Faculty & Department</p>
         <select name='faculty'>
+          
           {% for fac in faculty %}
           <option value="{{ fac.label }}" {% set value=fac.label + "+" + "None" %} {% if value==choice %} selected {%
             elif choice is none and fac.label=="STA" %} selected {% endif %}>

@@ -80,11 +80,11 @@
             {% block buttons %}
             {% if current_user.is_authenticated %}
               <span>You are already logged in.
-                <button onclick="window.location.href='/logout'"class="button" class="logout">Logout</button>
+                <button onclick="window.location.href='/logout'"class="custom-btn btn-5" class="logout">Logout</button>
               </span>
             {% else %}
               <span>Don't have an account? 
-                <button onclick="window.location.href='/signup'"class="button">Sign Up</button>
+                <button onclick="window.location.href='/signup'"class="custom-btn btn-5">Sign Up</button>
               </span>
             {% endif %}
             {% endblock %}

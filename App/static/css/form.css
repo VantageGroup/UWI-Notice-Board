@@ -27,9 +27,9 @@
 }
 
 .card-content{
-  margin-left: 1vw;
-  width: 30vw;
+  width: 500px;
   height: 300px;
+  margin-top: 50px;
 }
 
 .title{
@@ -260,4 +260,11 @@ button, input[type="submit"], input[type="reset"] {
     font: inherit;
     cursor: pointer;
     outline: inherit;
+}
+
+.cke_reset{
+  height: 350px !important;
+  width: 1000px !important;
+  /* border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px; */
 }
