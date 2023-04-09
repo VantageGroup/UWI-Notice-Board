@@ -157,16 +157,18 @@
                         <div class="top-left">
                           <div class="profile-image">
                             <img src="static/images/defaultProfile.jpg" alt="">
-                            <p class="name">{{ post.username }}</p>
+                            <p class="name">{{ current_user.username }}</p>
                             <p class="time">{{ post.schedulePostDate.strftime(' %H:%M') }}</p>
                           </div>
                         </div>
                         <div class="top-right">
+                          <a href="{{ url_for('viewPost',pID = post.id )}}"> 
                           <div class="card-content">
                             <h3 class="title">{{ post.title }}</h3>
                             
                             <p>{{ post.message | safe }}</p>
                           </div>
+                          </a>
                         </div>
                       </div>
                       <div class="card-bot">
@@ -183,18 +185,18 @@
                         <div class="card-bot-mid">
                           <div class="card-footer">
                             <a href="{{ url_for('follow', pID = post.id )  }}">
-                              <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                              <button class="custom-btn btn-5"><i class='bx bx-calendar-check'></i> Follow</button>
                             </a>
                           </div>
                         </div>
-                        <div class="card-bot-right-left">
+                        <!-- <div class="card-bot-right-left">
                           <p class="users-count">1.2k</p>
-                        </div>
+                        </div> 
                         <div class="user-icon">
                           <i class='bx bxs-user'></i>
-                        </div>
+                        </div> -->
                         <div class="card-bot-right-mid">
-                          <p class="views">15 views</p>
+                          <p class="views">{{post.viewCount}} views</p>
                         </div>
                         <div class="card-bot-right-right">
                           <i class='bx bx-dots-horizontal-rounded'></i>
@@ -223,11 +225,13 @@
                             </div>
                           </div>
                           <div class="top-right">
+                            <a href="{{ url_for('viewPost',pID = post.id )}}"> 
                             <div class="card-content">
                               <h3 class="title">{{ post.title }}</h3>
                               
                               <p>{{ post.message | safe }}</p>
                             </div>
+                            </a>
                           </div>
                         </div>
                         <div class="card-bot">
@@ -244,18 +248,18 @@
                           <div class="card-bot-mid">
                             <div class="card-footer">
                               <a href="{{ url_for('follow', pID = post.id )  }}">
-                                <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                                <button class="custom-btn btn-5"><i class='bx bx-calendar-check'></i> Follow</button>
                               </a>
                             </div>
                           </div>
-                          <div class="card-bot-right-left">
+                          <!-- <div class="card-bot-right-left">
                             <p class="users-count">1.2k</p>
-                          </div>
+                          </div> 
                           <div class="user-icon">
                             <i class='bx bxs-user'></i>
-                          </div>
+                          </div>-->
                           <div class="card-bot-right-mid">
-                            <p class="views">15 views</p>
+                            <p class="views">{{post.viewCount}} views</p>
                           </div>
                           <div class="card-bot-right-right">
                             <i class='bx bx-dots-horizontal-rounded'></i>
@@ -283,11 +287,13 @@
                             </div>
                           </div>
                           <div class="top-right">
+                            <a href="{{ url_for('viewPost',pID = post.id )}}"> 
                             <div class="card-content">
                               <h3 class="title">{{ post.title }}</h3>
                               
                               <p>{{ post.message | safe }}</p>
                             </div>
+                            </a>
                           </div>
                         </div>
                         <div class="card-bot">
@@ -304,18 +310,18 @@
                           <div class="card-bot-mid">
                             <div class="card-footer">
                               <a href="{{ url_for('follow', pID = post.id )  }}">
-                                <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                                <button class="custom-btn btn-5"><i class='bx bx-calendar-check'></i> Follow</button>
                               </a>
                             </div>
                           </div>
-                          <div class="card-bot-right-left">
-                            <p class="users-count">1.2k</p>
-                          </div>
+                          <!-- <div class="card-bot-right-left">
+                            <p class="users-count">{{post.subscribers}}</p>
+                          </div> 
                           <div class="user-icon">
                             <i class='bx bxs-user'></i>
-                          </div>
+                          </div>-->
                           <div class="card-bot-right-mid">
-                            <p class="views">15 views</p>
+                            <p class="views">{{post.viewCount}} views</p>
                           </div>
                           <div class="card-bot-right-right">
                             <i class='bx bx-dots-horizontal-rounded'></i>

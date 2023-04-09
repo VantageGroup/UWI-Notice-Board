@@ -181,18 +181,18 @@
                       <div class="card-bot-mid">
                         <div class="card-footer">
                           <a href="{{ url_for('follow', pID = post.id )  }}">
-                            <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                            <button class="custom-btn btn-5"><i class='bx bx-calendar-check'></i> Follow</button>
                           </a>
                         </div>
                       </div>
-                      <div class="card-bot-right-left">
-                        <p class="users-count">1.2k</p>
-                      </div>
+                      <!-- <div class="card-bot-right-left">
+                        <p class="users-count">{{board.subscribers}}</p>
+                      </div> 
                       <div class="user-icon">
                         <i class='bx bxs-user'></i>
-                      </div>
+                      </div>-->
                       <div class="card-bot-right-mid">
-                        <p class="views">15 views</p>
+                        <p class="views">{{post.viewCount}} views</p>
                       </div>
                       <div class="card-bot-right-right">
                         <i class='bx bx-dots-horizontal-rounded'></i>

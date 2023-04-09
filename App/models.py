@@ -61,7 +61,7 @@ class Post(db.Model):
   endDate = db.Column(db.Date,  default=date.today, index=True)
   schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True)
   scheduledDeleteDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True, nullable=True)
-  viewCount = db.Column(db.Integer, nullable=False)
+  viewCount = db.Column(db.Integer, nullable=True, default = 0)
   
   def toDict(self):
     return{

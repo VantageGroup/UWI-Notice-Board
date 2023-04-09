@@ -395,16 +395,18 @@ def cal():
 # View Post
 @app.route('/post<pID>', methods=['GET'])
 def viewPost(pID):
-  if (current_user.is_authenticated == False):
-    return redirect(url_for('login'))
-  
-  post = db.session.get(Post, pID)
-  post = post.toDict()
-  print(post)
-  post.viewCount = post.viewCount + 1
-  return render_template('post.html',
-    post=post
-  )
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
+    post = db.session.query(Post).get(pID)
+    if post is None:
+        abort(404)
+
+    post.viewCount += 1
+    db.session.add(post)
+    db.session.commit()
+
+    return render_template('post.html', post=post.toDict())
 
 # Create a Post Route
 @app.route('/board<bID>=create-post', methods=['GET'])
@@ -527,7 +529,7 @@ def uploadPost(bID):
       endDate=endDateObj,
 
       schedulePostDate = schedulePostDateObj,
-      scheduledDeleteDate = scheduledDeleteDateObj
+      scheduledDeleteDate = scheduledDeleteDateObj,
     )
     db.session.add(newPost)
     db.session.commit()
@@ -725,11 +727,14 @@ def savedBoards(sortF = None, sortD = None):
 def board(bID):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
-  
+  currentSysDateTime = datetime.datetime.now()
   board = db.session.get(Board, bID)
+  posts = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
   posts = Post.query.filter_by(bID=bID)
   
-  currentSysDateTime = datetime.datetime.now()
+  
+  
+  posts = posts.order_by(Post.schedulePostDate.desc())
     
   posts = [entry.toDict() for entry in posts]
   boardId = bID
