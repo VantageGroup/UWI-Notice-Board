@@ -248,8 +248,6 @@ def RetrieveFollowedEvents():
 @app.route('/|<sortF>,<sortD>', methods=['GET', 'POST'])
 def home(sortF = None, sortD = None):
   if (current_user.is_authenticated):
-    print("User already logged in")
-
     currentSysDateTime = datetime.datetime.now()
 
     boards = RetrieveAllBoards()
@@ -258,14 +256,17 @@ def home(sortF = None, sortD = None):
     
     feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
     feed = feed.order_by(Post.schedulePostDate.desc())
-    feed = [entry.toDict() for entry in feed]
     
-    profiles = Profile.query.all()
-    profiles = [entry.toDict() for entry in profiles]
     for post in feed:
-      post['username'] = ['here' for profile in profiles if profile['user']==post['owner']]
-      post['userImage'] = [profile['userImage'] for profile in profiles if profile['user']==post['owner']]
-      post['userImageLocation'] = [profile['userImageLocation'] for profile in profiles if profile['user']==post['owner']]
+      profile = Profile.query.filter_by(user=post.owner).first()
+      
+      post = post.toDict()
+      
+      post['username'] = profile.username
+      post['userImage'] = profile.image
+      post['userImageLocation'] = profile.imageLocation
+      
+    print(feed.username)
     
     return render_template('index.html', 
       posts=feed,
@@ -675,16 +676,16 @@ def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
+  
   subscribers = Subscriber.query.filter_by(user=current_user.id)
   subscribers = [entry.toDict() for entry in subscribers]
-   
   
   for board in boards:
-    board['currentUserIsSubd'] = False  # reset the attribute to False for all boards
+    board['currentUserIsSubd'] = False
     for sub in subscribers:
         if sub['board'] == board['id']:
-            board['currentUserIsSubd'] = True  # set the attribute to True for the matching board
-            break  # exit the inner loop because a match was found
+            board['currentUserIsSubd'] = True
+            break
     
   return render_template('boards.html', 
     boards=boards, 
