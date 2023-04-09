@@ -1,15 +1,7 @@
-import os
-import click
-import csv
-from flask import Flask
+from App import app,create_app
 
-from App import app
-from App.models import (
-  create_db, 
-  db, 
-  FacultyDept
-)
 
+app = create_app()
 
 # @app.cli.command('ínit', with_appcontext=True)
 # def initialize():
