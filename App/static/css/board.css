@@ -52,6 +52,7 @@
   width: 100%;
 }
 
+
 .board-join button {
   /* background-color: #4CAF50;
   border: none;
@@ -65,6 +66,16 @@
   transition: background-color 0.3s;
   padding-left: 50px;
   padding-right: 50px; */
+}
+
+
+.board-leave{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  bottom: 0px;
+  margin-bottom: 0px;
+  width: 100%;
 }
 
 .board-left-card {

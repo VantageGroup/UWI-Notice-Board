@@ -120,6 +120,7 @@ class Board(db.Model):
   image = db.Column(db.Boolean)
   imageLocation = db.Column(db.String(256), nullable=True)
   subscribers = db.Column(db.Integer, nullable=True, default = 1)
+  currentUserIsSubd = db.Column(db.Boolean, default = False)
   
   posts = db.relationship('Post', backref='b')
   
@@ -131,7 +132,8 @@ class Board(db.Model):
       "dept": self.dept,
       "image": self.image,
       "imageLocation": self.imageLocation,
-      "subscribers": self.subscribers
+      "subscribers": self.subscribers,
+      "currentUserIsSubd": self.currentUserIsSubd
     }
    
 '''#'''
@@ -140,14 +142,21 @@ class Subscriber(db.Model):
   board = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
   isAdmin = db.Column(db.Boolean)
+  isSubscribed = db.Column(db.Boolean)
   
   def toDict(self):
     return{
       "id": self.id,
       "board": self.board,
       "user": self.user,
-      "isAdmin": self.isAdmin
+      "isAdmin": self.isAdmin,
+      "isSubscribed" : self.isSubscribed
     }
+  
+
+  def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 '''#'''

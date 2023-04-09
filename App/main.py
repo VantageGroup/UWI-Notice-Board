@@ -665,13 +665,27 @@ def boards(sortF = None, sortD = None):
   boards = RetrieveAllBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
+  subscribers = Subscriber.query.filter_by(user=current_user.id)
+  subscribers = [entry.toDict() for entry in subscribers]
+   
+  
+  for board in boards:
+    board['currentUserIsSubd'] = False  # reset the attribute to False for all boards
+    for sub in subscribers:
+        if sub['board'] == board['id']:
+            board['currentUserIsSubd'] = True  # set the attribute to True for the matching board
+            break  # exit the inner loop because a match was found
+    
+  db.session.commit()
+
   
   return render_template('boards.html', 
     boards=boards, 
     sortF=sortF,
     sortD=sortD,
     faculty=faculty,
-    department=department
+    department=department,
+    subscribers=subscribers
   )
   
 # View Saved Boards Route
@@ -733,6 +747,16 @@ def createBoard():
     department=department,
     choice=None
   )
+
+
+# Delete a Board
+@app.route('/edit-board<bID>', methods=['GET'])
+@login_required
+@admin_required
+def deleteBoard(bID):
+  board = db.session.get(Board, bID)
+  return redirect(url_for('boards'))
+
 
 # Edit a Board Route
 @app.route('/edit-board<bID>', methods=['GET'])
@@ -804,7 +828,8 @@ def uploadBoard():
       faculty=faculty,
       dept=dept,
       image=image,
-      imageLocation=imageLocation
+      imageLocation=imageLocation,
+      currentUserIsSubd = True
     )
     db.session.add(newBoard)
     db.session.commit()
@@ -815,7 +840,8 @@ def uploadBoard():
     subscriber = Subscriber(
       board = latest_entry.id,
       user = current_user.id,
-      isAdmin = True
+      isAdmin = True,
+      isSubscribed = True
     )
     db.session.add(subscriber)
     db.session.commit()
@@ -878,23 +904,46 @@ def join(bID):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
+  board = db.session.get(Board,bID)
+  
   if (Subscriber.query.filter_by(board=bID, user=current_user.id).first()):
-    print("The user is already subscribed")
+   print("The user is already subscribed")
   else:
     subscriber = Subscriber(
       board = bID,
       user = current_user.id,
-      isAdmin = False
+      isAdmin = False,
+      isSubscribed = True
     )
-    
     db.session.add(subscriber)
-    
-    board = db.session.get(Board,bID)
-    board.subscribers = board.subscribers + 1
-    
+
+  board.currentUserIsSubd = True
+  board.subscribers = board.subscribers + 1
+
+  db.session.commit()
+
+  return redirect(url_for('board',bID=bID))
+
+# Leave Board Route
+@app.route('/leave<bID>', methods=['GET'])
+def leave(bID):
+  if (current_user.is_authenticated == False):
+    return redirect(url_for('login'))
+  
+  board = db.session.get(Board,bID)
+  
+  if (Subscriber.query.filter_by(board=board.id, user=current_user.id).first()):
+    print("deleting entry")
+    board.currentUserIsSubd == False
+    Subscriber.query.filter_by(board=bID, user=current_user.id).first().delete()
+    board.subscribers = board.subscribers - 1
     db.session.commit()
 
   return redirect(url_for('board',bID=bID))
+
+
+
+
 
 #############################################
 
@@ -1023,8 +1072,8 @@ def dropAll():
 # User Table
 @app.route('/users', methods=['GET'])
 def get_user():
-  if (current_user.is_authenticated):
-    return redirect(url_for('login'))
+  #if (current_user.is_authenticated):
+    #return redirect(url_for('login'))
   
   users = User.query.all()
   return json.dumps([user.toDict() for user in users])
@@ -1032,8 +1081,8 @@ def get_user():
 # Subscriber Table
 @app.route('/subscribers', methods=['GET'])
 def get_subs():
-  if (current_user.is_authenticated):
-    return redirect(url_for('login'))
+ # if (current_user.is_authenticated):
+   # return redirect(url_for('login'))
   
   subs = Subscriber.query.all()
   return json.dumps([sub.toDict() for sub in subs])
