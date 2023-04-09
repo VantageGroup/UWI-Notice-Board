@@ -158,11 +158,13 @@
                         </div>
                       </div>
                       <div class="top-right">
+                        <a href="{{ url_for('viewPost',pID = post.id )}}"> 
                         <div class="card-content">
                           <h3 class="title">{{ post.title }}</h3>
                           
                           <p>{{ post.message | safe }}</p>
                         </div>
+                      </a>
                       </div>
                     </div>
                     <div class="card-bot">

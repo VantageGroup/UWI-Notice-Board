@@ -399,7 +399,8 @@ def viewPost(pID):
     return redirect(url_for('login'))
   
   post = db.session.get(Post, pID)
-  
+  post = post.toDict()
+  print(post)
   return render_template('post.html',
     post=post
   )
