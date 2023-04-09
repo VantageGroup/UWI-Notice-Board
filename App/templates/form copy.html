@@ -103,7 +103,7 @@
   <section class="home-section">
       <div class="button-container">
         <div class="text">Form</div>
-        <!-- <div class="act-container">
+        <div class="act-container">
           <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
             {{ sortF }}
           {% else %}
@@ -126,91 +126,120 @@
               {% endif %}
             {% endfor %}
           </div>
-        </div> -->
+        </div>
       </div>
 <!-- Your Stuff Goes, Use a main tag-->
 <main>
     {% block content %}
     {% if formPost %}
     <div class="container-post">
-      <h4>Please fill out the form to create your post</h4></br>
+      <h4>Please fill out the form to create your post</h4><br />
       <form method="POST" enctype="multipart/form-data" style="width:100%">
         {{ formPost.hidden_tag() }}
-        {{ formPost.photo(class="form.control") }}
-        <h3 class="title">{{ formPost.title(placeholder="Enter post title") }}</h3>
-        <p>{{ formPost.message(placeholder="Add some text") }}</p>
-   
-        <!-- This is for Events and Dates -->
-        <div class="card-content">
-            <label for="eventCheck">Create Event</label>
-            <input type="checkBox" id="eventCheck" onclick="scheduleEvent()">
+        <div class="card">
+          <div class="card-left">
+            <div class="card-top" style="height:200vh">
+              <div class="top-left">
+                <div class="profile-image">
+                  <img src="static/images/defaultProfile.jpg" alt="">
+                  <p class="name">Aaron S.</p>
+                  <p class="time">1hr ago</p>
+                </div>
+              </div>
+              <div class="top-right">
+                <div class="card-content">
+                  <h3 class="title">{{ formPost.title(placeholder="Enter post title") }}</h3>
+                  <p>{{ formPost.message(placeholder="Add some text") }}</p>
+                </div>
 
-            <div id="eventDrop" style="display:none">
-            <p>{{ formPost.startDate.label}} {{formPost.startDate(class='DateTimeField')}}</p>
-            <p>{{ formPost.endDate.label}} {{formPost.endDate(class='DateTimeField')}}</p>
-            </div><br>
+                <div class="card-content">
+                  <label for="eventCheck">Create Event</label>
+                  <input type="checkBox" id="eventCheck" onclick="scheduleEvent()">
 
-            <br>
-            
-            <label for="postCheck">Schedule Post</label>
-            <input type="checkBox" id="postCheck" onclick="schedulePost()">
+                  <div id="eventDrop" style="display:none">
+                    <p>{{ formPost.startDate.label}} {{formPost.startDate(class='DateTimeField')}}</p>
+                    <p>{{ formPost.endDate.label}} {{formPost.endDate(class='DateTimeField')}}</p>
+                  </div><br>
 
-            <div id="postDrop" style="display:none">
-            <p>{{ formPost.schedulePostDate.label}} {{formPost.schedulePostDate(class='form-control')}}</p>
-            </div><br>
+                  <br>
+                  
+                  <label for="postCheck">Schedule Post</label>
+                  <input type="checkBox" id="postCheck" onclick="schedulePost()">
 
-            <br>
+                  <div id="postDrop" style="display:none">
+                    <p>{{ formPost.schedulePostDate.label}} {{formPost.schedulePostDate(class='form-control')}}</p>
+                  </div><br>
 
-            <label for="deleteCheck">Schedule Delete</label>
-            <input type="checkBox" id="deleteCheck" onclick="scheduleDelete()">
+                  <br>
 
-            <div id="deleteDrop" style="display:none">
-            <p>{{ formPost.scheduledDeleteDate.label}} {{formPost.scheduledDeleteDate(class='form-control')}}</p>
-            </div><br>
+                  <label for="deleteCheck">Schedule Delete</label>
+                  <input type="checkBox" id="deleteCheck" onclick="scheduleDelete()">
 
-            <br>
-            <script>
-                function scheduleEvent() {
-                var box = document.getElementById("eventCheck");
-                var drop = document.getElementById("eventDrop");
+                  <div id="deleteDrop" style="display:none">
+                    <p>{{ formPost.scheduledDeleteDate.label}} {{formPost.scheduledDeleteDate(class='form-control')}}</p>
+                  </div><br>
 
-                if (box.checked) {
-                    drop.style.display = "block";
-                }
-                else {
-                    drop.style.display = "none";
-                }
-                }
+                  <br>
+                    <script>
+                      function scheduleEvent() {
+                        var box = document.getElementById("eventCheck");
+                        var drop = document.getElementById("eventDrop");
 
-                function schedulePost() {
-                var box = document.getElementById("postCheck");
-                var drop = document.getElementById("postDrop");
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
 
-                if (box.checked) {
-                    drop.style.display = "block";
-                }
-                else {
-                    drop.style.display = "none";
-                }
-                }
+                      function schedulePost() {
+                        var box = document.getElementById("postCheck");
+                        var drop = document.getElementById("postDrop");
 
-                function scheduleDelete() {
-                var box = document.getElementById("deleteCheck");
-                var drop = document.getElementById("deleteDrop");
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
 
-                if (box.checked) {
-                    drop.style.display = "block";
-                }
-                else {
-                    drop.style.display = "none";
-                }
-                }
-            </script>
+                      function scheduleDelete() {
+                        var box = document.getElementById("deleteCheck");
+                        var drop = document.getElementById("deleteDrop");
+
+                        if (box.checked) {
+                          drop.style.display = "block";
+                        }
+                        else {
+                          drop.style.display = "none";
+                        }
+                      }
+                    </script>
+                </div>
+              </div>
+            </div>
+            <div class="card-bot">
+              <div class="card-bot-left">
+                <p class="board-name">DCIT</p>
+              </div>
+              <div class="card-bot-mid">
+                <div class="card-footer">
+                  <button>{{ formPost.submit() }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="flyer">
+              {% if file_url %}
+              <img class="flyer-image" src="{{ url_for('get_file', filename=formPost.photo)  }}" alt="">
+              {% endif %}
+            </div>
+          </div>
         </div>
-        <!-- This is end of Events and Dates -->
-
-        <button class="custom-btn btn-5"><i class='bx bxs-paper-plane'></i> {{ formPost.submit() }}</button>
-        
+        {{ formPost.photo(class="form.control") }}
       </form>
       {{ ckeditor.load(pkg_type="basic") }}
       {{ ckeditor.config(name='message') }}

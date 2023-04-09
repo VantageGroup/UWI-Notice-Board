@@ -33,27 +33,34 @@
         <span class="tooltip">Home</span>
       </li>
       <li>
-        <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}">
-          <i class='bx bx-compass'></i>
-          <span class="links_name">Feed</span>
-        </a>
-        <span class="tooltip">Feed</span>
-      </li>
-      <li>
-        <a href="{{ url_for('boards') }}">
-          <i class='bx bx-collection'></i>
-          <span class="links_name">Boards</span>
-        </a>
-        <span class="tooltip">Boards</span>
-      </li>
-      <li>
-        <a href="{{ url_for('cal') }}">
-          <i class='bx bx-calendar'></i>
-          <span class="links_name">Calendar</span>
-        </a>
-        <span class="tooltip">Calendar</span>
-      </li>
-      <!-- <li>
+       <a href="{{ url_for('feed', uID = current_user.id, sortF = None, sortD = None) }}">
+         <i class='bx bx-compass' ></i>
+         <span class="links_name">Feed</span>
+       </a>
+       <span class="tooltip">Feed</span>
+     </li>
+     <li>
+       <a href="{{ url_for('boards') }}">
+         <i class='bx bx-collection' ></i>
+         <span class="links_name">Boards</span>
+       </a>
+       <span class="tooltip">Boards</span>
+     </li>
+     <li>
+      <a href="{{ url_for('savedBoards') }}">
+        <i class='bx bx-heart' ></i>
+        <span class="links_name">Saved Boards</span>
+      </a>
+      <span class="tooltip">Saved Boards</span>
+    </li>
+     <li>
+       <a href="{{ url_for('cal') }}">
+         <i class='bx bx-calendar' ></i>
+         <span class="links_name">Calendar</span>
+       </a>
+       <span class="tooltip">Calendar</span>
+     </li>
+     <!-- <li>
        <a href="#">
          <i class='bx bx-folder' ></i>
          <span class="links_name">File Manager</span>

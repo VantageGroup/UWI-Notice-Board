@@ -1,5 +1,9 @@
 /* This is for styling the form cards */
 
+.container-post{
+  margin-left: 50px;
+}
+
 .card{
   position: relative;
   font-family: "Candara", sans-serif;
