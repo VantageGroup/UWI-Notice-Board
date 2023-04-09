@@ -101,13 +101,16 @@
     </ul>
   </div>
   <section class="home-section">
-      <div class="button-container">
-        <div class="text">{{board.title}} Board</div>
+    <div class="button-container">
+      <div class="left-side">
+        <div class="text">{{ board.title }}</div>
         <a href="{{ url_for('createPost', bID = board.id ) }}">
             <button class="custom-btn btn-5"><i class='bx bx-plus'></i> Create Post</button>
         </a>
+      </div>
+      
+      <!-- <div class="group-buttons">
         <div class="act-container">
-            
           <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
             {{ sortF }}
           {% else %}
@@ -118,6 +121,9 @@
               <a href="{{ url_for('home', sortF = fac.label )  }}"> {{ fac.title }} </a>
             {% endfor %}
           </div>
+        </div>
+        
+        <div class="act-container">
           <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortD %}
             {{ sortD }}
           {% else %}
@@ -131,7 +137,8 @@
             {% endfor %}
           </div>
         </div>
-      </div>
+      </div> -->
+    </div>
       <main>
         <div class="container-post"> <!-- Open container -->
         {% block content %}

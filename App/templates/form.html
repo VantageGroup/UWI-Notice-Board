@@ -220,32 +220,13 @@
 
     <div class="container-board">
       <h4>Please fill out the form to create your board</h4><br />
-      <!-- Need to allow user to add in faculty and department here -->
+      
       <form method="POST" enctype="multipart/form-data" style="width:100%">
-        <div class="board-card">
-          <div class="board-card-image">
-            <img src="static/images/dark.jpg">
-          </div>
-          <div class="board-card-content">
-            <div class="board-title">
-              <h3>
-                {{ formBoard.hidden_tag() }}
-                {{ formBoard.title(placeholder="Enter board name") }}
-              </h3>
-            </div>
-            <div class="board-left-card">
-              <div class="board-u-count">
-                <p class="board-users-count">1.2k</p>
-              </div>
-              <div class="board-user-icon">
-                <i class="material-icons">person</i>
-              </div>
-            </div>
-          </div>
-          <div class="board-join">
-            <button>{{ formBoard.submit() }}</button>
-          </div>
-        </div>
+        {{ formBoard.hidden_tag() }}
+
+        {{ formBoard.photo(class="form.control") }}
+        <p>{{ formBoard.title(placeholder="Enter board name") }}</p>
+            
 
         <select name='faculty'>
           {% for fac in faculty %}
@@ -270,9 +251,10 @@
           {% endfor %}
         </select>
 
-        {{ formBoard.photo(class="form.control") }}
-        <br>
-
+        <div>
+            <button class="custom-btn btn-5"><i class='bx bxs-paper-plane'></i> {{ formBoard.submit() }}</button>
+        </div>
+        
       </form>
       {{ ckeditor.load(pkg_type="basic") }}
       {{ ckeditor.config(name='message') }}

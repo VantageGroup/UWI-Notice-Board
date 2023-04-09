@@ -4,6 +4,13 @@
   margin-left: 50px;
 }
 
+.container-board{
+  margin-left: 50px;
+  /* display: flex;
+  align-items: center; */
+  /* flex-wrap: wrap; */
+}
+
 .card{
   position: relative;
   font-family: "Candara", sans-serif;

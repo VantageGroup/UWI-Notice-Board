@@ -1077,21 +1077,21 @@ def dropAll():
 # User Table
 @app.route('/users', methods=['GET'])
 def get_user():
-  #if (current_user.is_authenticated):
-    #return redirect(url_for('login'))
+  if (current_user.is_authenticated):
+    users = User.query.all()
+    return json.dumps([user.toDict() for user in users])
   
-  users = User.query.all()
-  return json.dumps([user.toDict() for user in users])
+  return redirect(url_for('login'))
 
 # Subscriber Table
 @app.route('/subscribers', methods=['GET'])
 def get_subs():
- # if (current_user.is_authenticated):
-   # return redirect(url_for('login'))
+  if (current_user.is_authenticated):
+    subs = Subscriber.query.all()
+    return json.dumps([sub.toDict() for sub in subs])
   
-  subs = Subscriber.query.all()
-  return json.dumps([sub.toDict() for sub in subs])
-
+  return redirect(url_for('login'))
+  
 #############################################
 
 
