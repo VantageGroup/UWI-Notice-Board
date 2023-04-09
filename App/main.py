@@ -252,11 +252,20 @@ def home(sortF = None, sortD = None):
 
     currentSysDateTime = datetime.datetime.now()
 
-    feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
-    feed = feed.order_by(Post.schedulePostDate.desc())
     boards = RetrieveAllBoards()
     faculty = RetrieveFacultyList()
     department = RetrieveDepartmentList()
+    
+    feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
+    feed = feed.order_by(Post.schedulePostDate.desc())
+    feed = [entry.toDict() for entry in feed]
+    
+    profiles = Profile.query.all()
+    profiles = [entry.toDict() for entry in profiles]
+    for post in feed:
+      post['username'] = ['here' for profile in profiles if profile['user']==post['owner']]
+      post['userImage'] = [profile['userImage'] for profile in profiles if profile['user']==post['owner']]
+      post['userImageLocation'] = [profile['userImageLocation'] for profile in profiles if profile['user']==post['owner']]
     
     return render_template('index.html', 
       posts=feed,
@@ -498,6 +507,7 @@ def uploadPost(bID):
     
     newPost = Post(
       bID=bID,
+      owner=current_user.id,
       title=title,
       message=message,
       
