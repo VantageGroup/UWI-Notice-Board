@@ -46,7 +46,7 @@ def reCreate_db():
 class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   bID = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
-  owner = db.Column(db.String(64), db.ForeignKey('user.id'))
+  owner = db.Column(db.Integer, db.ForeignKey('user.id'))
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
@@ -162,9 +162,9 @@ class Subscriber(db.Model):
 '''#'''
 class User(db.Model, UserMixin):
   id = db.Column(db.Integer, primary_key=True)
-  username = db.Column(db.String(64), unique=True, nullable=False)
-  email = db.Column(db.String(64), nullable=False)
-  password = db.Column(db.String(64), nullable=False)
+  username = db.Column(db.String, unique=True, nullable=False)
+  email = db.Column(db.String, nullable=False)
+  password = db.Column(db.String, nullable=False)
   isAdmin = db.Column(db.Boolean, nullable=True)
   
   def toDict(self):
