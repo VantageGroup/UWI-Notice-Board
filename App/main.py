@@ -266,7 +266,7 @@ def home(sortF = None, sortD = None):
       post['userImage'] = profile.image
       post['userImageLocation'] = profile.imageLocation
       
-    print(feed.username)
+  
     
     return render_template('index.html', 
       posts=feed,
@@ -401,6 +401,7 @@ def viewPost(pID):
   post = db.session.get(Post, pID)
   post = post.toDict()
   print(post)
+  post.viewCount = post.viewCount + 1
   return render_template('post.html',
     post=post
   )
@@ -925,7 +926,7 @@ def join(bID):
     )
     db.session.add(subscriber)
 
-  board.subscribers = board.subscribers + 1
+    board.subscribers = board.subscribers + 1
 
   db.session.commit()
 
