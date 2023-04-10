@@ -579,8 +579,8 @@ def uploadPost(bID):
       db.session.commit()
 
  
-    print("this is new event")
-    print(newEvent.toDict())     
+    # print("this is new event")
+    # print(newEvent.toDict())     
 
   else:
     print("Form did not validate on submit")  

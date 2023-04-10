@@ -109,8 +109,8 @@
     </div>
     <section class="home-section">
         <div class="button-container">
-            <div class="text">Home</div>
-            <div class="act-container">
+            <div class="text">{{ post.title }}</div>
+            <!-- <div class="act-container">
                 <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
                     {{ sortF }}
                     {% else %}
@@ -133,33 +133,32 @@
                     {% endif %}
                     {% endfor %}
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Your Stuff Goes, Use a main tag-->
         <main>
             <div class="container-board">
                 {% block content %}
+                <div class="post-view-container">
+                    <h3>Author</h3>
+                    <p>{{ post.ownerName }}</p><br>
 
-                <div>
-                    {{ post.title }} <br>
-                </div>
+                    <h3>Published</h3>
+                    <p>{{ post.schedulePostDate.strftime('%Y-%m-%d') }}</p>
+                    <p>At {{ post.schedulePostDate.strftime('%I:%M %p') }}</p><br>
+                    <h3>Message</h3>
+                    <p>{{ post.message | safe}}</p><br>
 
-                <div>
-                    {{ post.schedulePostDate }} <br>
-                </div>
 
-                <div>
-                    {{ post.message | safe}}
-                </div>
-
-                {% if post.image %}
-                <div class="flyer">
-                    <img class="flyer-image" src="{{ url_for('get_post_image', filename = post.imageLocation)  }}"
-                        alt="">
-                </div>
-                {% endif %}
-
+                    {% if post.image %}
+                        <h3>Flyer</h3>
+                        <div class="">
+                            <img class="" src="{{ url_for('get_post_image', filename = post.imageLocation)  }}"
+                                alt="">
+                        </div>
+                    {% endif %}
                 {% endblock %}
+                </div>
             </div>
         </main>
 

@@ -1,5 +1,9 @@
 /* This is for styling the post cards */
 
+.post-view-container{
+  margin-left: 100px;
+}
+
 .card{
   position: relative;
   font-family: "Candara", sans-serif;
