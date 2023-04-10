@@ -3,7 +3,7 @@ import os
 import requests
 
 from sqlalchemy.exc import OperationalError
-from werkzeug.utils import secure_filename
+
 
 from flask import (
   Flask, 
@@ -34,7 +34,7 @@ from flask_uploads import (
 from flask_ckeditor import CKEditor
 
 from sqlalchemy.exc import OperationalError, IntegrityError
-from werkzeug.utils import secure_filename
+
 
 from flask_login import (
   LoginManager, 
@@ -79,7 +79,7 @@ from functions.userFunctions import (
 
 from datetime import datetime, date
 import datetime
-import pytz
+
 
 from functools import wraps
 from flask import abort
@@ -88,7 +88,7 @@ from sqlalchemy import desc
 
 
 def create_app():
-  app = Flask(__name__, static_url_path='/static')
+  app = Flask(__name__)
   CORS(app)
   app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
   app.config['TEMPLATE_AUTO_RELOAD'] = True
@@ -96,7 +96,8 @@ def create_app():
   app.config['TEMPLATES_AUTO_RELOAD'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
   
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
+  app.config['SQLALCHEMY_DATABASE_URI'] =  'postgresql://uwi_notice_board_user:a7L2PrFm9cj9YPqxezyO8na4JxQKMi96@dpg-cgpecfpeuhlq286280og-a.oregon-postgres.render.com/uwi_notice_board'
+  #postgres://uwi_notice_board_user:a7L2PrFm9cj9YPqxezyO8na4JxQKMi96@dpg-cgpecfpeuhlq286280og-a.oregon-postgres.render.com/uwi_notice_board
   
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
   os.makedirs(os.path.join(app.instance_path, 'board'), exist_ok=True)
@@ -139,6 +140,8 @@ def base():
 FacultyDept.initialize()
 Faculty.initialize()
 
+
+'''Functions'''
 # Decorator function to restrict route access to admins
 def admin_required(f):
     @wraps(f)
@@ -149,7 +152,7 @@ def admin_required(f):
     return decorated_function
 
 
-'''Functions'''
+
 
 # Retrieve all Posts from the Database
 def RetrieveAllPosts():
@@ -1125,4 +1128,4 @@ def add_admin():
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', debug=True, port=8080)
+  app.run(host='0.0.0.0', port=80)
