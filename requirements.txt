@@ -8,3 +8,8 @@ SQLAlchemy==2.0.4
 WTForms==3.0.1
 gunicorn
 requests
+flask_login
+flask_uploads
+functools
+werkzeug
+
