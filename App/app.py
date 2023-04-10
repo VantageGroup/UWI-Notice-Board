@@ -511,8 +511,11 @@ def uploadPost(bID):
     if (scheduledDeleteDate != ''):
       scheduledDeleteDateObj = datetime.datetime.strptime(scheduledDeleteDate, '%Y-%m-%dT%H:%M')
     else:
-      scheduledDeleteDateObj = None
-    
+      scheduledDeleteDateObj =  datetime.datetime.now()
+      time_change = datetime.timedelta(days=365)
+      scheduledDeleteDateObj = scheduledDeleteDateObj + time_change
+      # convert to a string in the format SQLite expects
+      
     if (form.photo.data !=  None):
       image = True
       
