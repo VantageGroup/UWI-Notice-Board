@@ -3,7 +3,7 @@ import os
 import requests
 
 from sqlalchemy.exc import OperationalError
-from werkzeug.utils import secure_filename
+
 
 from flask import (
   Flask, 
@@ -34,7 +34,7 @@ from flask_uploads import (
 from flask_ckeditor import CKEditor
 
 from sqlalchemy.exc import OperationalError, IntegrityError
-from werkzeug.utils import secure_filename
+
 
 from flask_login import (
   LoginManager, 
