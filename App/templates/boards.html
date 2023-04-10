@@ -174,11 +174,21 @@
                         </div>
                       </div>
                     </div>
+                    {% if board.currentUserIsSubd %}
+                    <div class="board-leave">
+                      <a href="{{ url_for('leave', bID = board.id, uID = current_user.id ) }}">
+                        <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Leave</button>
+                      </a>
+                    </div>
+        
+                    {% else %}
+        
                     <div class="board-join">
                       <a href="{{ url_for('join', bID = board.id, uID = current_user.id ) }}">
                         <button class="custom-btn btn-5"><i class='bx bx-door-open'></i> Join</button>
                       </a>
                     </div>
+                    {% endif %}
                   </div>
                 </a>
               {% elif board.faculty == sortF %}

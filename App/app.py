@@ -96,7 +96,7 @@ def create_app():
   app.config['TEMPLATES_AUTO_RELOAD'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
   
-  app.config['SQLALCHEMY_DATABASE_URI'] =  'postgresql://uwi_notice_board_user:a7L2PrFm9cj9YPqxezyO8na4JxQKMi96@dpg-cgpecfpeuhlq286280og-a.oregon-postgres.render.com/uwi_notice_board'
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   #postgres://uwi_notice_board_user:a7L2PrFm9cj9YPqxezyO8na4JxQKMi96@dpg-cgpecfpeuhlq286280og-a.oregon-postgres.render.com/uwi_notice_board
   
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
@@ -260,15 +260,17 @@ def home(sortF = None, sortD = None):
     feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
     feed = feed.order_by(Post.schedulePostDate.desc())
     
+    # for post in feed:
+    #   profile = Profile.query.filter_by(user=post.owner).first()
+      
+    #   post = post.toDict()
+      
+    #   post['username'] = profile.username
+    #   post['userImage'] = profile.image
+    #   post['userImageLocation'] = profile.imageLocation
+       
     for post in feed:
-      profile = Profile.query.filter_by(user=post.owner).first()
-      
-      post = post.toDict()
-      
-      post['username'] = profile.username
-      post['userImage'] = profile.image
-      post['userImageLocation'] = profile.imageLocation
-      
+     print(post)
   
     
     return render_template('index.html', 
@@ -526,6 +528,7 @@ def uploadPost(bID):
     newPost = Post(
       bID=bID,
       owner=current_user.id,
+      ownerName = current_user.username,
       title=title,
       message=message,
       
@@ -1128,4 +1131,4 @@ def add_admin():
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=80)
+  app.run(host='0.0.0.0',debug=True, port=80)

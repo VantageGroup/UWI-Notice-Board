@@ -47,6 +47,7 @@ class Post(db.Model):
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   bID = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
   owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+  ownerName = db.Column(db.String(64), nullable=False)
   title = db.Column(db.String(64), nullable=False)
   message = db.Column(db.String(2048), nullable=False)
   faculty = db.Column(db.String(8), nullable=False)
@@ -68,6 +69,7 @@ class Post(db.Model):
       "id": self.id,
       "bID": self.bID,
       "owner": self.owner,
+      "ownerName":self.ownerName,
       "title": self.title,
       "message": self.message,
       "faculty": self.faculty,
