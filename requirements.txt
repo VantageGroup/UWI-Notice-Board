@@ -10,5 +10,5 @@ gunicorn
 requests
 flask_login
 flask_uploads
-werkzeug
+
 
