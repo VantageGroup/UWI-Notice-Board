@@ -727,13 +727,18 @@ def savedBoards(sortF = None, sortD = None):
   if (current_user.is_authenticated == False):
     return redirect(url_for('login'))
   
-  userBoards = RetrieveUserBoards()
-  boards = RetrieveAllBoards()
+  subscribers = RetrieveUserBoards()
   faculty = RetrieveFacultyList()
   department = RetrieveDepartmentList()
-  
+  boards = []
+
+  for subs in subscribers:
+    query = Board.query.filter_by(id=subs['board'])
+    boards.extend(query.all())
+
+  print(boards)
+
   return render_template('savedBoards.html', 
-    userBoards=userBoards,
     boards=boards, 
     sortF=sortF,
     sortD=sortD,
