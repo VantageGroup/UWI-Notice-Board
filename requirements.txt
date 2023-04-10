@@ -7,3 +7,4 @@ flask_wtf==1.1.1
 SQLAlchemy==2.0.4
 WTForms==3.0.1
 gunicorn
+requests
