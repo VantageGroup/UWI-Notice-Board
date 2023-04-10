@@ -22,7 +22,9 @@
     <ul class="nav-list">
       <li>
         <i class='bx bx-search'></i>
-        <input type="text" placeholder="Search...">
+        <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
+          <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        </form>
         <span class="tooltip">Search</span>
       </li>
       <li>
@@ -96,9 +98,11 @@
             <!-- <div class="job">Web designer</div> -->
           </div>
         </div>
-        <a href="{{ url_for('logout') }}">
-          <i class='bx bx-log-out' id="log_out"></i>
-        </a>
+        <div>
+          <a href="{{ url_for('logout') }}">
+            <i class='bx bx-log-out' id="log_out"></i>
+          </a>
+        </div>
       </li>
     </ul>
   </div>
@@ -137,14 +141,6 @@
       </div>
     </div>
     <main>
-      <!-- <div class="search center">
-          <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
-            <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
-            <button class="btn btn-outline-secondary" type="submit">
-              <i class="material-icons">search</i>
-            </button>
-          </form>
-        </div> -->
         <div class="container-post"> <!-- Open container -->
           {% block content %}
             {% for post in posts %}            
@@ -158,7 +154,7 @@
                           <div class="profile-image">
                             <img src="static/images/defaultProfile.jpg" alt="">
                             <p class="name">{{ current_user.username }}</p>
-                            <p class="time">{{ post.schedulePostDate.strftime(' %H:%M') }}</p>
+                            <p class="time">{{ post.schedulePostDate.strftime('%I:%M %p') }}</p>
                           </div>
                         </div>
                         <div class="top-right">
@@ -221,7 +217,7 @@
                             <div class="profile-image">
                               <img src="static/images/defaultProfile.jpg" alt="">
                               <p class="name">{{ current_user.username }}</p>
-                              <p class="time">{{ post.schedulePostDate.strftime(' %H:%M') }}</p>
+                              <p class="time">{{ post.schedulePostDate.strftime('%I:%M %p') }}</p>
                             </div>
                           </div>
                           <div class="top-right">
@@ -283,7 +279,7 @@
                             <div class="profile-image">
                               <img src="static/images/defaultProfile.jpg" alt="">
                               <p class="name">{{ current_user.username }}</p>
-                              <p class="time">{{ post.schedulePostDate.strftime(' %H:%M') }}</p>
+                              <p class="time">{{ post.schedulePostDate.strftime('%I:%M %p') }}</p>
                             </div>
                           </div>
                           <div class="top-right">

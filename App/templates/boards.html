@@ -22,7 +22,9 @@
     <ul class="nav-list">
       <li>
         <i class='bx bx-search'></i>
-        <input type="text" placeholder="Search...">
+        <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
+          <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        </form>
         <span class="tooltip">Search</span>
       </li>
       <li>
@@ -96,9 +98,11 @@
             <!-- <div class="job">Web designer</div> -->
           </div>
         </div>
-        <a href="{{ url_for('logout') }}">
-          <i class='bx bx-log-out' id="log_out"></i>
-        </a>
+        <div>
+          <a href="{{ url_for('logout') }}">
+            <i class='bx bx-log-out' id="log_out"></i>
+          </a>
+        </div>
       </li>
     </ul>
   </div>
@@ -110,7 +114,7 @@
               <button class="custom-btn btn-5"><i class='bx bx-plus'></i> Create Board</button>
           </a>
         </div>
-        
+
         <div class="group-buttons">
           <div class="act-container">
             <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}

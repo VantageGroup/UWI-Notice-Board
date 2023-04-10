@@ -19,9 +19,11 @@
     </div>
     <ul class="nav-list">
       <li>
-          <i class='bx bx-search' ></i>
-         <input type="text" placeholder="Search...">
-         <span class="tooltip">Search</span>
+        <i class='bx bx-search'></i>
+        <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
+          <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+        </form>
+        <span class="tooltip">Search</span>
       </li>
       <li>
         <a href="{{ url_for('home') }}">
@@ -94,9 +96,11 @@
              <!-- <div class="job">Web designer</div> -->
            </div>
          </div>
-         <a href="{{ url_for('logout') }}">
-          <i class='bx bx-log-out' id="log_out" ></i>
-         </a>
+         <div>
+          <a href="{{ url_for('logout') }}">
+            <i class='bx bx-log-out' id="log_out"></i>
+          </a>
+        </div>
      </li>
     </ul>
   </div>
@@ -104,11 +108,22 @@
     <div class="button-container">
       <div class="left-side">
         <div class="text">{{ board.title }}</div>
-        <a href="{{ url_for('createPost', bID = board.id ) }}">
-            <button class="custom-btn btn-5"><i class='bx bx-plus'></i> Create Post</button>
-        </a>
+        {% block button %}
+        {% for subscriber in subscribers %}
+          {% if board.id == subscriber.board %}
+            {% if subscriber.isAdmin == true %}
+              <a href="{{ url_for('createPost', bID = board.id ) }}">
+                <button class="custom-btn btn-5"><i class='bx bx-plus'></i> Create Post</button>
+              </a>
+              <a href="{{ url_for('add_admin') }}">
+                <button class="custom-btn btn-5"><i class='bx bx-plus'></i> Add Admin</button>
+              </a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% endblock %}
       </div>
-      
+
       <!-- <div class="group-buttons">
         <div class="act-container">
           <button class="custom-btn btn-5"><i class='bx bx-filter-alt'></i>{% if sortF %}
@@ -154,7 +169,7 @@
                         <div class="profile-image">
                           <img src="static/images/defaultProfile.jpg" alt="">
                           <p class="name">{{current_user.username }}</p>
-                          <p class="time">{{post.schedulePostDate.strftime(' %H:%M') }}</p>
+                          <p class="time">{{post.schedulePostDate.strftime('%I:%M %p') }}</p>
                         </div>
                       </div>
                       <div class="top-right">

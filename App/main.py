@@ -349,28 +349,38 @@ def search(sortF = None, sortD = None):
   
   search = request.form.get('searchCriteria')
   
-  found = postsDb.filter( db.or_ 
-    (
-    (Post.message.like( '%' + search + '%' )), 
-    (Post.title.like( '%' + search + '%' ))
+  # found = Post.query.filter( db.or_ 
+  #   (
+  #   (Post.message.ilike( '%' + search + '%' )), 
+  #   (Post.title.ilike( '%' + search + '%' ))
+  #   )
+  # )
+  # foundPosts = found
+  # foundPosts = foundPosts.order_by(Post.title).all()
+  
+  
+  # found = Post.query.filter(
+  #   (
+  #   (Board.title.like( '%' + search + '%' ))
+  #   )
+  # )
+  # foundBoards = found
+  # foundBoards = foundBoards.order_by(Board.title).all()
+  post_query = Post.query.filter(
+    db.or_(
+        Post.title.ilike(f'%{search}%'),
+        Post.message.ilike(f'%{search}%')
     )
   )
-  foundPosts = found
-  foundPosts = foundPosts.order_by(Post.title).all()
+  board_query = Board.query.filter(Board.title.ilike(f'%{search}%'))
   
-  
-  found = boardsDb.filter(
-    (
-    (Board.title.like( '%' + search + '%' ))
-    )
-  )
-  foundBoards = found
-  foundBoards = foundBoards.order_by(Board.title).all()
-  
+  print("Here")
+  print(post_query)
+  print("END")
   return render_template('search.html',
     searched = search, 
-    boards = foundBoards,
-    posts = foundPosts,
+    boards = board_query,
+    posts = post_query,
     sortF = sortF,
     sortD = sortD,
     faculty=faculty,
@@ -731,6 +741,8 @@ def board(bID):
   board = db.session.get(Board, bID)
   posts = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
   posts = Post.query.filter_by(bID=bID)
+  subscribers = Subscriber.query.filter_by(user=current_user.id)
+  subscribers = [entry.toDict() for entry in subscribers]
   
   
   
@@ -742,7 +754,8 @@ def board(bID):
   return render_template("boardPosts.html",  
     boardID=boardId, 
     board=board,
-    posts=posts
+    posts=posts,
+    subscribers = subscribers
   )
 
 # Create a Board Route
@@ -1098,6 +1111,15 @@ def get_subs():
     return json.dumps([sub.toDict() for sub in subs])
   
   return redirect(url_for('login'))
+
+# Add Admin
+@app.route('/addadmin')
+def add_admin():
+  if (current_user.is_authenticated):
+    # stuff
+    return redirect(url_for('board'))
+
+  return redirect(url_for('board'))
   
 #############################################
 

@@ -3,7 +3,7 @@
 .card{
   position: relative;
   font-family: "Candara", sans-serif;
-  width: 65vw;
+  width: 1000px;
   height: 270px;
   margin: 20px;
   margin-left: 100px;
@@ -18,8 +18,8 @@
 }
 
 .card-content{
-  margin-left: 1vw;
-  width: 30vw;
+  margin-left: 15px;
+  width: 578px;
   height: 300px;
 }
 
@@ -34,9 +34,9 @@
   height: 100px;
   position: relative;
   display: block;
-  margin-left: 0.5vw;
+  margin-left: 10px;
   margin-right: auto;
-  margin-top: 0.5vw;
+  margin-top: 10px;
   border-radius: 100px;
   border: 8px solid #fff;
   transition-duration: 0.4s;
