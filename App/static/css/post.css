@@ -132,8 +132,9 @@
   width: 20%;
 }
 
-.card-bot-right-right .bx-dots-horizontal-rounded{
-  padding: 20px;
+.card-bot-right-right .bx-edit{
+  padding: 15px;
+  font-size: 25px;
 }
 
 .board-name{

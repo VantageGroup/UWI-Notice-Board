@@ -1120,9 +1120,9 @@ def get_subs():
 def add_admin():
   if (current_user.is_authenticated):
     # stuff
-    return redirect(url_for('board'))
+    return redirect(url_for('home'))
 
-  return redirect(url_for('board'))
+  return redirect(url_for('home'))
   
 #############################################
 

@@ -210,7 +210,15 @@
                         <p class="views">{{post.viewCount}} views</p>
                       </div>
                       <div class="card-bot-right-right">
-                        <i class='bx bx-dots-horizontal-rounded'></i>
+                        {% for subscriber in subscribers %}
+                          {% if board.id == subscriber.board %}
+                            {% if subscriber.isAdmin == true %}
+                              <a href="{{ url_for('editPost', bID = board.id, pID = post.id) }}">
+                                <i class='bx bx-edit'></i>
+                              </a>
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
                       </div>
                     </div>
                   </div>
