@@ -23,7 +23,8 @@
             <li>
                 <i class='bx bx-search'></i>
                 <form method="POST" action="{{ url_for('search') }}" class="d-flex"> {{ form.hidden_tag() }}
-                    <input class="form-control me-2" type="search" placeholder="Search"  aria-label="Search" name="searchCriteria"/>
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                        name="searchCriteria" />
                 </form>
                 <span class="tooltip">Search</span>
             </li>
@@ -100,9 +101,9 @@
                 </div>
                 <div>
                     <a href="{{ url_for('logout') }}">
-                      <i class='bx bx-log-out' id="log_out"></i>
+                        <i class='bx bx-log-out' id="log_out"></i>
                     </a>
-                  </div>
+                </div>
             </li>
         </ul>
     </div>
@@ -152,8 +153,9 @@
                 </div>
 
                 {% if post.image %}
-                <div>
-                    {{ post.imageLocation }}
+                <div class="flyer">
+                    <img class="flyer-image" src="{{ url_for('get_post_image', filename = post.imageLocation)  }}"
+                        alt="">
                 </div>
                 {% endif %}
 

@@ -97,8 +97,10 @@ class Event(db.Model):
     return{
       "id": self.id,
       "post": self.post,
+      "title":self.title,
       "startDate" : self.startDate,
-      "endDate" : self.endDate
+      "endDate" : self.endDate,
+      "url":self.url
     }
 
 '''#'''

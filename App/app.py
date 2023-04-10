@@ -399,6 +399,8 @@ def cal():
     return redirect(url_for('login'))
   
   events = RetrieveFollowedEvents()
+
+  
   
   return render_template("cal.html", events=events)
 
@@ -562,8 +564,10 @@ def uploadPost(bID):
         title = latest_entry.title,
         startDate = startDateObj,
         endDate = endDateObj,
-        url = request.base_url + url_for('viewPost', pID=latest_entry.id)
+        url =  url_for('viewPost', pID=latest_entry.id)
       )
+
+    
       
       follow = Follow(
         post = latest_entry.id,
@@ -574,8 +578,14 @@ def uploadPost(bID):
       db.session.add(follow)
       db.session.commit()
 
+ 
+    print("this is new event")
+    print(newEvent.toDict())     
+
   else:
     print("Form did not validate on submit")  
+
+   
   
   return  redirect(url_for('board', bID=bID))
 
