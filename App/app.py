@@ -566,8 +566,6 @@ def uploadPost(bID):
         endDate = endDateObj,
         url =  url_for('viewPost', pID=latest_entry.id)
       )
-
-    
       
       follow = Follow(
         post = latest_entry.id,
@@ -598,7 +596,7 @@ def uploadEdittedPost(bID, pID):
   
   board = db.session.get(Board, bID)
   post = db.session.get(Post, pID)
-  eventObj = Event.query.filter_by(post=post.id)
+  eventObj = Event.query.filter_by(post=post.id).first()
   
   form = PostForm()
   
@@ -662,9 +660,25 @@ def uploadEdittedPost(bID, pID):
     post.schedulePostDate = schedulePostDateObj
     post.scheduledDeleteDate = scheduledDeleteDateObj
     
-    eventObj.title = post.title
-    eventObj.startDate = startDateObj
-    eventObj.endDate = endDateObj
+    if (eventObj):
+      eventObj.title = post.title
+      eventObj.startDate = startDateObj
+      eventObj.endDate = endDateObj
+    else:
+      newEvent = Event(
+        post = post.id,
+        title = post.title,
+        startDate = startDateObj,
+        endDate = endDateObj,
+        url =  url_for('viewPost', pID=post.id)
+      )
+      db.session.add(newEvent)
+      
+      follow = Follow(
+        post = post.id,
+        user = current_user.id
+      )
+      db.session.add(follow)
     
     db.session.commit()
   else:
