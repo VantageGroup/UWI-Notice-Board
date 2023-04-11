@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 
-from werkzeug.utils import secure_filename
+#from werkzeug.utils import secure_filename
 from flask_ckeditor import CKEditorField
 
 from flask_wtf import FlaskForm

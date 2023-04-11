@@ -6,9 +6,9 @@ flask_sqlalchemy==3.0.3
 flask_wtf==1.1.1
 SQLAlchemy==2.0.4
 WTForms==3.0.1
-gunicorn
-requests
-flask_login
-flask_uploads
+gunicorn==20.1.0
+requests==2.28.2
+flask_login==0.6.2
+flask_uploads==0.2.1
 
 
