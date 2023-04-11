@@ -96,7 +96,7 @@ def create_app():
   app.config['TEMPLATES_AUTO_RELOAD'] = True
   app.config['PREFERRED_URL_SCHEME'] = 'https'
   
-  app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://uwi_notice_board_platform_user:2aNpkmppk2oGYJJiAS7toeqyGG3hhhc7@dpg-cgq9h45269v32ofb2530-a.oregon-postgres.render.com/uwi_notice_board_platform'
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'data.db')
   #'postgresql://uwi_notice_board_platform_user:2aNpkmppk2oGYJJiAS7toeqyGG3hhhc7@dpg-cgq9h45269v32ofb2530-a.oregon-postgres.render.com/uwi_notice_board_platform'
   
   os.makedirs(os.path.join(app.instance_path, 'post'), exist_ok=True)
