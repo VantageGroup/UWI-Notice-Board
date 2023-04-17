@@ -62,6 +62,7 @@ class Post(db.Model):
   endDate = db.Column(db.Date,  default=date.today, index=True)
   schedulePostDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True)
   scheduledDeleteDate = db.Column(db.DateTime,  default=datetime.utcnow, index=True, nullable=True)
+  
   viewCount = db.Column(db.Integer, nullable=True, default = 0)
   
   def toDict(self):
@@ -127,8 +128,6 @@ class Board(db.Model):
   imageLocation = db.Column(db.String(256), nullable=True)
   subscribers = db.Column(db.Integer, nullable=True, default = 1)
   
-  posts = db.relationship('Post', backref='b')
-  
   def toDict(self):
     return{
       "id": self.id,
@@ -176,8 +175,7 @@ class User(db.Model, UserMixin):
       "id": self.id,
       "username": self.username,
       "password": self.password,
-      # "faculty": self.faculty,
-      # "dept": self.dept,
+      "email": self.email,
       "isAdmin" : self.isAdmin
     }
   

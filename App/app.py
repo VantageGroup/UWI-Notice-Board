@@ -67,14 +67,22 @@ from models import (
 )
 
 from functions.postFunctions import (
-  PostForm
+  PostForm,
+  RetrieveAllPosts
 )
 from functions.boardFunctions import (
-  BoardForm
+  BoardForm,
+  RetrieveAllBoards,
+  RetrieveFacultyList,
+  RetrieveDepartmentList
 )
 from functions.userFunctions import (
   LoginForm,
-  SignUpForm
+  SignUpForm,
+  RetrieveUserBoards,
+  RetrieveFeedSub,
+  RetrieveUserFollowed,
+  RetrieveFollowedEvents
 )
 
 from datetime import datetime, date
@@ -151,95 +159,6 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
-
-
-# Retrieve all Posts from the Database
-def RetrieveAllPosts():
-  list = Post.query.order_by(Post.id.desc()).all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve all Boards from the Database
-def RetrieveAllBoards():
-  list = Board.query.all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve all Events from the Database
-def RetrieveAllEvents():
-  list = Event.query.all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieves all User Profiles from the Database
-def RetreveProfiles():
-  list = Profile.query.all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve all Facuties from the Database
-def RetrieveFacultyList():
-  list = Faculty.query.all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve all Departments from the Database
-def RetrieveDepartmentList():
-  list = FacultyDept.query.all()
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve User Subscribed Boards
-def RetrieveUserBoards():
-  list = Subscriber.query.filter_by(user=current_user.id)
-  list = [entry.toDict() for entry in list]
-  
-  return list
-
-# Retrieve User Post Feed
-def RetrieveFeedSub():
-  all_posts = RetrieveAllPosts() 
-  boards = RetrieveUserBoards()
-  
-  posts = []
-
-  for board in boards:
-    for post in all_posts:
-      if (post['bID'] == board['board']):
-        posts.append(post)
-  
-  return posts
-
-#
-def RetrieveUserFollowed():
-  list = Follow.query.filter_by(user=current_user.id)
-  list = [entry.toDict() for entry in list]
-  
-  return list
-  
-
-# Retrieve User Followed Events
-def RetrieveFollowedEvents():
-  all_events = RetrieveAllEvents() 
-  follow = RetrieveUserFollowed()
-  
-  events = []
-
-  for post in follow:
-    for event in all_events:
-      print(post['id'])
-      if (event['post'] == post['post']):
-        events.append(event)
-  
-  return events
-
 #############################################
 
 
@@ -259,15 +178,6 @@ def home(sortF = None, sortD = None):
     
     feed = Post.query.filter(Post.schedulePostDate<=currentSysDateTime, Post.scheduledDeleteDate>=currentSysDateTime)
     feed = feed.order_by(Post.schedulePostDate.desc())
-    
-    # for post in feed:
-    #   profile = Profile.query.filter_by(user=post.owner).first()
-      
-    #   post = post.toDict()
-      
-    #   post['username'] = profile.username
-    #   post['userImage'] = profile.image
-    #   post['userImageLocation'] = profile.imageLocation
        
     for post in feed:
      print(post)
@@ -354,23 +264,6 @@ def search(sortF = None, sortD = None):
   
   search = request.form.get('searchCriteria')
   
-  # found = Post.query.filter( db.or_ 
-  #   (
-  #   (Post.message.ilike( '%' + search + '%' )), 
-  #   (Post.title.ilike( '%' + search + '%' ))
-  #   )
-  # )
-  # foundPosts = found
-  # foundPosts = foundPosts.order_by(Post.title).all()
-  
-  
-  # found = Post.query.filter(
-  #   (
-  #   (Board.title.like( '%' + search + '%' ))
-  #   )
-  # )
-  # foundBoards = found
-  # foundBoards = foundBoards.order_by(Board.title).all()
   post_query = Post.query.filter(
     db.or_(
         Post.title.ilike(f'%{search}%'),
@@ -379,9 +272,6 @@ def search(sortF = None, sortD = None):
   )
   board_query = Board.query.filter(Board.title.ilike(f'%{search}%'))
   
-  print("Here")
-  print(post_query)
-  print("END")
   return render_template('search.html',
     searched = search, 
     boards = board_query,
@@ -399,8 +289,6 @@ def cal():
     return redirect(url_for('login'))
   
   events = RetrieveFollowedEvents()
-
-  
   
   return render_template("cal.html", events=events)
 
@@ -1003,10 +891,6 @@ def leave(bID):
     db.session.commit()
 
   return redirect(url_for('board',bID=bID))
-
-
-
-
 
 #############################################
 

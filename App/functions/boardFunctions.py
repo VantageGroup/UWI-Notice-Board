@@ -1,8 +1,5 @@
 import os
-from flask import Flask, render_template
-
-#from werkzeug.utils import secure_filename
-from flask_ckeditor import CKEditorField
+from flask import Flask
 
 from flask_wtf import FlaskForm
 from flask_uploads import (
@@ -12,24 +9,19 @@ from flask_uploads import (
 )
 from wtforms import (
     StringField,
-    SubmitField,
-    TextAreaField,
-    IntegerField,
-    BooleanField,
-    SelectField,
-    RadioField
+    SubmitField
 )
 from flask_wtf.file import (
     FileField, 
     FileAllowed
 )
 from wtforms.validators import (
-    DataRequired,
     InputRequired,
     Length
 )
 
 from models import (
+    Board,
     Faculty,
     FacultyDept
 )
@@ -56,3 +48,24 @@ class BoardForm(FlaskForm):
     )
     submit= SubmitField("Submit")
 
+
+# Retrieve all Boards from the Database
+def RetrieveAllBoards():
+  list = Board.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
+
+# Retrieve all Facuties from the Database
+def RetrieveFacultyList():
+  list = Faculty.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
+
+# Retrieve all Departments from the Database
+def RetrieveDepartmentList():
+  list = FacultyDept.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list

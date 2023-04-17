@@ -1,10 +1,8 @@
 import os
-from flask import Flask, render_template
-
-#from werkzeug.utils import secure_filename
-from flask_ckeditor import CKEditorField
+from flask import Flask
 
 from flask_wtf import FlaskForm
+from flask_ckeditor import CKEditorField
 from flask_uploads import (
     UploadSet, 
     IMAGES, 
@@ -13,22 +11,21 @@ from flask_uploads import (
 from wtforms import (
     StringField,
     SubmitField,
-    TextAreaField,
-    IntegerField,
-    BooleanField,
-    RadioField,
     DateField,
     DateTimeLocalField
 )
 from flask_wtf.file import (
     FileField, 
-    FileRequired, 
     FileAllowed
 )
 from wtforms.validators import (
-    DataRequired,
     InputRequired,
     Length
+)
+
+from models import (
+    Post,
+    Event
 )
 
 from datetime import datetime, date
@@ -57,3 +54,17 @@ class PostForm(FlaskForm):
     schedulePostDate = DateTimeLocalField('When would you like this post to be published?', format= '%Y-%m-%dT%H:%M')
     scheduledDeleteDate = DateTimeLocalField('When would you like this post to be removed?', format= '%Y-%m-%dT%H:%M')
 
+
+# Retrieve all Posts from the Database
+def RetrieveAllPosts():
+  list = Post.query.order_by(Post.id.desc()).all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
+
+# Retrieve all Events from the Database
+def RetrieveAllEvents():
+  list = Event.query.all()
+  list = [entry.toDict() for entry in list]
+  
+  return list
